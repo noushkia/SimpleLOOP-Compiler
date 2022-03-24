@@ -10,104 +10,89 @@ program
     mainClass;
 
 mainClass
-    : CLASS MAIN LBRACE classBody* mainInit classBody* RBRACE;
+    : CLASS MAIN LBRACE
+     (varDecStatement | method)* constructor (varDecStatement| method)*
+     RBRACE;
 
-//todo: check if brace is required
-mainInit
+constructor
     : PUBLIC INITIALIZE LPAR RPAR body;
 
 //todo
 classDeclaration
-    : CLASS identifier ((BEGIN structBody NEWLINE+ END) | (NEWLINE+ singleStatementStructBody SEMICOLON?)) NEWLINE+;
+    : CLASS identifier (LESS_THAN identifier) LBRACE
+    (((varDecStatement | method)* constructor (varDecStatement| method)*)
+    | ((varDecStatement | method)*))
+    RBRACE;
+
+
+method
+    : (PUBLIC | PRIVATE) (type | VOID) identifier
+    LPAR methodArgsDec RPAR body;
 
 //todo
-singleVarWithGetAndSet :
-    type identifier functionArgsDec BEGIN NEWLINE+ setBody getBody END;
+methodArgsDec
+    : LPAR ( argDec (COMMA argDec)*)? RPAR ;
+
+argDec
+    : type identifier (ASSIGN orExpression)? ;
 
 //todo
-singleStatementStructBody :
-    varDecStatement | singleVarWithGetAndSet;
+methodArgs
+    : (expression (COMMA expression)*)?;
 
-//todo
-structBody :
-    (NEWLINE+ (singleStatementStructBody SEMICOLON)* singleStatementStructBody SEMICOLON?)+;
-
-//todo
-getBody :
-    GET body NEWLINE+;
-
-//todo
-setBody :
-    SET body NEWLINE+;
-
-//todo
-functionDeclaration :
-    (type | VOID ) identifier functionArgsDec body NEWLINE+;
-
-//todo
-functionArgsDec :
-    LPAR (type identifier (COMMA type identifier)*)? RPAR ;
-
-//todo
-functionArguments :
-    (expression (COMMA expression)*)?;
 
 //todo
 body :
      (blockStatement | (NEWLINE+ singleStatement (SEMICOLON)?));
 
 //todo
-loopCondBody :
-     (blockStatement | (NEWLINE+ singleStatement ));
-
-//todo
 blockStatement :
     LBRACE (NEWLINE+ (singleStatement SEMICOLON)* singleStatement (SEMICOLON)?)+ NEWLINE+ RBRACE;
 
 //todo
+singleStatement :
+    ifStatement | printStatement | methodCallStmt | returnStatement | assignmentStatement
+    | varDecStatement | loopStatement;
+
+
+//todo can we have a,b=2? wb int a=1
 varDecStatement :
-    type identifier (ASSIGN orExpression )? (COMMA identifier (ASSIGN orExpression)? )*;
+    type ((identifier (ASSIGN orExpression )?) | (identifier (COMMA identifier)*));
+
+
+//todo is () necessary?
+ifStatement :
+    IF LPAR expression RPAR body
+    elsifStatement*
+    elseStatement?;
+
+elsifStatement :
+     NEWLINE* ELSIF LPAR expression RPAR body;
+
+//todo wb loopCondbody?
+elseStatement :
+     NEWLINE* ELSE body;
 
 //todo
-functionCallStmt :
-     otherExpression ((LPAR functionArguments RPAR) | (DOT identifier))* (LPAR functionArguments RPAR);
+printStatement :
+    PRINT LPAR expression RPAR;
+
+//todo check
+methodCallStmt :
+    otherExpression ((LPAR methodArgs RPAR) | (DOT identifier))* (LPAR methodArgs RPAR);
 
 //todo
 returnStatement :
     RETURN (expression)?;
 
 //todo
-ifStatement :
-    IF expression (loopCondBody | body elseStatement);
-
-//todo
-elseStatement :
-     NEWLINE* ELSE loopCondBody;
-
-//todo
-loopStatement :
-    whileLoopStatement | doWhileLoopStatement;
-
-//todo
-whileLoopStatement :
-    WHILE expression loopCondBody;
-
-//todo
-doWhileLoopStatement :
-    DO body NEWLINE* WHILE expression;
-
-//todo
-displayStatement :
-  DISPLAY LPAR expression RPAR;
-
-//todo
 assignmentStatement :
     orExpression ASSIGN expression;
 
-//todo
-singleStatement :
-    ifStatement | displayStatement | functionCallStmt | returnStatement | assignmentStatement
-    | varDecStatement | loopStatement | append | size;
+//todo NEGATIVE VALUES POSSIBLE?
+loopStatement :
+    ((identifier) | (LPAR INT_VALUE DOT DOT INT_VALUE RPAR)) DOT EACH BAR identifier BAR
+    body;
 
 //todo
 expression:
@@ -139,23 +124,18 @@ multiplicativeExpression:
 
 //todo
 preUnaryExpression:
-    ((op = NOT | op = MINUS) preUnaryExpression ) | accessExpression;
+    ((op = NOT | op = MINUS) preUnaryExpression ) | postUnaryExpression;
+
+postUnaryExpression:
+    accessExpression (INC | DEC)?;
 
 //todo
 accessExpression:
-    otherExpression ((LPAR functionArguments RPAR) | (DOT identifier))*  ((LBRACK expression RBRACK) | (DOT identifier))*;
+    otherExpression ((LPAR methodArgs RPAR) | (DOT identifier))*  ((LBRACK expression RBRACK) | (DOT identifier))*;
 
 //todo
 otherExpression:
-    value | identifier | LPAR (functionArguments) RPAR | size | append ;
-
-//todo
-size :
-    SIZE LPAR expression RPAR;
-
-//todo
-append :
-    APPEND LPAR expression COMMA expression RPAR;
+    value | identifier | LPAR (methodArgs) RPAR;
 
 //todo
 value :
@@ -169,9 +149,9 @@ boolValue:
 identifier:
     IDENTIFIER;
 
-//todo
+//todo add array and Set and Class object
 type:
-    INT | BOOL | LIST SHARP type | STRUCT identifier | fptrType;
+    INT | BOOL | fptrType;
 
 //todo
 fptrType:
