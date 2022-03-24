@@ -1,3 +1,11 @@
+# IntelliJ files
+.idea
+Joey.iml
+
+# Project files
+*.q
+*.txt
+
 # Compiled class file
 *.class
 
