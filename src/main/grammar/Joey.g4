@@ -4,14 +4,14 @@ joey
     : NEWLINE* p = program NEWLINE* EOF;
 
 program
-    :
-    (varDecStatement)*
-    (classDeclaration)*
-    mainClass;
+    : NEWLINE*
+    (varDecStatement)* NEWLINE*
+    (classDeclaration)* NEWLINE*
+    mainClass NEWLINE*;
 
 mainClass
-    : CLASS MAIN LBRACE
-     (varDecStatement | method)* constructor (varDecStatement| method)*
+    : CLASS MAIN LBRACE NEWLINE*
+     (varDecStatement | method)* NEWLINE* constructor NEWLINE* (varDecStatement| method)*
      RBRACE;
 
 constructor
@@ -19,15 +19,14 @@ constructor
 
 //todo
 classDeclaration
-    : CLASS identifier (LESS_THAN identifier) LBRACE
+    : CLASS identifier (LESS_THAN identifier)? LBRACE NEWLINE*
     (((varDecStatement | method)* constructor (varDecStatement| method)*)
     | ((varDecStatement | method)*))
     RBRACE;
 
 
 method
-    : (PUBLIC | PRIVATE) (type | VOID) identifier
-    LPAR methodArgsDec RPAR body;
+    : (PUBLIC | PRIVATE) (type | VOID) identifier methodArgsDec body NEWLINE*;
 
 //todo
 methodArgsDec
