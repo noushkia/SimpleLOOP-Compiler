@@ -3,10 +3,9 @@ grammar Jerry;
 jerry
     : NEWLINE* p = program NEWLINE* EOF;
 
-program
-    : (varDecStatement)*
-      NEWLINE*
-      (classDeclaration)*;
+program //todo fix NEWLINE
+    : (varDecStatement (SEMICOLON)? NEWLINE+)*
+      (classDeclaration NEWLINE+)*;
 
 constructor
     : PUBLIC INITIALIZE methodArgsDec body;
@@ -14,13 +13,14 @@ constructor
 //todo
 classDeclaration
     : CLASS class_identifier (LESS_THAN identifier)? NEWLINE* LBRACE NEWLINE+
-    (((varDecStatement | method)* constructor (varDecStatement| method)*)
-    | ((varDecStatement | method)*))
-    RBRACE NEWLINE+;
+    ((field_decleration* constructor field_decleration*) | (field_decleration*))
+    RBRACE NEWLINE*;
 
+field_decleration
+    : (PUBLIC | PRIVATE) (varDecStatement | method) (SEMICOLON)? NEWLINE+;
 
 method
-    : (PUBLIC | PRIVATE) (type | VOID) identifier methodArgsDec NEWLINE* body NEWLINE+;
+    : (type | VOID) identifier methodArgsDec NEWLINE* body;
 
 //todo
 methodArgsDec
@@ -93,7 +93,7 @@ expression:
 
 //todo
 ternaryExpression:
-    orExpression (op = TIF expression TELSE expression)? ;
+    orExpression (op = TIF ternaryExpression TELSE ternaryExpression)* ;
 
 //todo
 orExpression:
@@ -245,3 +245,4 @@ CLASS_IDENTIFIER: [A-Z][A-Za-z0-9_]*;
 COMMENT: '#' .*? '\n' -> skip;
 MLCOMMENT: ('=begin' .*? '=end') -> skip;
 WS: ([ \t\r]) -> skip;
+LINE_BREAK: ('//\n') -> skip;

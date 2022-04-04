@@ -1,0 +1,5 @@
+int total_grade, total_cost;
+
+class Student {
+    private int a
+}
