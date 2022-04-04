@@ -1,32 +1,26 @@
-grammar Joey;
+grammar Jerry;
 
-joey
+jerry
     : NEWLINE* p = program NEWLINE* EOF;
 
 program
-    : NEWLINE*
-    (varDecStatement)* NEWLINE*
-    (classDeclaration)* NEWLINE*
-    mainClass NEWLINE*;
-
-mainClass
-    : CLASS MAIN LBRACE NEWLINE*
-     (varDecStatement | method)* NEWLINE* constructor NEWLINE* (varDecStatement| method)*
-     RBRACE;
+    : (varDecStatement)*
+      NEWLINE*
+      (classDeclaration)*;
 
 constructor
-    : PUBLIC INITIALIZE LPAR RPAR body;
+    : PUBLIC INITIALIZE methodArgsDec body;
 
 //todo
 classDeclaration
-    : CLASS identifier (LESS_THAN identifier)? LBRACE NEWLINE*
+    : CLASS class_identifier (LESS_THAN identifier)? NEWLINE* LBRACE NEWLINE+
     (((varDecStatement | method)* constructor (varDecStatement| method)*)
     | ((varDecStatement | method)*))
-    RBRACE;
+    RBRACE NEWLINE+;
 
 
 method
-    : (PUBLIC | PRIVATE) (type | VOID) identifier methodArgsDec body NEWLINE*;
+    : (PUBLIC | PRIVATE) (type | VOID) identifier methodArgsDec NEWLINE* body NEWLINE+;
 
 //todo
 methodArgsDec
@@ -39,7 +33,6 @@ argDec
 methodArgs
     : (expression (COMMA expression)*)?;
 
-
 //todo
 body :
      (blockStatement | (NEWLINE+ singleStatement (SEMICOLON)?));
@@ -48,27 +41,27 @@ body :
 blockStatement :
     LBRACE (NEWLINE+ (singleStatement SEMICOLON)* singleStatement (SEMICOLON)?)+ NEWLINE+ RBRACE;
 
-//todo
+//todo fix a++
 singleStatement :
     ifStatement | printStatement | methodCallStmt | returnStatement | assignmentStatement
     | varDecStatement | loopStatement;
 
 
-//todo can we have a,b=2? wb int a=1
+//todo
 varDecStatement :
-    type ((identifier (ASSIGN orExpression )?) | (identifier (COMMA identifier)*));
+    type identifier (COMMA identifier)*;
 
 
-//todo is () necessary?
+//todo
 ifStatement :
-    IF LPAR expression RPAR body
+    IF (LPAR | ) expression (RPAR | ) body
     elsifStatement*
     elseStatement?;
 
 elsifStatement :
-     NEWLINE* ELSIF LPAR expression RPAR body;
+     NEWLINE* ELSIF (LPAR | ) expression (RPAR | ) body;
 
-//todo wb loopCondbody?
+//todo
 elseStatement :
      NEWLINE* ELSE body;
 
@@ -76,7 +69,8 @@ elseStatement :
 printStatement :
     PRINT LPAR expression RPAR;
 
-//todo check
+//todo check if meth is possible instead of S.meth
+//if not remove (LPAR methodArgs RPAR)
 methodCallStmt :
     otherExpression ((LPAR methodArgs RPAR) | (DOT identifier))* (LPAR methodArgs RPAR);
 
@@ -88,14 +82,18 @@ returnStatement :
 assignmentStatement :
     orExpression ASSIGN expression;
 
-//todo NEGATIVE VALUES POSSIBLE?
+//todo
 loopStatement :
-    ((identifier) | (LPAR INT_VALUE DOT DOT INT_VALUE RPAR)) DOT EACH BAR identifier BAR
+    ((identifier) | (LPAR expression DOT DOT expression RPAR)) DOT EACH LBRACK identifier RBRACK
     body;
 
 //todo
 expression:
-    orExpression (op = ASSIGN expression )? ;
+    ternaryExpression (op = ASSIGN expression )? ;
+
+//todo
+ternaryExpression:
+    orExpression (op = TIF expression TELSE expression)? ;
 
 //todo
 orExpression:
@@ -144,17 +142,27 @@ value :
 boolValue:
     TRUE | FALSE;
 
+class_identifier:
+    CLASS_IDENTIFIER;
+
 //todo
 identifier:
     IDENTIFIER;
 
-//todo add array and Set and Class object
+//todo
 type:
-    INT | BOOL | fptrType;
+    INT | BOOL | array_type | fptr_type | set_type | class_identifier;
+
+array_type:
+    (INT | BOOL | class_identifier) (LBRACK expression RBRACK)+;
 
 //todo
-fptrType:
+fptr_type:
     FPTR LESS_THAN (VOID | (type (COMMA type)*)) ARROW (type | VOID) GREATER_THAN;
+
+set_type:
+    SET LESS_THAN (INT) GREATER_THAN;
+
 
 
 CLASS: 'class';
@@ -171,7 +179,7 @@ VOID: 'void';
 
 
 DELETE: 'delete';
-INCLUDE: 'include'; //TODO: contain?
+INCLUDE: 'include';
 ADD: 'add';
 MERGE: 'merge';
 PRINT: 'print';
@@ -231,8 +239,9 @@ SEMICOLON: ';';
 NEWLINE: '\n';
 
 INT_VALUE: '0' | [1-9][0-9]*;
-IDENTIFIER: [a-zA-Z_][A-Za-z0-9_]*;
+IDENTIFIER: [a-z_][A-Za-z0-9_]*;
+CLASS_IDENTIFIER: [A-Z][A-Za-z0-9_]*;
 
-
-COMMENT: ('/*' .*? '*/') -> skip;
+COMMENT: '#' .*? '\n' -> skip;
+MLCOMMENT: ('=begin' .*? '=end') -> skip;
 WS: ([ \t\r]) -> skip;
