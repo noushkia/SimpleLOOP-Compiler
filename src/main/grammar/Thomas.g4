@@ -1,6 +1,6 @@
-grammar Jerry;
+grammar Thomas;
 
-jerry
+thomas
     : NEWLINE* p = program NEWLINE* EOF;
 
 program //todo fix NEWLINE
@@ -44,13 +44,20 @@ blockStatement :
 //todo fix a++
 singleStatement :
     ifStatement | printStatement | methodCallStmt | returnStatement | assignmentStatement
-    | varDecStatement | loopStatement;
+    | varDecStatement | loopStatement | addStatement | mergeStatement | deleteStatement;
 
+addStatement :
+    identifier DOT ADD LPAR orExpression RPAR;
+
+mergeStatement :
+    identifier DOT MERGE LPAR orExpression (COMMA orExpression)* RPAR;
+
+deleteStatement :
+    identifier DOT DELETE LPAR orExpression RPAR;
 
 //todo
 varDecStatement :
     type identifier (COMMA identifier)*;
-
 
 //todo
 ifStatement :
@@ -132,7 +139,13 @@ accessExpression:
 
 //todo
 otherExpression:
-    value | identifier | LPAR (methodArgs) RPAR;
+    value | identifier | LPAR (methodArgs) RPAR | setNew | setInclude;
+
+setNew:
+    SET DOT NEW LPAR (orExpression (COMMA orExpression)*)? RPAR;
+
+setInclude:
+    identifier DOT INCLUDE LPAR orExpression RPAR;
 
 //todo
 value :
