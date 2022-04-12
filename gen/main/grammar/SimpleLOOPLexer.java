@@ -1,4 +1,4 @@
-// Generated from E:/UT/S6/TA/Compiler/Joey-Compiler/src/main/grammar\Thomas.g4 by ANTLR 4.9.2
+// Generated from E:/UT/S6/TA/SimpleLOOP-Compiler/src/main/grammar\SimpleLOOP.g4 by ANTLR 4.9.2
 package main.grammar;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
@@ -10,7 +10,7 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
-public class ThomasLexer extends Lexer {
+public class SimpleLOOPLexer extends Lexer {
 	static { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
@@ -107,13 +107,13 @@ public class ThomasLexer extends Lexer {
 	}
 
 
-	public ThomasLexer(CharStream input) {
+	public SimpleLOOPLexer(CharStream input) {
 		super(input);
 		_interp = new LexerATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
 	@Override
-	public String getGrammarFileName() { return "Thomas.g4"; }
+	public String getGrammarFileName() { return "SimpleLOOP.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }

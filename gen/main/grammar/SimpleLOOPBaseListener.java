@@ -1,4 +1,4 @@
-// Generated from E:/UT/S6/TA/Compiler/Joey-Compiler/src/main/grammar\Thomas.g4 by ANTLR 4.9.2
+// Generated from E:/UT/S6/TA/SimpleLOOP-Compiler/src/main/grammar\SimpleLOOP.g4 by ANTLR 4.9.2
 package main.grammar;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -6,575 +6,575 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
- * This class provides an empty implementation of {@link ThomasListener},
+ * This class provides an empty implementation of {@link SimpleLOOPListener},
  * which can be extended to create a listener which only needs to handle a subset
  * of the available methods.
  */
-public class ThomasBaseListener implements ThomasListener {
+public class SimpleLOOPBaseListener implements SimpleLOOPListener {
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterThomas(ThomasParser.ThomasContext ctx) { }
+	@Override public void enterSimpleLOOP(SimpleLOOPParser.SimpleLOOPContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitThomas(ThomasParser.ThomasContext ctx) { }
+	@Override public void exitSimpleLOOP(SimpleLOOPParser.SimpleLOOPContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterProgram(ThomasParser.ProgramContext ctx) { }
+	@Override public void enterProgram(SimpleLOOPParser.ProgramContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitProgram(ThomasParser.ProgramContext ctx) { }
+	@Override public void exitProgram(SimpleLOOPParser.ProgramContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterConstructor(ThomasParser.ConstructorContext ctx) { }
+	@Override public void enterConstructor(SimpleLOOPParser.ConstructorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitConstructor(ThomasParser.ConstructorContext ctx) { }
+	@Override public void exitConstructor(SimpleLOOPParser.ConstructorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterClassDeclaration(ThomasParser.ClassDeclarationContext ctx) { }
+	@Override public void enterClassDeclaration(SimpleLOOPParser.ClassDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitClassDeclaration(ThomasParser.ClassDeclarationContext ctx) { }
+	@Override public void exitClassDeclaration(SimpleLOOPParser.ClassDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterField_decleration(ThomasParser.Field_declerationContext ctx) { }
+	@Override public void enterField_decleration(SimpleLOOPParser.Field_declerationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitField_decleration(ThomasParser.Field_declerationContext ctx) { }
+	@Override public void exitField_decleration(SimpleLOOPParser.Field_declerationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMethod(ThomasParser.MethodContext ctx) { }
+	@Override public void enterMethod(SimpleLOOPParser.MethodContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMethod(ThomasParser.MethodContext ctx) { }
+	@Override public void exitMethod(SimpleLOOPParser.MethodContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMethodArgsDec(ThomasParser.MethodArgsDecContext ctx) { }
+	@Override public void enterMethodArgsDec(SimpleLOOPParser.MethodArgsDecContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMethodArgsDec(ThomasParser.MethodArgsDecContext ctx) { }
+	@Override public void exitMethodArgsDec(SimpleLOOPParser.MethodArgsDecContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArgDec(ThomasParser.ArgDecContext ctx) { }
+	@Override public void enterArgDec(SimpleLOOPParser.ArgDecContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArgDec(ThomasParser.ArgDecContext ctx) { }
+	@Override public void exitArgDec(SimpleLOOPParser.ArgDecContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMethodArgs(ThomasParser.MethodArgsContext ctx) { }
+	@Override public void enterMethodArgs(SimpleLOOPParser.MethodArgsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMethodArgs(ThomasParser.MethodArgsContext ctx) { }
+	@Override public void exitMethodArgs(SimpleLOOPParser.MethodArgsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBody(ThomasParser.BodyContext ctx) { }
+	@Override public void enterBody(SimpleLOOPParser.BodyContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBody(ThomasParser.BodyContext ctx) { }
+	@Override public void exitBody(SimpleLOOPParser.BodyContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBlockStatement(ThomasParser.BlockStatementContext ctx) { }
+	@Override public void enterBlockStatement(SimpleLOOPParser.BlockStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBlockStatement(ThomasParser.BlockStatementContext ctx) { }
+	@Override public void exitBlockStatement(SimpleLOOPParser.BlockStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterSingleStatement(ThomasParser.SingleStatementContext ctx) { }
+	@Override public void enterSingleStatement(SimpleLOOPParser.SingleStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitSingleStatement(ThomasParser.SingleStatementContext ctx) { }
+	@Override public void exitSingleStatement(SimpleLOOPParser.SingleStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAddStatement(ThomasParser.AddStatementContext ctx) { }
+	@Override public void enterAddStatement(SimpleLOOPParser.AddStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAddStatement(ThomasParser.AddStatementContext ctx) { }
+	@Override public void exitAddStatement(SimpleLOOPParser.AddStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMergeStatement(ThomasParser.MergeStatementContext ctx) { }
+	@Override public void enterMergeStatement(SimpleLOOPParser.MergeStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMergeStatement(ThomasParser.MergeStatementContext ctx) { }
+	@Override public void exitMergeStatement(SimpleLOOPParser.MergeStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDeleteStatement(ThomasParser.DeleteStatementContext ctx) { }
+	@Override public void enterDeleteStatement(SimpleLOOPParser.DeleteStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDeleteStatement(ThomasParser.DeleteStatementContext ctx) { }
+	@Override public void exitDeleteStatement(SimpleLOOPParser.DeleteStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVarDecStatement(ThomasParser.VarDecStatementContext ctx) { }
+	@Override public void enterVarDecStatement(SimpleLOOPParser.VarDecStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVarDecStatement(ThomasParser.VarDecStatementContext ctx) { }
+	@Override public void exitVarDecStatement(SimpleLOOPParser.VarDecStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterIfStatement(ThomasParser.IfStatementContext ctx) { }
+	@Override public void enterIfStatement(SimpleLOOPParser.IfStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitIfStatement(ThomasParser.IfStatementContext ctx) { }
+	@Override public void exitIfStatement(SimpleLOOPParser.IfStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterElsifStatement(ThomasParser.ElsifStatementContext ctx) { }
+	@Override public void enterElsifStatement(SimpleLOOPParser.ElsifStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitElsifStatement(ThomasParser.ElsifStatementContext ctx) { }
+	@Override public void exitElsifStatement(SimpleLOOPParser.ElsifStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterElseStatement(ThomasParser.ElseStatementContext ctx) { }
+	@Override public void enterElseStatement(SimpleLOOPParser.ElseStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitElseStatement(ThomasParser.ElseStatementContext ctx) { }
+	@Override public void exitElseStatement(SimpleLOOPParser.ElseStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPrintStatement(ThomasParser.PrintStatementContext ctx) { }
+	@Override public void enterPrintStatement(SimpleLOOPParser.PrintStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPrintStatement(ThomasParser.PrintStatementContext ctx) { }
+	@Override public void exitPrintStatement(SimpleLOOPParser.PrintStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMethodCallStmt(ThomasParser.MethodCallStmtContext ctx) { }
+	@Override public void enterMethodCallStmt(SimpleLOOPParser.MethodCallStmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMethodCallStmt(ThomasParser.MethodCallStmtContext ctx) { }
+	@Override public void exitMethodCallStmt(SimpleLOOPParser.MethodCallStmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterReturnStatement(ThomasParser.ReturnStatementContext ctx) { }
+	@Override public void enterReturnStatement(SimpleLOOPParser.ReturnStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitReturnStatement(ThomasParser.ReturnStatementContext ctx) { }
+	@Override public void exitReturnStatement(SimpleLOOPParser.ReturnStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAssignmentStatement(ThomasParser.AssignmentStatementContext ctx) { }
+	@Override public void enterAssignmentStatement(SimpleLOOPParser.AssignmentStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAssignmentStatement(ThomasParser.AssignmentStatementContext ctx) { }
+	@Override public void exitAssignmentStatement(SimpleLOOPParser.AssignmentStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLoopStatement(ThomasParser.LoopStatementContext ctx) { }
+	@Override public void enterLoopStatement(SimpleLOOPParser.LoopStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLoopStatement(ThomasParser.LoopStatementContext ctx) { }
+	@Override public void exitLoopStatement(SimpleLOOPParser.LoopStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpression(ThomasParser.ExpressionContext ctx) { }
+	@Override public void enterExpression(SimpleLOOPParser.ExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpression(ThomasParser.ExpressionContext ctx) { }
+	@Override public void exitExpression(SimpleLOOPParser.ExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTernaryExpression(ThomasParser.TernaryExpressionContext ctx) { }
+	@Override public void enterTernaryExpression(SimpleLOOPParser.TernaryExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTernaryExpression(ThomasParser.TernaryExpressionContext ctx) { }
+	@Override public void exitTernaryExpression(SimpleLOOPParser.TernaryExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterOrExpression(ThomasParser.OrExpressionContext ctx) { }
+	@Override public void enterOrExpression(SimpleLOOPParser.OrExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitOrExpression(ThomasParser.OrExpressionContext ctx) { }
+	@Override public void exitOrExpression(SimpleLOOPParser.OrExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAndExpression(ThomasParser.AndExpressionContext ctx) { }
+	@Override public void enterAndExpression(SimpleLOOPParser.AndExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAndExpression(ThomasParser.AndExpressionContext ctx) { }
+	@Override public void exitAndExpression(SimpleLOOPParser.AndExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEqualityExpression(ThomasParser.EqualityExpressionContext ctx) { }
+	@Override public void enterEqualityExpression(SimpleLOOPParser.EqualityExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitEqualityExpression(ThomasParser.EqualityExpressionContext ctx) { }
+	@Override public void exitEqualityExpression(SimpleLOOPParser.EqualityExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterRelationalExpression(ThomasParser.RelationalExpressionContext ctx) { }
+	@Override public void enterRelationalExpression(SimpleLOOPParser.RelationalExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitRelationalExpression(ThomasParser.RelationalExpressionContext ctx) { }
+	@Override public void exitRelationalExpression(SimpleLOOPParser.RelationalExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAdditiveExpression(ThomasParser.AdditiveExpressionContext ctx) { }
+	@Override public void enterAdditiveExpression(SimpleLOOPParser.AdditiveExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAdditiveExpression(ThomasParser.AdditiveExpressionContext ctx) { }
+	@Override public void exitAdditiveExpression(SimpleLOOPParser.AdditiveExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMultiplicativeExpression(ThomasParser.MultiplicativeExpressionContext ctx) { }
+	@Override public void enterMultiplicativeExpression(SimpleLOOPParser.MultiplicativeExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMultiplicativeExpression(ThomasParser.MultiplicativeExpressionContext ctx) { }
+	@Override public void exitMultiplicativeExpression(SimpleLOOPParser.MultiplicativeExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPreUnaryExpression(ThomasParser.PreUnaryExpressionContext ctx) { }
+	@Override public void enterPreUnaryExpression(SimpleLOOPParser.PreUnaryExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPreUnaryExpression(ThomasParser.PreUnaryExpressionContext ctx) { }
+	@Override public void exitPreUnaryExpression(SimpleLOOPParser.PreUnaryExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPostUnaryExpression(ThomasParser.PostUnaryExpressionContext ctx) { }
+	@Override public void enterPostUnaryExpression(SimpleLOOPParser.PostUnaryExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPostUnaryExpression(ThomasParser.PostUnaryExpressionContext ctx) { }
+	@Override public void exitPostUnaryExpression(SimpleLOOPParser.PostUnaryExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAccessExpression(ThomasParser.AccessExpressionContext ctx) { }
+	@Override public void enterAccessExpression(SimpleLOOPParser.AccessExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAccessExpression(ThomasParser.AccessExpressionContext ctx) { }
+	@Override public void exitAccessExpression(SimpleLOOPParser.AccessExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterOtherExpression(ThomasParser.OtherExpressionContext ctx) { }
+	@Override public void enterOtherExpression(SimpleLOOPParser.OtherExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitOtherExpression(ThomasParser.OtherExpressionContext ctx) { }
+	@Override public void exitOtherExpression(SimpleLOOPParser.OtherExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAccessByIndex(ThomasParser.AccessByIndexContext ctx) { }
+	@Override public void enterAccessByIndex(SimpleLOOPParser.AccessByIndexContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAccessByIndex(ThomasParser.AccessByIndexContext ctx) { }
+	@Override public void exitAccessByIndex(SimpleLOOPParser.AccessByIndexContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterSetNew(ThomasParser.SetNewContext ctx) { }
+	@Override public void enterSetNew(SimpleLOOPParser.SetNewContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitSetNew(ThomasParser.SetNewContext ctx) { }
+	@Override public void exitSetNew(SimpleLOOPParser.SetNewContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterSetInclude(ThomasParser.SetIncludeContext ctx) { }
+	@Override public void enterSetInclude(SimpleLOOPParser.SetIncludeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitSetInclude(ThomasParser.SetIncludeContext ctx) { }
+	@Override public void exitSetInclude(SimpleLOOPParser.SetIncludeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterValue(ThomasParser.ValueContext ctx) { }
+	@Override public void enterValue(SimpleLOOPParser.ValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitValue(ThomasParser.ValueContext ctx) { }
+	@Override public void exitValue(SimpleLOOPParser.ValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBoolValue(ThomasParser.BoolValueContext ctx) { }
+	@Override public void enterBoolValue(SimpleLOOPParser.BoolValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBoolValue(ThomasParser.BoolValueContext ctx) { }
+	@Override public void exitBoolValue(SimpleLOOPParser.BoolValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterClass_identifier(ThomasParser.Class_identifierContext ctx) { }
+	@Override public void enterClass_identifier(SimpleLOOPParser.Class_identifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitClass_identifier(ThomasParser.Class_identifierContext ctx) { }
+	@Override public void exitClass_identifier(SimpleLOOPParser.Class_identifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterIdentifier(ThomasParser.IdentifierContext ctx) { }
+	@Override public void enterIdentifier(SimpleLOOPParser.IdentifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitIdentifier(ThomasParser.IdentifierContext ctx) { }
+	@Override public void exitIdentifier(SimpleLOOPParser.IdentifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterType(ThomasParser.TypeContext ctx) { }
+	@Override public void enterType(SimpleLOOPParser.TypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitType(ThomasParser.TypeContext ctx) { }
+	@Override public void exitType(SimpleLOOPParser.TypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArray_type(ThomasParser.Array_typeContext ctx) { }
+	@Override public void enterArray_type(SimpleLOOPParser.Array_typeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArray_type(ThomasParser.Array_typeContext ctx) { }
+	@Override public void exitArray_type(SimpleLOOPParser.Array_typeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFptr_type(ThomasParser.Fptr_typeContext ctx) { }
+	@Override public void enterFptr_type(SimpleLOOPParser.Fptr_typeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFptr_type(ThomasParser.Fptr_typeContext ctx) { }
+	@Override public void exitFptr_type(SimpleLOOPParser.Fptr_typeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterSet_type(ThomasParser.Set_typeContext ctx) { }
+	@Override public void enterSet_type(SimpleLOOPParser.Set_typeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitSet_type(ThomasParser.Set_typeContext ctx) { }
+	@Override public void exitSet_type(SimpleLOOPParser.Set_typeContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

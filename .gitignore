@@ -5,6 +5,7 @@ Joey.iml
 # Project files
 *.q
 *.txt
+out
 
 # Compiled class file
 *.class

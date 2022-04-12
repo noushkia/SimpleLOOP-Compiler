@@ -12,6 +12,7 @@ class Student {
     public void enroll(int cid, int cost) {
         enrollments.add(cid)
         self.cost = cost
+        self.cost++
     }
 
 }
@@ -44,7 +45,6 @@ class Main {
         students.each do |i|
             students[i].enroll(crs.get_cid(), crs.get_cost())
         if crs.get_cost() < 100 {
-        }
             print(1)
         }
         elsif crs.get_cost() == 100 {
@@ -53,7 +53,12 @@ class Main {
         elsif crs.get_cost() > 100 {
             print(3)
         }
-        crs2.set_cid(crs.get_cid() == 1 ? crs.get_cost() < 100 ? 2 : 3 : 4)
+        crs2.set_cid(crs.get_cid() == 1
+                        ? crs.get_cost() < 100 ? 2
+                        : 3
+                        : 4)
         print(crs2.get_cid())
     }
 }
+
+

@@ -1,6 +1,6 @@
-grammar Thomas;
+grammar SimpleLOOP;
 
-thomas
+simpleLOOP
     : NEWLINE* p = program NEWLINE* EOF;
 
 program
@@ -78,7 +78,7 @@ returnStatement :
     RETURN {System.out.println("Return");} (expression)?;
 
 assignmentStatement :
-    orExpression ASSIGN expression;
+    orExpression ASSIGN expression {System.out.println("Operator : =");};
 
 loopStatement :
     ((identifier) | (LPAR expression DOT DOT expression RPAR)) DOT EACH {System.out.println("Loop : each");}
@@ -86,39 +86,35 @@ loopStatement :
     body;
 
 expression:
-    ternaryExpression (op = ASSIGN expression )? ;
+    ternaryExpression (op = ASSIGN expression {System.out.println("Operator : =");})?;
 
 ternaryExpression:
-    orExpression (op = TIF ternaryExpression TELSE ternaryExpression)* {System.out.println("Operator : ?:");};
+    orExpression (op = TIF ternaryExpression TELSE ternaryExpression {System.out.println("Operator : ?:");})*;
 
 orExpression:
-    andExpression (op = OR andExpression )* {System.out.println("Operator : ||");};
+    andExpression (op = OR andExpression {System.out.println("Operator : ||");} )*;
 
 andExpression:
-    equalityExpression (op = AND equalityExpression )* {System.out.println("Operator : &&");};
+    equalityExpression (op = AND equalityExpression {System.out.println("Operator : &&");} )*;
 
 equalityExpression:
-    relationalExpression (op = EQUAL relationalExpression )* {System.out.println("Operator : ==");};
+    relationalExpression (op = EQUAL relationalExpression {System.out.println("Operator : ==");} )*;
 
 relationalExpression:
-    additiveExpression ((op = GREATER_THAN | op = LESS_THAN) additiveExpression )*
-        {System.out.println("Operator : "+$op.getText());};
+    additiveExpression ((op = GREATER_THAN | op = LESS_THAN) additiveExpression {System.out.println("Operator : "+$op.getText());})*;
 
 additiveExpression:
-    multiplicativeExpression ((op = PLUS | op = MINUS) multiplicativeExpression )*
-            {System.out.println("Operator : "+$op.getText());};
+    multiplicativeExpression ((op = PLUS | op = MINUS) multiplicativeExpression {System.out.println("Operator : "+$op.getText());})*;
 
 multiplicativeExpression:
-    preUnaryExpression ((op = MULT | op = DIVIDE) preUnaryExpression )*
-            {System.out.println("Operator : "+$op.getText());};
+    preUnaryExpression ((op = MULT | op = DIVIDE) preUnaryExpression {System.out.println("Operator : "+$op.getText());}  )*;
 
 preUnaryExpression:
     ((op = NOT | op = MINUS) preUnaryExpression {System.out.println("Operator : "+$op.getText());})
     | postUnaryExpression;
 
 postUnaryExpression:
-    accessExpression (op = INC | op = DEC)?
-            {System.out.println("Operator : "+$op.getText());};
+    accessExpression ((op = INC | op = DEC)  {System.out.println("Operator : "+$op.getText());})?;
 
 accessExpression:
     otherExpression ((LPAR methodArgs RPAR) | (DOT identifier))*  ((LBRACK expression RBRACK) | (DOT identifier))*;
