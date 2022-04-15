@@ -5,12 +5,11 @@ simpleLOOP
 
 program
     : (varDecStatement (SEMICOLON)? NEWLINE+)*
-      (classDeclaration NEWLINE+)* (classDeclaration | );
+      (classDeclaration NEWLINE+)* classDeclaration?;
 
 constructor
     : INITIALIZE methodArgsDec body;
 
-//todo
 classDeclaration
     : CLASS CLASS_IDENTIFIER {System.out.println("ClassDec : " + $CLASS_IDENTIFIER.getText());}
     (LESS_THAN PR=CLASS_IDENTIFIER {System.out.println("Inheritance : " + $CLASS_IDENTIFIER.getText() + " < " + $PR.getText());})?
@@ -23,10 +22,10 @@ method
     : (type | VOID) IDENTIFIER {System.out.println("MethodDec : " + $IDENTIFIER.getText());} methodArgsDec NEWLINE* body;
 
 methodArgsDec
-    : LPAR ( argDec (COMMA argDec)*)? RPAR ;
+    : LPAR (argDec ((ASSIGN orExpression) | (COMMA argDec)*) (COMMA argDec ASSIGN orExpression)*)?  RPAR ;
 
 argDec
-    : type IDENTIFIER {System.out.println("ArgumentDec : " + $IDENTIFIER.getText());} (ASSIGN orExpression)? ;
+    : type IDENTIFIER {System.out.println("ArgumentDec : " + $IDENTIFIER.getText());} ;
 
 methodArgs
     : (expression (COMMA expression)*)?;
@@ -69,7 +68,7 @@ printStatement :
     PRINT {System.out.println("Built-in : print");} LPAR expression RPAR;
 
 methodCallStmt :
-    otherExpression  (DOT identifier)* (({System.out.println("MethodCall");} LPAR methodArgs RPAR)
+    otherExpression  (DOT INITIALIZE | identifier)* (({System.out.println("MethodCall");} LPAR methodArgs RPAR)
                                         | ((op = INC | op = DEC) {System.out.println("Operator : " + $op.getText());}));
 
 returnStatement :
@@ -115,16 +114,16 @@ postUnaryExpression:
     accessExpression ((op = INC | op = DEC)  {System.out.println("Operator : "+$op.getText());})?;
 
 accessExpression:
-    otherExpression ((LPAR methodArgs RPAR) | (DOT identifier))*  ((LBRACK expression RBRACK) | (DOT identifier))*;
+    otherExpression ((LPAR methodArgs RPAR) | (DOT identifier))* ((DOT identifier) | (LBRACK expression RBRACK))*;
 
 otherExpression:
-    value | identifier | LPAR (methodArgs) RPAR | setNew | setInclude| accessByIndex;
+    value | identifier | LPAR methodArgs RPAR | setNew | setInclude| accessByIndex;
 
 accessByIndex:
     identifier LBRACK expression RBRACK;
 
 setNew:
-    SET DOT NEW {System.out.println("NEW");} LPAR (orExpression (COMMA orExpression)*)? RPAR;
+    SET DOT NEW {System.out.println("NEW");} LPAR (LPAR orExpression (COMMA orExpression)* RPAR)? RPAR;
 
 setInclude:
     identifier DOT INCLUDE {System.out.println("INCLUDE");} LPAR orExpression RPAR;
@@ -154,6 +153,7 @@ set_type:
     SET LESS_THAN (INT) GREATER_THAN;
 
 
+LINE_BREAK: ('//\n') -> skip;
 
 CLASS: 'class';
 PUBLIC: 'public';
@@ -234,4 +234,3 @@ CLASS_IDENTIFIER: [A-Z][A-Za-z0-9_]*;
 COMMENT: '#' .*? '\n' -> skip;
 MLCOMMENT: ('=begin' .*? '=end') -> skip;
 WS: ([ \t\r]) -> skip;
-LINE_BREAK: ('//\n') -> skip;

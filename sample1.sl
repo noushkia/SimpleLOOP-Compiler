@@ -16,7 +16,6 @@ class Student {
     }
 
 }
-
 class Course  {
     private int cid, cost;
     public void set_cid(int _cid) {
@@ -53,10 +52,7 @@ class Main {
         elsif crs.get_cost() > 100 {
             print(3)
         }
-        crs2.set_cid(crs.get_cid() == 1
-                        ? crs.get_cost() < 100 ? 2
-                        : 3
-                        : 4)
+        crs2.set_cid(crs.get_cid() == 1?  crs.get_cost() < 100 ? 2 : 3  : 4)
         print(crs2.get_cid())
     }
 }
