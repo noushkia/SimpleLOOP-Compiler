@@ -13,19 +13,19 @@ public class AssignmentStmt extends Statement{
         this.rValue = rValue;
     }
 
-    public Expression getLValue() {
+    public Expression getlValue() {
         return lValue;
     }
 
-    public void setLValue(Expression lValue) {
+    public void setlValue(Expression lValue) {
         this.lValue = lValue;
     }
 
-    public Expression getRValue() {
+    public Expression getrValue() {
         return rValue;
     }
 
-    public void setRValue(Expression rValue) {
+    public void setrValue(Expression rValue) {
         this.rValue = rValue;
     }
 

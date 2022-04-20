@@ -13,6 +13,7 @@ public class Identifier extends Expression{
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -21,6 +22,7 @@ public class Identifier extends Expression{
     public String toString() {
         return "Identifier_" + this.name;
     }
+
     @Override
     public <T> T accept(IVisitor<T> visitor) {
         return visitor.visit(this);

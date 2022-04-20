@@ -14,6 +14,7 @@ public class BoolValue extends Value {
     public boolean getConstant() {
         return constant;
     }
+
     public void setConstant(boolean constant) {
         this.constant = constant;
     }
@@ -22,6 +23,7 @@ public class BoolValue extends Value {
     public String toString() {
         return "BoolValue_" + this.constant;
     }
+
     @Override
     public <T> T accept(IVisitor<T> visitor) {
         return visitor.visit(this);

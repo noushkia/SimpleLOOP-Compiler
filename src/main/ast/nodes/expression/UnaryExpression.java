@@ -3,7 +3,7 @@ package main.ast.nodes.expression;
 import main.ast.nodes.expression.operators.UnaryOperator;
 import main.visitor.IVisitor;
 
-//line -> The line of operator
+//line -> NOT or MINUS or INCREMENT or DECREMENT
 public class UnaryExpression extends Expression{
     private Expression operand;
     private UnaryOperator operator;

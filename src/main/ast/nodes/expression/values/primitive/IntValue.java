@@ -14,6 +14,7 @@ public class IntValue extends Value {
     public int getConstant() {
         return constant;
     }
+
     public void setConstant(int constant) {
         this.constant = constant;
     }
@@ -22,6 +23,7 @@ public class IntValue extends Value {
     public String toString() {
         return "IntValue_" + this.constant;
     }
+
     @Override
     public <T> T accept(IVisitor<T> visitor) {
         return visitor.visit(this);

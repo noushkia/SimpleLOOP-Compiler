@@ -1,13 +1,18 @@
 package main.ast.nodes.statement;
 
 import main.ast.nodes.expression.Expression;
+import main.ast.nodes.expression.values.NullValue;
 import main.visitor.IVisitor;
 
 //line -> RETURN
 public class ReturnStmt extends Statement{
-    private Expression returnedExpr;
+    private Expression returnedExpr = new NullValue();
 
     public ReturnStmt() {
+    }
+
+    public ReturnStmt(Expression returnedExpr) {
+        this.returnedExpr = returnedExpr;
     }
 
     public Expression getReturnedExpr() {
@@ -25,6 +30,6 @@ public class ReturnStmt extends Statement{
 
     @Override
     public <T> T accept(IVisitor<T> visitor) {
-            return visitor.visit(this);
+        return visitor.visit(this);
     }
 }

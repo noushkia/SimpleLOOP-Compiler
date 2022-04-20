@@ -9,8 +9,9 @@ public class ConditionalStmt extends Statement{
     private Statement thenBody;
     private Statement elseBody;
 
-    public ConditionalStmt(Expression expression) {
+    public ConditionalStmt(Expression expression, Statement thenBody) {
         this.condition = expression;
+        this.thenBody = thenBody;
     }
 
     public Expression getCondition() {

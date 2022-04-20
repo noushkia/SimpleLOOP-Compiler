@@ -4,8 +4,7 @@ package main.symbolTable;
 import main.symbolTable.exceptions.ItemAlreadyExistsException;
 import main.symbolTable.exceptions.ItemNotFoundException;
 import main.symbolTable.items.SymbolTableItem;
-import main.symbolTable.utils.Stack;
-
+import main.symbolTable.utils.stack.Stack;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,9 +51,13 @@ public class SymbolTable {
         items.put(item.getKey(), item);
     }
 
-    public SymbolTableItem getItem(String key) throws ItemNotFoundException {
+    public SymbolTableItem getItem(String key, Boolean searchCurrent) throws ItemNotFoundException {
         Set<SymbolTable> visitedSymbolTables = new HashSet<>();
         SymbolTable currentSymbolTable = this;
+        if(!searchCurrent) {
+            visitedSymbolTables.add(this);
+            currentSymbolTable = this.pre;
+        }
         while((currentSymbolTable != null) && (!visitedSymbolTables.contains(currentSymbolTable))) {
             visitedSymbolTables.add( currentSymbolTable );
             SymbolTableItem symbolTableItem = currentSymbolTable.items.get(key);
