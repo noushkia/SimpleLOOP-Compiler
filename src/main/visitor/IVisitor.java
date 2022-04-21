@@ -59,6 +59,8 @@ public interface IVisitor<T> {
     T visit(SetValue setValue);
 
     T visit(ClassValue classValue);
+
+    T visit(SetMerge setMerge);
 //    T visit(StringValue stringValue);
 
 }

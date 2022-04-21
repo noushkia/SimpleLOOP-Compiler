@@ -1,20 +1,20 @@
 package main.ast.nodes.expression;
 
-import main.ast.nodes.expression.values.primitive.IntValue;
 import main.visitor.IVisitor;
 
-//line -> ADD
-public class SetAdd extends Expression{
-    private IntValue setArg;
+import java.util.ArrayList;
+
+public class SetMerge extends Expression{
+    private ArrayList<Expression> args = new ArrayList<>();
     private Expression elementArg;
 
-    public SetAdd(IntValue setArg, Expression elementArg) {
-        this.setArg = setArg;
+    public SetMerge(ArrayList<Expression> args, Expression elementArg) {
+        this.args = args;
         this.elementArg = elementArg;
     }
 
-    public void setSetArg(IntValue setArg) { this.setArg = setArg; }
-    public IntValue getSetArg() { return setArg; }
+    public void setArgs(ArrayList<Expression> args) { this.args = args; }
+    public ArrayList<Expression> getArgs() { return args; }
 
     public void setElementArg(Expression elementArg) { this.elementArg = elementArg; }
     public Expression getElementArg() {
@@ -23,7 +23,7 @@ public class SetAdd extends Expression{
 
     @Override
     public String toString() {
-        return "SetAdd";
+        return "SetMerge";
     }
 
     @Override
