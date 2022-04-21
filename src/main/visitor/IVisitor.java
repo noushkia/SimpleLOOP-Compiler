@@ -12,6 +12,7 @@ import main.ast.nodes.expression.values.ListValue;
 import main.ast.nodes.expression.values.NullValue;
 import main.ast.nodes.expression.values.SetValue;
 import main.ast.nodes.expression.values.primitive.BoolValue;
+import main.ast.nodes.expression.values.primitive.ClassValue;
 import main.ast.nodes.expression.values.primitive.IntValue;
 import main.ast.nodes.statement.*;
 import main.ast.nodes.statement.loop.ForStmt;
@@ -56,6 +57,8 @@ public interface IVisitor<T> {
     T visit(SetAdd setAdd);
 
     T visit(SetValue setValue);
+
+    T visit(ClassValue classValue);
 //    T visit(StringValue stringValue);
 
 }
