@@ -1,2 +1,2 @@
-# Joey-Compiler
-Compiler for Joey programming language
+# SimpleLOOP-Compiler
+Compiler for SimpleLOOP programming language
