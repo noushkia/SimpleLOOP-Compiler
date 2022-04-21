@@ -1,6 +1,7 @@
 package main.visitor;
 
 import main.ast.nodes.Program;
+import main.ast.nodes.declaration.MainDeclaration;
 import main.ast.nodes.declaration.classDec.ClassDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.ConstructorDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
@@ -9,6 +10,7 @@ import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.ast.nodes.expression.*;
 import main.ast.nodes.expression.values.ListValue;
 import main.ast.nodes.expression.values.NullValue;
+import main.ast.nodes.expression.values.SetValue;
 import main.ast.nodes.expression.values.primitive.BoolValue;
 import main.ast.nodes.expression.values.primitive.IntValue;
 import main.ast.nodes.statement.*;
@@ -48,6 +50,11 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
+    public T visit(MainDeclaration mainDeclaration) {
+        return null;
+    }
+
+    @Override
     public T visit(AssignmentStmt assignmentStmt) {
         return null;
     }
@@ -77,15 +84,15 @@ public class Visitor<T> implements IVisitor<T> {
         return null;
     }
 
-    @Override
-    public T visit(BreakStmt breakStmt) {
-        return null;
-    }
-
-    @Override
-    public T visit(ContinueStmt continueStmt) {
-        return null;
-    }
+//    @Override
+//    public T visit(BreakStmt breakStmt) {
+//        return null;
+//    }
+//
+//    @Override
+//    public T visit(ContinueStmt continueStmt) {
+//        return null;
+//    }
 
     @Override
     public T visit(ForeachStmt foreachStmt) {
@@ -133,9 +140,14 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
-    public T visit(ThisClass thisClass) {
+    public T visit(SELFClass selfClass) {
         return null;
     }
+
+//    @Override
+//    public T visit(ThisClass thisClass) {
+//        return null;
+//    }
 
     @Override
     public T visit(ListValue listValue) {
@@ -158,8 +170,18 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
-    public T visit(StringValue stringValue) {
+    public T visit(SetAdd setAdd) {
         return null;
     }
+
+    @Override
+    public T visit(SetValue setValue) {
+        return null;
+    }
+
+//    @Override
+//    public T visit(StringValue stringValue) {
+//        return null;
+//    }
 
 }
