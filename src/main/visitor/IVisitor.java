@@ -1,6 +1,7 @@
 package main.visitor;
 
 import main.ast.nodes.Program;
+import main.ast.nodes.declaration.MainDeclaration;
 import main.ast.nodes.declaration.classDec.ClassDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.ConstructorDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
@@ -27,6 +28,7 @@ public interface IVisitor<T> {
     T visit(MethodDeclaration methodDeclaration);
     T visit(FieldDeclaration fieldDeclaration);
     T visit(VariableDeclaration varDeclaration);
+    T visit(MainDeclaration mainDeclaration);
 
     T visit(AssignmentStmt assignmentStmt);
     T visit(BlockStmt blockStmt);
