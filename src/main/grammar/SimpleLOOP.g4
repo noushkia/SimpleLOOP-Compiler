@@ -1,236 +1,411 @@
 grammar SimpleLOOP;
 
 simpleLOOP
-    : NEWLINE* p = program NEWLINE* EOF;
+    : NewLine* program NewLine* EOF
+    ;
 
 program
-    : (varDecStatement (SEMICOLON)? NEWLINE+)*
-      (classDeclaration NEWLINE+)* classDeclaration?;
+    : varDefSection classSection
+    ;
+
+varDefSection
+    : (varDef NewLine+)*
+    ;
+
+varDef
+    : types identifierGroup
+    ;
+
+classVarDef
+    : (types | Void) r = Identifier{System.out.println("MethodDec : " + $r.text);}
+    ;
+
+types
+    : Int
+    | Bool
+    | array_type
+    | fptr_type
+    | set_type
+    ;
+
+
+identifierGroup
+    : r = Identifier{System.out.println("VarDec : " + $r.text);} (Comma z = Identifier{System.out.println("VarDec : " + $z.text);})* SemiCollon?
+    | r = Identifier{System.out.println("VarDec : " + $r.text);}
+    | expressionStatement
+    ;
+
+fptr_type
+    : Fptr Less (types | Void) (Comma (types | Void))* Arrow (types | Void) Greater
+    ;
+
+array_type
+    : ( Int |  Bool | ClassIdentifier ) ((LBrack commaExpression RBrack)+ | )
+    ;
+
+set_type
+    : Set Less Int Greater
+    ;
+
+classSection
+    : ((Class z = ClassIdentifier {System.out.println("ClassDec : " + $z.text);}
+        Less r = ClassIdentifier {System.out.println("Inheritance : " + $z.text + " < " + $r.text);} classStatementBlock)
+        |  (Class r = ClassIdentifier {System.out.println("ClassDec : " + $r.text);} classStatementBlock))*
+    ;
+
+classStatementBlock
+    : (LCurlyBrack NewLine+ classScope RCurlyBrack NewLine+) |
+       (NewLine+ (((Public | Private) (varDef | constructor)) | (Public initClass)) NewLine+)
+    ;
+
+
+classScope
+    : classDef (Public initClass NewLine)? ((Public | Private) (varDef | constructor) NewLine*)*
+    ;
+
+
+classDef
+    : ((Public | Private) (varDef | constructor) NewLine*)*
+    ;
+
+
+initClass
+    : Initialize mArgument mainStatementBlock?
+    ;
 
 constructor
-    : INITIALIZE methodArgsDec body;
+    : classVarDef mArgument mainStatementBlock?
+    ;
+
+mArgument
+    : LPar (argVarDef (Assign IntLiteral)? (Comma argVarDef (Assign IntLiteral)? )* )? RPar
+    ;
+
+argVarDef
+    : types argIdentifierGroup
+    ;
+
+argIdentifierGroup
+    : r = Identifier{System.out.println("ArgumentDec : " + $r.text);} (Comma z = Identifier{System.out.println("ArgumentDec : " + $z.text);})*
+    | r = Identifier{System.out.println("ArgumentDec : " + $r.text);}
+    ;
+
+mainStatementBlock
+    : NewLine* LCurlyBrack NewLine+ scope RCurlyBrack
+    | NewLine* statement SemiCollon?
+    | NewLine* LCurlyBrack NewLine* RCurlyBrack
+    ;
+
+scope
+    : statement SemiCollon? NewLine+ scope*
+    ;
+
+statement
+    : varDef
+    | expressionStatement
+    | ifStatement
+    | eachLoop
+    | returnStatement
+    | printStatement
+    ;
+
+
+returnStatement
+    : Return{System.out.println("Return");} commaExpression
+    | Return{System.out.println("Return");}
+    ;
+
+ifStatement
+    : If{System.out.println("Conditional : if");} commaExpression NewLine* mainStatementBlock
+    | If{System.out.println("Conditional : if");} commaExpression NewLine* mainStatementBlock (NewLine* Elsif{System.out.println("Conditional : elsif");} commaExpression NewLine* mainStatementBlock)+
+    | If{System.out.println("Conditional : if");} commaExpression NewLine* mainStatementBlock (NewLine+ Else{System.out.println("Conditional : else");} NewLine* mainStatementBlock)+
+    | If{System.out.println("Conditional : if");} commaExpression NewLine* mainStatementBlock (NewLine* Elsif{System.out.println("Conditional : elsif");} commaExpression NewLine* mainStatementBlock)+ NewLine+ Else{System.out.println("Conditional : else");} NewLine* mainStatementBlock
+    ;
+
+eachLoop
+    : ((LPar commaExpression Dot Dot commaExpression RPar) | Identifier) Dot Each{System.out.println("Loop : each");} Do Line Identifier Line mainStatementBlock
+    ;
+
+printStatement
+    : Print{System.out.println("Built-in : print");} LPar (Identifier | commaExpression) RPar
+    ;
+
+expressionStatement
+    : {System.out.println("MethodCall");} memberExpression LPar params RPar
+    | commaExpression
+    ;
+
+// Expressions
+commaExpression
+    : assignExpression commaExpressionL
+    ;
+
+commaExpressionL
+    : Comma assignExpression {System.out.println("Operator : ,");} commaExpressionL
+    |
+    ;
+
+assignExpression
+    : ternaryExpression Assign assignExpression {System.out.println("Operator : =");}
+    | ternaryExpression
+    ;
+
+ternaryExpression
+    : logicalOrExpression ternaryExpressionL
+    ;
+
+ternaryExpressionL
+    : QMark ternaryExpression Colon ternaryExpression{System.out.println("Operator : ?:");} ternaryExpressionL
+    |
+    ;
+
+logicalOrExpression
+    : logicalAndExpression logicalOrExpressionL
+    ;
+
+logicalOrExpressionL
+    : Or logicalAndExpression{System.out.println("Operator : ||");} logicalOrExpressionL
+    |
+    ;
+
+logicalAndExpression
+    : equalityExpression logicalAndExpressionL
+    ;
+
+logicalAndExpressionL
+    : And equalityExpression{System.out.println("Operator : &&");} logicalAndExpressionL
+    |
+    ;
+
+equalityExpression
+    : relationExpression equalityExpressionL
+    ;
+
+equalityExpressionL
+    : Equals relationExpression{System.out.println("Operator : ==");} equalityExpressionL
+    |
+    ;
+
+relationExpression
+    : additiveExpression relationExpressionL
+    ;
+
+relationExpressionL
+    : r = (Less | Greater) additiveExpression{System.out.println("Operator : " + $r.text);} relationExpressionL
+    |
+    ;
+
+additiveExpression
+    : multExpression additiveExpressionL
+    ;
 
-classDeclaration
-    : CLASS CLASS_IDENTIFIER {System.out.println("ClassDec : " + $CLASS_IDENTIFIER.getText());}
-    (LESS_THAN PR=CLASS_IDENTIFIER {System.out.println("Inheritance : " + $CLASS_IDENTIFIER.getText() + " < " + $PR.getText());})?
-    NEWLINE* ((LBRACE NEWLINE+ field_decleration+ RBRACE) | (field_decleration)) NEWLINE*;
+additiveExpressionL
+    : r = (Plus | Minus) multExpression{System.out.println("Operator : " + $r.text);} additiveExpressionL
+    |
+    ;
 
-field_decleration
-    : (PUBLIC | PRIVATE) (varDecStatement | method | constructor) (SEMICOLON)? NEWLINE+;
+multExpression
+    : unaryExpression multExpressionL
+    ;
 
-method
-    : (type | VOID) IDENTIFIER {System.out.println("MethodDec : " + $IDENTIFIER.getText());} methodArgsDec NEWLINE* body;
+multExpressionL
+    : r = (Multiply | Division) unaryExpression{System.out.println("Operator : " + $r.text);} multExpressionL
+    |
+    ;
 
-methodArgsDec
-    : LPAR (argDec ((ASSIGN orExpression) | (COMMA argDec)*) (COMMA argDec ASSIGN orExpression)*)?  RPAR ;
+unaryExpression
+    : r = (Minus | Not) unaryExpression{System.out.println("Operator : " + $r.text);}
+    | incDecExpression
+    ;
 
-argDec
-    : type IDENTIFIER {System.out.println("ArgumentDec : " + $IDENTIFIER.getText());} ;
+incDecExpression
+    : memberExpression incDecExpressionL
+    ;
 
-methodArgs
-    : (expression (COMMA expression)*)?;
+incDecExpressionL
+    : r = (PPlus | MMinus){System.out.println("Operator : " + $r.text);} incDecExpressionL
+    |
+    ;
 
-body :
-     (blockStatement | (NEWLINE+ singleStatement (SEMICOLON)?));
+memberExpression
+    : valExpression memberExpressionL
+    ;
 
-blockStatement :
-    LBRACE (NEWLINE+ singleStatement (SEMICOLON)?)+ NEWLINE+ RBRACE;
+memberExpressionL
+    : LPar params RPar memberExpressionL
+    | Dot (specialExpression | memberExpression) memberExpressionL
+    | LBrack commaExpression RBrack memberExpressionL
+    |
+    ;
 
-singleStatement :
-    ifStatement | printStatement | methodCallStmt | returnStatement | assignmentStatement
-    | varDecStatement | loopStatement | addStatement | mergeStatement | deleteStatement;
+specialExpression
+    : newFuncExpression
+    | (Add{System.out.println("ADD");} | Include{System.out.println("INCLUDE");} | Delete{System.out.println("DELETE");}) LPar (IntLiteral | Identifier | assignExpression) RPar
+    | Merge{System.out.println("MERGE");} LPar (Set Dot newFuncExpression) RPar
+    | Merge{System.out.println("MERGE");} LPar (Set Dot newFuncExpression) RPar
+    ;
 
-addStatement :
-    identifier DOT ADD {System.out.println("ADD");} LPAR orExpression RPAR;
+newFuncExpression
+    : New{System.out.println("NEW");} ((LPar IntLiteral (Comma IntLiteral)* RPar) | (LPar LPar IntLiteral (Comma IntLiteral)* RPar RPar) | LPar RPar)
+    ;
 
-mergeStatement :
-    identifier DOT MERGE {System.out.println("MERGE");} LPAR orExpression (COMMA orExpression)* RPAR;
+valExpression
+    : LPar commaExpression RPar
+    | literal
+    | Identifier
+    | Self
+    | Set
+    | IntLiteral
+    | ClassIdentifier
+    | Initialize
+    ;
 
-deleteStatement :
-    identifier DOT DELETE {System.out.println("DELETE");} LPAR orExpression RPAR;
+params
+    : (assignExpression (Comma assignExpression)*)?
+    ;
 
-varDecStatement :
-    type IDENTIFIER {System.out.println("VarDec : " + $IDENTIFIER.getText());}
-    (COMMA ID2=IDENTIFIER {System.out.println("VarDec : " + $ID2.getText());})*;
+literal
+    : IntLiteral
+    | boolLiteral
+    | setLiteral
+    ;
 
-ifStatement :
-    IF {System.out.println("Conditional : if");} (LPAR | ) expression (RPAR | ) body
-    elsifStatement*
-    elseStatement?;
+setLiteral
+    : LPar params RPar
+    ;
 
-elsifStatement :
-     NEWLINE* ELSIF {System.out.println("Conditional : elsif");} (LPAR | ) expression (RPAR | ) body;
+boolLiteral
+    : True
+    | False
+    ;
 
-elseStatement :
-     NEWLINE* ELSE {System.out.println("Conditional : else");} body;
 
-printStatement :
-    PRINT {System.out.println("Built-in : print");} LPAR expression RPAR;
+//KeyWords
 
-methodCallStmt :
-    otherExpression  (DOT INITIALIZE | identifier)* (({System.out.println("MethodCall");} LPAR methodArgs RPAR)
-                                        | ((op = INC | op = DEC) {System.out.println("Operator : " + $op.getText());}));
+IntLiteral: [1-9] [0-9]* | [0];
 
-returnStatement :
-    RETURN {System.out.println("Return");} (expression)?;
+Class: 'class';
 
-assignmentStatement :
-    orExpression ASSIGN expression {System.out.println("Operator : =");};
+Private: 'private';
 
-loopStatement :
-    ((identifier) | (LPAR expression DOT DOT expression RPAR)) DOT EACH {System.out.println("Loop : each");}
-    DO BAR identifier BAR
-    body;
+Public: 'public';
 
-expression:
-    ternaryExpression (op = ASSIGN expression {System.out.println("Operator : =");})?;
+Self: 'self';
 
-ternaryExpression:
-    orExpression (op = TIF ternaryExpression TELSE ternaryExpression {System.out.println("Operator : ?:");})*;
+Initialize: 'initialize';
 
-orExpression:
-    andExpression (op = OR andExpression {System.out.println("Operator : ||");} )*;
+Print: 'print';
 
-andExpression:
-    equalityExpression (op = AND equalityExpression {System.out.println("Operator : &&");} )*;
+New: 'new';
 
-equalityExpression:
-    relationalExpression (op = EQUAL relationalExpression {System.out.println("Operator : ==");} )*;
+Null: 'null';
 
-relationalExpression:
-    additiveExpression ((op = GREATER_THAN | op = LESS_THAN) additiveExpression {System.out.println("Operator : "+$op.getText());})*;
+Delete: 'delete';
 
-additiveExpression:
-    multiplicativeExpression ((op = PLUS | op = MINUS) multiplicativeExpression {System.out.println("Operator : "+$op.getText());})*;
+Include: 'include';
 
-multiplicativeExpression:
-    preUnaryExpression ((op = MULT | op = DIVIDE) preUnaryExpression {System.out.println("Operator : "+$op.getText());}  )*;
+Add: 'add';
 
-preUnaryExpression:
-    ((op = NOT | op = MINUS) preUnaryExpression {System.out.println("Operator : "+$op.getText());})
-    | postUnaryExpression;
+Merge: 'merge';
 
-postUnaryExpression:
-    accessExpression ((op = INC | op = DEC)  {System.out.println("Operator : "+$op.getText());})?;
+Begin: 'begin';
 
-accessExpression:
-    otherExpression ((LPAR methodArgs RPAR) | (DOT identifier))* ((DOT identifier) | (LBRACK expression RBRACK))*;
+End: 'end';
 
-otherExpression:
-    value | identifier | LPAR methodArgs RPAR | setNew | setInclude| accessByIndex;
+Int: 'int';
 
-accessByIndex:
-    identifier LBRACK expression RBRACK;
+Bool: 'bool';
 
-setNew:
-    SET DOT NEW {System.out.println("NEW");} LPAR (LPAR orExpression (COMMA orExpression)* RPAR)? RPAR;
+True: 'true';
 
-setInclude:
-    identifier DOT INCLUDE {System.out.println("INCLUDE");} LPAR orExpression RPAR;
+False: 'false';
 
-value :
-    boolValue | INT_VALUE;
+Set: 'Set';
 
-boolValue:
-    TRUE | FALSE;
+Fptr: 'fptr';
 
-class_identifier:
-    CLASS_IDENTIFIER;
+Main: 'main';
 
-identifier:
-    IDENTIFIER;
+Void: 'void';
 
-type:
-    INT | BOOL | array_type | fptr_type | set_type | class_identifier;
+While: 'while';
 
-array_type:
-    (INT | BOOL | class_identifier) (LBRACK expression RBRACK)+;
+Do: 'do';
 
-fptr_type:
-    FPTR LESS_THAN (VOID | (type (COMMA type)*)) ARROW (type | VOID) GREATER_THAN;
+If: 'if';
 
-set_type:
-    SET LESS_THAN (INT) GREATER_THAN;
+Else: 'else';
 
+Elsif: 'elsif';
 
-LINE_BREAK: ('//\n') -> skip;
+Each: 'each';
 
-CLASS: 'class';
-PUBLIC: 'public';
-PRIVATE: 'private';
-INITIALIZE: 'initialize';
-NEW: 'new';
+Return: 'return';
 
+SemiCollon: ';';
 
-MAIN: 'main';
-RETURN: 'return';
-VOID: 'void';
+LPar: '(';
 
+RPar: ')';
 
-DELETE: 'delete';
-INCLUDE: 'include';
-ADD: 'add';
-MERGE: 'merge';
-PRINT: 'print';
+LBrack: '[';
 
+RBrack: ']';
 
-IF: 'if';
-ELSE: 'else';
-ELSIF: 'elsif';
+LCurlyBrack: '{';
 
-PLUS: '+';
-MINUS: '-';
-MULT: '*';
-DIVIDE: '/';
-INC: '++';
-DEC: '--';
+RCurlyBrack: '}';
 
-EQUAL: '==';
-GREATER_THAN: '>';
-LESS_THAN: '<';
+Comma: ',';
 
-ARROW: '->';
-BAR: '|';
+Equals: '==';
 
-AND: '&&';
-OR: '||';
-NOT: '!';
+PPlus: '++';
 
-TIF: '?';
-TELSE: ':';
+MMinus: '--';
 
-TRUE: 'true';
-FALSE: 'false';
-NULL: 'null';
+Assign: '=';
 
-BEGIN: '=begin';
-END: '=end';
+Plus: '+';
 
-INT: 'int';
-BOOL: 'bool';
-FPTR: 'fptr';
-SET: 'Set';
-EACH: 'each';
-DO: 'do';
+Minus: '-';
 
-ASSIGN: '=';
-SHARP: '#';
-LPAR: '(';
-RPAR: ')';
-LBRACK: '[';
-RBRACK: ']';
-LBRACE: '{';
-RBRACE: '}';
+Not: '!';
 
-COMMA: ',';
-DOT: '.';
-SEMICOLON: ';';
-NEWLINE: '\n';
+Multiply: '*';
 
-INT_VALUE: '0' | [1-9][0-9]*;
-IDENTIFIER: [a-z_][A-Za-z0-9_]*;
-CLASS_IDENTIFIER: [A-Z][A-Za-z0-9_]*;
+Division: '/';
 
-COMMENT: '#' .*? '\n' -> skip;
-MLCOMMENT: ('=begin' .*? '=end') -> skip;
+DSlahs: '//';
+
+Dot: '.';
+
+Sharp: '#';
+
+Arrow: '->';
+
+Less: '<';
+
+Greater: '>';
+
+And: '&&';
+
+Or: '||';
+
+Line: '|';
+
+Colon: ':';
+
+QMark: '?';
+
+NONZERODIGIT: [1-9];
+
+Identifier: [a-z_] [a-zA-Z0-9_]*;
+
+ClassIdentifier: [A-Z] [a-zA-Z0-9_]*;
+
+NewLine: ('\n' | '\r')+;
+
+Comment: (('=begin' .*? '=end') | ('#' .*? [\n])) -> skip;
+
 WS: ([ \t\r]) -> skip;
