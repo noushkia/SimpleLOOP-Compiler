@@ -10,12 +10,10 @@ import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.ast.nodes.expression.*;
 import main.ast.nodes.expression.values.ListValue;
 import main.ast.nodes.expression.values.NullValue;
+import main.ast.nodes.expression.values.SetValue;
 import main.ast.nodes.expression.values.primitive.BoolValue;
 import main.ast.nodes.expression.values.primitive.IntValue;
-import main.ast.nodes.expression.values.primitive.StringValue;
 import main.ast.nodes.statement.*;
-import main.ast.nodes.statement.loop.BreakStmt;
-import main.ast.nodes.statement.loop.ContinueStmt;
 import main.ast.nodes.statement.loop.ForStmt;
 import main.ast.nodes.statement.loop.ForeachStmt;
 
@@ -36,8 +34,8 @@ public interface IVisitor<T> {
     T visit(MethodCallStmt methodCallStmt);
     T visit(PrintStmt print);
     T visit(ReturnStmt returnStmt);
-    T visit(BreakStmt breakStmt);
-    T visit(ContinueStmt continueStmt);
+//    T visit(BreakStmt breakStmt);
+//    T visit(ContinueStmt continueStmt);
     T visit(ForeachStmt foreachStmt);
     T visit(ForStmt forStmt);
 
@@ -48,11 +46,16 @@ public interface IVisitor<T> {
     T visit(ListAccessByIndex listAccessByIndex);
     T visit(MethodCall methodCall);
     T visit(NewClassInstance newClassInstance);
-    T visit(ThisClass thisClass);
+//    T visit(ThisClass thisClass);
+    T visit(SELFClass selfClass);
     T visit(ListValue listValue);
     T visit(NullValue nullValue);
     T visit(IntValue intValue);
     T visit(BoolValue boolValue);
-    T visit(StringValue stringValue);
+
+    T visit(SetAdd setAdd);
+
+    T visit(SetValue setValue);
+//    T visit(StringValue stringValue);
 
 }
