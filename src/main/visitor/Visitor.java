@@ -140,7 +140,7 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
-    public T visit(SELFClass selfClass) {
+    public T visit(SelfClass selfClass) {
         return null;
     }
 

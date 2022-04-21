@@ -47,7 +47,7 @@ public interface IVisitor<T> {
     T visit(MethodCall methodCall);
     T visit(NewClassInstance newClassInstance);
 //    T visit(ThisClass thisClass);
-    T visit(SELFClass selfClass);
+    T visit(SelfClass selfClass);
     T visit(ListValue listValue);
     T visit(NullValue nullValue);
     T visit(IntValue intValue);

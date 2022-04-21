@@ -3,10 +3,10 @@ package main.ast.nodes.expression;
 import main.visitor.IVisitor;
 
 //line -> SELF
-public class SELFClass extends Expression {
+public class SelfClass extends Expression {
     @Override
     public String toString() {
-        return "SELFClass";
+        return "SelfClass";
     }
 
     @Override
