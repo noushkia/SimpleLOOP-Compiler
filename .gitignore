@@ -6,6 +6,9 @@ Joey.iml
 *.q
 *.txt
 out
+delivery
+samples
+gen
 
 # Compiled class file
 *.class
