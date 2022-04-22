@@ -12,8 +12,11 @@ import main.ast.nodes.expression.values.ListValue;
 import main.ast.nodes.expression.values.NullValue;
 import main.ast.nodes.expression.values.SetValue;
 import main.ast.nodes.expression.values.primitive.BoolValue;
+import main.ast.nodes.expression.values.primitive.ClassValue;
 import main.ast.nodes.expression.values.primitive.IntValue;
 import main.ast.nodes.statement.*;
+import main.ast.nodes.statement.set.SetDelete;
+import main.ast.nodes.statement.set.SetMerge;
 
 public class Visitor<T> implements IVisitor<T> {
 
@@ -81,16 +84,6 @@ public class Visitor<T> implements IVisitor<T> {
     public T visit(ReturnStmt returnStmt) {
         return null;
     }
-
-//    @Override
-//    public T visit(BreakStmt breakStmt) {
-//        return null;
-//    }
-//
-//    @Override
-//    public T visit(ContinueStmt continueStmt) {
-//        return null;
-//    }
 
     @Override
     public T visit(EachStmt eachStmt) {
@@ -164,6 +157,31 @@ public class Visitor<T> implements IVisitor<T> {
 
     @Override
     public T visit(SetValue setValue) {
+        return null;
+    }
+
+    @Override
+    public T visit(ClassValue classValue) {
+        return null;
+    }
+
+    @Override
+    public T visit(SetNew setMerge) {
+        return null;
+    }
+
+    @Override
+    public T visit(TernaryExpression ternaryExpression) {
+        return null;
+    }
+
+    @Override
+    public T visit(SetDelete setDelete) {
+        return null;
+    }
+
+    @Override
+    public T visit(SetMerge setAdd) {
         return null;
     }
 

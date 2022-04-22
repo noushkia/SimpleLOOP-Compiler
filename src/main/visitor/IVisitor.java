@@ -35,8 +35,6 @@ public interface IVisitor<T> {
     T visit(MethodCallStmt methodCallStmt);
     T visit(PrintStmt print);
     T visit(ReturnStmt returnStmt);
-//    T visit(BreakStmt breakStmt);
-//    T visit(ContinueStmt continueStmt);
     T visit(EachStmt EachStmt);
 
     T visit(BinaryExpression binaryExpression);
@@ -46,7 +44,6 @@ public interface IVisitor<T> {
     T visit(ListAccessByIndex listAccessByIndex);
     T visit(MethodCall methodCall);
     T visit(NewClassInstance newClassInstance);
-//    T visit(ThisClass thisClass);
     T visit(SelfClass selfClass);
     T visit(ListValue listValue);
     T visit(NullValue nullValue);

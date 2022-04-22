@@ -1,154 +1,217 @@
 grammar SimpleLOOP;
 
-simpleLOOP
-    : NEWLINE* p = program NEWLINE* EOF;
+@header{
+     import main.ast.nodes.*;
+     import main.ast.nodes.declaration.*;
+     import main.ast.nodes.declaration.struct.*;
+     import main.ast.nodes.expression.*;
+     import main.ast.nodes.expression.operators.*;
+     import main.ast.nodes.expression.values.*;
+     import main.ast.nodes.expression.values.primitive.*;
+     import main.ast.nodes.statement.*;
+     import main.ast.types.*;
+     import main.ast.types.primitives.*;
+     import java.util.*;
+ }
 
-program
-    : (varDecStatement (SEMICOLON)? NEWLINE+)*
-      (classDeclaration NEWLINE+)* classDeclaration?;
+simpleLOOP returns [Program simpleLOOPProgram]:
+    NEWLINE* p = program {$simpleLOOPProgram = $p.programRet;} NEWLINE* EOF;
 
+program returns[Program programRet]:
+    {$programRet = new Program();
+     int line = 1;
+     $programRet.setLine(line);}
+    (v = varDecStatement (SEMICOLON)? NEWLINE+ {$programRet.addGlobalVariable($v.variableDeclarationRet);})*
+    (c = classDeclaration NEWLINE+ {$programRet.addClass($c.classDeclarationRet);})*;
+
+//todo
 constructor
     : INITIALIZE methodArgsDec body;
 
+//todo
 classDeclaration
-    : CLASS name=(CLASS_IDENTIFIER | MAIN) {System.out.println("ClassDec : " + $name.getText());}
-    (LESS_THAN PR=CLASS_IDENTIFIER {System.out.println("Inheritance : " + $name.getText() + " < " + $PR.getText());})?
+    : CLASS name=(CLASS_IDENTIFIER | MAIN) (LESS_THAN PR=CLASS_IDENTIFIER)?
     NEWLINE* ((LBRACE NEWLINE+ field_decleration+ RBRACE) | (field_decleration)) NEWLINE*;
 
+//todo
 field_decleration
     : (PUBLIC | PRIVATE) (varDecStatement | method | constructor) (SEMICOLON)? NEWLINE+;
 
+//todo
 method
-    : (type | VOID) IDENTIFIER {System.out.println("MethodDec : " + $IDENTIFIER.getText());} methodArgsDec NEWLINE* body;
+    : (type | VOID) IDENTIFIER methodArgsDec NEWLINE* body;
 
+//todo
 methodArgsDec
     : LPAR (argDec ((ASSIGN orExpression) | (COMMA argDec)*) (COMMA argDec ASSIGN orExpression)*)?  RPAR ;
 
+//todo
 argDec
-    : type IDENTIFIER {System.out.println("ArgumentDec : " + $IDENTIFIER.getText());} ;
+    : type IDENTIFIER ;
 
+//todo
 methodArgs
     : (expression (COMMA expression)*)?;
 
+//todo
 body :
      (blockStatement | (NEWLINE+ singleStatement (SEMICOLON)?));
 
+//todo
 blockStatement :
     LBRACE (NEWLINE+ singleStatement (SEMICOLON)?)+ NEWLINE+ RBRACE;
 
+//todo
 singleStatement :
     ifStatement | printStatement | methodCallStmt | returnStatement | assignmentStatement
     | varDecStatement | loopStatement | addStatement | mergeStatement | deleteStatement;
 
+//todo
 addStatement :
-    identifier DOT ADD {System.out.println("ADD");} LPAR orExpression RPAR;
+    identifier DOT ADD LPAR orExpression RPAR;
 
+//todo
 mergeStatement :
-    identifier DOT MERGE {System.out.println("MERGE");} LPAR orExpression (COMMA orExpression)* RPAR;
+    identifier DOT MERGE LPAR orExpression (COMMA orExpression)* RPAR;
 
+//todo
 deleteStatement :
-    identifier DOT DELETE {System.out.println("DELETE");} LPAR orExpression RPAR;
+    identifier DOT DELETE LPAR orExpression RPAR;
 
+//todo
 varDecStatement :
-    type IDENTIFIER {System.out.println("VarDec : " + $IDENTIFIER.getText());}
-    (COMMA ID2=IDENTIFIER {System.out.println("VarDec : " + $ID2.getText());})*;
+    type IDENTIFIER (COMMA ID2=IDENTIFIER)*;
 
+//todo
 ifStatement :
-    IF {System.out.println("Conditional : if");} (LPAR | ) expression (RPAR | ) body
+    IF condition body
     elsifStatement*
     elseStatement?;
 
+//todo
 elsifStatement :
-     NEWLINE* ELSIF {System.out.println("Conditional : elsif");} (LPAR | ) expression (RPAR | ) body;
+     NEWLINE* ELSIF condition body;
 
+//todo
+condition :
+    (LPAR expression RPAR) | expression;
+
+//todo
 elseStatement :
-     NEWLINE* ELSE {System.out.println("Conditional : else");} body;
+     NEWLINE* ELSE body;
 
+//todo
 printStatement :
-    PRINT {System.out.println("Built-in : print");} LPAR expression RPAR;
+    PRINT LPAR expression RPAR;
 
+//todo
 methodCallStmt :
-    accessExpression  (DOT (INITIALIZE | identifier))* (({System.out.println("MethodCall");} LPAR methodArgs RPAR)
-                                        | ((op = INC | op = DEC) {System.out.println("Operator : " + $op.getText());}));
+    accessExpression  (DOT (INITIALIZE | identifier))*
+    ((LPAR methodArgs RPAR) | ((op = INC | op = DEC)));
 
+//todo
 returnStatement :
-    RETURN {System.out.println("Return");} (expression)?;
+    RETURN expression?;
 
+//todo
 assignmentStatement :
-    orExpression ASSIGN expression {System.out.println("Operator : =");};
+    orExpression ASSIGN expression;
 
+//todo
 loopStatement :
-    ((identifier) | (LPAR expression DOT DOT expression RPAR)) DOT EACH {System.out.println("Loop : each");}
-    DO BAR identifier BAR
+    ((identifier) | (LPAR expression DOT DOT expression RPAR)) DOT EACH DO BAR identifier BAR
     body;
 
+//todo
 expression:
-    ternaryExpression (op = ASSIGN expression {System.out.println("Operator : =");})?;
+    ternaryExpression (ASSIGN expression)?;
 
+//todo
 ternaryExpression:
-    orExpression (op = TIF ternaryExpression TELSE ternaryExpression {System.out.println("Operator : ?:");})*;
+    orExpression (TIF ternaryExpression TELSE ternaryExpression)*;
 
+//todo
 orExpression:
-    andExpression (op = OR andExpression {System.out.println("Operator : ||");} )*;
+    andExpression (OR andExpression)*;
 
+//todo
 andExpression:
-    equalityExpression (op = AND equalityExpression {System.out.println("Operator : &&");} )*;
+    equalityExpression (AND equalityExpression)*;
 
+//todo
 equalityExpression:
-    relationalExpression (op = EQUAL relationalExpression {System.out.println("Operator : ==");} )*;
+    relationalExpression (EQUAL relationalExpression)*;
 
+//todo
 relationalExpression:
-    additiveExpression ((op = GREATER_THAN | op = LESS_THAN) additiveExpression {System.out.println("Operator : "+$op.getText());})*;
+    additiveExpression ((GREATER_THAN | LESS_THAN) additiveExpression)*;
 
+//todo
 additiveExpression:
-    multiplicativeExpression ((op = PLUS | op = MINUS) multiplicativeExpression {System.out.println("Operator : "+$op.getText());})*;
+    multiplicativeExpression ((PLUS | MINUS) multiplicativeExpression)*;
 
+//todo
 multiplicativeExpression:
-    preUnaryExpression ((op = MULT | op = DIVIDE) preUnaryExpression {System.out.println("Operator : "+$op.getText());}  )*;
+    preUnaryExpression ((MULT | DIVIDE) preUnaryExpression)*;
 
+//todo
 preUnaryExpression:
-    ((op = NOT | op = MINUS) preUnaryExpression {System.out.println("Operator : "+$op.getText());})
+    ((NOT | MINUS) preUnaryExpression)
     | postUnaryExpression;
 
+//todo
 postUnaryExpression:
-    accessExpression ((op = INC | op = DEC)  {System.out.println("Operator : "+$op.getText());})?;
+    accessExpression ((INC | DEC))?;
 
+//todo
 accessExpression:
     otherExpression ((LPAR methodArgs RPAR) | (DOT identifier))* ((DOT identifier) | (LBRACK expression RBRACK))*;
 
+//todo
 otherExpression:
     value | identifier | LPAR methodArgs RPAR | setNew | setInclude| accessByIndex;
 
+//todo
 accessByIndex:
     identifier LBRACK expression RBRACK;
 
+//todo
 setNew:
-    SET DOT NEW {System.out.println("NEW");} LPAR (LPAR orExpression (COMMA orExpression)* RPAR)? RPAR;
+    SET DOT NEW LPAR (LPAR orExpression (COMMA orExpression)* RPAR)? RPAR;
 
+//todo
 setInclude:
-    identifier DOT INCLUDE {System.out.println("INCLUDE");} LPAR orExpression RPAR;
+    identifier DOT INCLUDE LPAR orExpression RPAR;
 
+//todo
 value :
     boolValue | INT_VALUE;
 
+//todo
 boolValue:
     TRUE | FALSE;
 
+//todo
 class_identifier:
     CLASS_IDENTIFIER;
 
+//todo
 identifier:
     IDENTIFIER;
 
+//todo
 type:
     INT | BOOL | array_type | fptr_type | set_type | class_identifier;
 
+//todo
 array_type:
     (INT | BOOL | class_identifier) (LBRACK expression RBRACK)+;
 
+//todo
 fptr_type:
     FPTR LESS_THAN (VOID | (type (COMMA type)*)) ARROW (type | VOID) GREATER_THAN;
 
+//todo
 set_type:
     SET LESS_THAN (INT) GREATER_THAN;
 
