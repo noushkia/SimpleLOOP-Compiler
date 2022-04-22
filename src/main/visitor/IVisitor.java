@@ -15,8 +15,8 @@ import main.ast.nodes.expression.values.primitive.BoolValue;
 import main.ast.nodes.expression.values.primitive.ClassValue;
 import main.ast.nodes.expression.values.primitive.IntValue;
 import main.ast.nodes.statement.*;
-import main.ast.nodes.statement.loop.ForStmt;
-import main.ast.nodes.statement.loop.ForeachStmt;
+import main.ast.nodes.statement.set.SetMerge;
+import main.ast.nodes.statement.set.SetDelete;
 
 public interface IVisitor<T> {
 
@@ -37,8 +37,7 @@ public interface IVisitor<T> {
     T visit(ReturnStmt returnStmt);
 //    T visit(BreakStmt breakStmt);
 //    T visit(ContinueStmt continueStmt);
-    T visit(ForeachStmt foreachStmt);
-    T visit(ForStmt forStmt);
+    T visit(EachStmt EachStmt);
 
     T visit(BinaryExpression binaryExpression);
     T visit(UnaryExpression unaryExpression);
@@ -54,13 +53,17 @@ public interface IVisitor<T> {
     T visit(IntValue intValue);
     T visit(BoolValue boolValue);
 
-    T visit(SetAdd setAdd);
+    T visit(SetInclude setAdd);
 
     T visit(SetValue setValue);
 
     T visit(ClassValue classValue);
 
-    T visit(SetMerge setMerge);
+    T visit(SetNew setMerge);
 
     T visit(TernaryExpression ternaryExpression);
+
+    T visit(SetDelete setDelete);
+
+    T visit(SetMerge setAdd);
 }

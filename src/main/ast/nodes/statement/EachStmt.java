@@ -1,17 +1,17 @@
-package main.ast.nodes.statement.loop;
+package main.ast.nodes.statement;
 
 import main.ast.nodes.expression.Expression;
 import main.ast.nodes.expression.Identifier;
 import main.ast.nodes.statement.Statement;
 import main.visitor.IVisitor;
 
-//line -> FOREACH
-public class ForeachStmt extends Statement {
+//line -> EACH
+public class EachStmt extends Statement {
     private Identifier variable;
     private Expression list;
     private Statement body;
 
-    public ForeachStmt(Identifier variable, Expression list) {
+    public EachStmt(Identifier variable, Expression list) {
         this.variable = variable;
         this.list = list;
     }
@@ -42,7 +42,7 @@ public class ForeachStmt extends Statement {
 
     @Override
     public String toString() {
-        return "ForeachStmt";
+        return "EachStmt";
     }
 
     @Override

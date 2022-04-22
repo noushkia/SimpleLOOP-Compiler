@@ -14,8 +14,6 @@ import main.ast.nodes.expression.values.SetValue;
 import main.ast.nodes.expression.values.primitive.BoolValue;
 import main.ast.nodes.expression.values.primitive.IntValue;
 import main.ast.nodes.statement.*;
-import main.ast.nodes.statement.loop.ForStmt;
-import main.ast.nodes.statement.loop.ForeachStmt;
 
 public class Visitor<T> implements IVisitor<T> {
 
@@ -95,12 +93,7 @@ public class Visitor<T> implements IVisitor<T> {
 //    }
 
     @Override
-    public T visit(ForeachStmt foreachStmt) {
-        return null;
-    }
-
-    @Override
-    public T visit(ForStmt forStmt) {
+    public T visit(EachStmt eachStmt) {
         return null;
     }
 
@@ -144,11 +137,6 @@ public class Visitor<T> implements IVisitor<T> {
         return null;
     }
 
-//    @Override
-//    public T visit(ThisClass thisClass) {
-//        return null;
-//    }
-
     @Override
     public T visit(ListValue listValue) {
         return null;
@@ -170,7 +158,7 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
-    public T visit(SetAdd setAdd) {
+    public T visit(SetInclude setAdd) {
         return null;
     }
 
@@ -178,10 +166,5 @@ public class Visitor<T> implements IVisitor<T> {
     public T visit(SetValue setValue) {
         return null;
     }
-
-//    @Override
-//    public T visit(StringValue stringValue) {
-//        return null;
-//    }
 
 }

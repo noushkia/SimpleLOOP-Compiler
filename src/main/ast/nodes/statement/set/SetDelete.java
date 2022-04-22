@@ -1,20 +1,22 @@
-package main.ast.nodes.expression;
+package main.ast.nodes.statement.set;
 
-import main.ast.nodes.expression.values.primitive.IntValue;
+import main.ast.nodes.expression.Expression;
+import main.ast.nodes.statement.Statement;
 import main.visitor.IVisitor;
 
-//line -> ADD
-public class SetAdd extends Expression{
-    private IntValue setArg;
+
+// line -> DELETE
+public class SetDelete extends Statement {
+    private Expression setArg;
     private Expression elementArg;
 
-    public SetAdd(IntValue setArg, Expression elementArg) {
+    public SetDelete(Expression setArg, Expression elementArg) {
         this.setArg = setArg;
         this.elementArg = elementArg;
     }
 
-    public void setSetArg(IntValue setArg) { this.setArg = setArg; }
-    public IntValue getSetArg() { return setArg; }
+    public void setSetArg(Expression setArg) { this.setArg = setArg; }
+    public Expression getSetArg() { return setArg; }
 
     public void setElementArg(Expression elementArg) { this.elementArg = elementArg; }
     public Expression getElementArg() {
@@ -23,7 +25,7 @@ public class SetAdd extends Expression{
 
     @Override
     public String toString() {
-        return "SetAdd";
+        return "setDelete";
     }
 
     @Override
