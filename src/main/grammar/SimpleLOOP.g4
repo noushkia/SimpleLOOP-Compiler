@@ -3,14 +3,19 @@ grammar SimpleLOOP;
 @header{
      import main.ast.nodes.*;
      import main.ast.nodes.declaration.*;
-     import main.ast.nodes.declaration.struct.*;
+     import main.ast.nodes.declaration.classDec.*;
+     import main.ast.nodes.declaration.variableDec.*;
      import main.ast.nodes.expression.*;
      import main.ast.nodes.expression.operators.*;
      import main.ast.nodes.expression.values.*;
      import main.ast.nodes.expression.values.primitive.*;
      import main.ast.nodes.statement.*;
+     import main.ast.nodes.statement.set.*;
      import main.ast.types.*;
      import main.ast.types.primitives.*;
+     import main.ast.types.set.*;
+     import main.ast.types.functionPointer.*;
+     import main.ast.types.array.*;
      import java.util.*;
  }
 

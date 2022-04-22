@@ -5,6 +5,7 @@ import main.visitor.IVisitor;
 
 import java.util.ArrayList;
 
+//todo
 //line -> LBRACK before elements
 public class ListValue extends Value{
     private ArrayList<Expression> elements = new ArrayList<>();

@@ -1,6 +1,6 @@
 package main.ast.nodes.expression;
 
-import main.ast.types.single.ClassType;
+import main.ast.types.primitive.ClassType;
 import main.visitor.IVisitor;
 
 import java.util.ArrayList;

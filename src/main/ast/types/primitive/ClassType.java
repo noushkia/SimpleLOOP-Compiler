@@ -1,4 +1,4 @@
-package main.ast.types.single;
+package main.ast.types.primitive;
 
 import main.ast.nodes.expression.Identifier;
 import main.ast.types.Type;
