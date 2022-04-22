@@ -61,6 +61,6 @@ public interface IVisitor<T> {
     T visit(ClassValue classValue);
 
     T visit(SetMerge setMerge);
-//    T visit(StringValue stringValue);
 
+    T visit(TernaryExpression ternaryExpression);
 }
