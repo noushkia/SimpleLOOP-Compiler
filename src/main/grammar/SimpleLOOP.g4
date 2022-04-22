@@ -124,7 +124,7 @@ assignmentStatement :
 
 //todo
 loopStatement :
-    ((identifier) | (LPAR expression DOT DOT expression RPAR)) DOT EACH DO BAR identifier BAR
+    ((accessExpression) | (LPAR expression DOT DOT expression RPAR)) DOT EACH DO BAR identifier BAR
     body;
 
 //todo

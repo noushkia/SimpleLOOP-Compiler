@@ -210,7 +210,7 @@ public class ASTTreePrinter extends Visitor<Void> {
     }
 
     @Override
-    public Void visit(ListAccessByIndex listAccessByIndex) {
+    public Void visit(ArrayAccessByIndex listAccessByIndex) {
         messagePrinter(listAccessByIndex.getLine(), listAccessByIndex.toString());
         listAccessByIndex.getInstance().accept(this);
         listAccessByIndex.getIndex().accept(this);

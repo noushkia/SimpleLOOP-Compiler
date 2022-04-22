@@ -3,11 +3,11 @@ package main.ast.nodes.expression;
 import main.visitor.IVisitor;
 
 //line -> LBRACK before index
-public class ListAccessByIndex extends Expression {
+public class ArrayAccessByIndex extends Expression {
     private Expression instance;
     private Expression index;
 
-    public ListAccessByIndex(Expression instance, Expression index) {
+    public ArrayAccessByIndex(Expression instance, Expression index) {
         this.instance = instance;
         this.index = index;
     }
@@ -30,7 +30,7 @@ public class ListAccessByIndex extends Expression {
 
     @Override
     public String toString() {
-        return "ListAccessByIndex";
+        return "ArrayAccessByIndex";
     }
 
     @Override

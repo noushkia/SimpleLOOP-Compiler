@@ -41,7 +41,7 @@ public interface IVisitor<T> {
     T visit(UnaryExpression unaryExpression);
     T visit(ObjectOrListMemberAccess objectOrListMemberAccess);
     T visit(Identifier identifier);
-    T visit(ListAccessByIndex listAccessByIndex);
+    T visit(ArrayAccessByIndex listAccessByIndex);
     T visit(MethodCall methodCall);
     T visit(NewClassInstance newClassInstance);
     T visit(SelfClass selfClass);
@@ -63,4 +63,6 @@ public interface IVisitor<T> {
     T visit(SetDelete setDelete);
 
     T visit(SetMerge setAdd);
+
+    T visit(RangeExpression rangeExpression);
 }

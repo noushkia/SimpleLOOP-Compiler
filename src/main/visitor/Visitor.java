@@ -111,7 +111,7 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
-    public T visit(ListAccessByIndex listAccessByIndex) {
+    public T visit(ArrayAccessByIndex listAccessByIndex) {
         return null;
     }
 
