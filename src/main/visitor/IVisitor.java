@@ -1,7 +1,6 @@
 package main.visitor;
 
 import main.ast.nodes.Program;
-import main.ast.nodes.declaration.MainDeclaration;
 import main.ast.nodes.declaration.classDec.ClassDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.ConstructorDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
@@ -15,6 +14,7 @@ import main.ast.nodes.expression.values.primitive.BoolValue;
 import main.ast.nodes.expression.values.primitive.ClassValue;
 import main.ast.nodes.expression.values.primitive.IntValue;
 import main.ast.nodes.statement.*;
+import main.ast.nodes.statement.set.SetAdd;
 import main.ast.nodes.statement.set.SetMerge;
 import main.ast.nodes.statement.set.SetDelete;
 
@@ -27,7 +27,6 @@ public interface IVisitor<T> {
     T visit(MethodDeclaration methodDeclaration);
     T visit(FieldDeclaration fieldDeclaration);
     T visit(VariableDeclaration varDeclaration);
-    T visit(MainDeclaration mainDeclaration);
 
     T visit(AssignmentStmt assignmentStmt);
     T visit(BlockStmt blockStmt);
@@ -39,6 +38,8 @@ public interface IVisitor<T> {
 
     T visit(BinaryExpression binaryExpression);
     T visit(UnaryExpression unaryExpression);
+    T visit(TernaryExpression ternaryExpression);
+    T visit(RangeExpression rangeExpression);
     T visit(ObjectOrArrayMemberAccess objectOrListMemberAccess);
     T visit(Identifier identifier);
     T visit(ArrayAccessByIndex listAccessByIndex);
@@ -49,20 +50,17 @@ public interface IVisitor<T> {
     T visit(NullValue nullValue);
     T visit(IntValue intValue);
     T visit(BoolValue boolValue);
+    T visit(ClassValue classValue);
+    T visit(SetValue setValue);
+
 
     T visit(SetInclude setAdd);
 
-    T visit(SetValue setValue);
-
-    T visit(ClassValue classValue);
-
-    T visit(SetNew setMerge);
-
-    T visit(TernaryExpression ternaryExpression);
+    T visit(SetNew setNew);
 
     T visit(SetDelete setDelete);
 
-    T visit(SetMerge setAdd);
+    T visit(SetMerge setMerge);
 
-    T visit(RangeExpression rangeExpression);
+    T visit(SetAdd setAdd);
 }

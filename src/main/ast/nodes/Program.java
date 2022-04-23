@@ -1,6 +1,5 @@
 package main.ast.nodes;
 
-import main.ast.nodes.declaration.MainDeclaration;
 import main.ast.nodes.declaration.classDec.ClassDeclaration;
 import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.visitor.IVisitor;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 public class Program extends Node {
     private ArrayList<VariableDeclaration> globalVariables = new ArrayList<>();
     private ArrayList<ClassDeclaration> classes = new ArrayList<>();
-    private MainDeclaration main = new MainDeclaration();
 
     public Program() {
     }
@@ -43,13 +41,6 @@ public class Program extends Node {
 
     public void addGlobalVariable(VariableDeclaration variableDeclaration) {
         globalVariables.add(variableDeclaration);
-    }
-
-    public MainDeclaration getMain() {
-        return main;
-    }
-    public void setMain(MainDeclaration main) {
-        this.main = main;
     }
 
     @Override

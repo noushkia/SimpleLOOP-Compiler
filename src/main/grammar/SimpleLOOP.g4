@@ -35,7 +35,7 @@ constructor
 
 //todo
 classDeclaration
-    : CLASS name=(CLASS_IDENTIFIER | MAIN) (LESS_THAN CLASS_IDENTIFIER)?
+    : CLASS class_identifier (LESS_THAN class_identifier)?
     NEWLINE* ((LBRACE NEWLINE+ field_decleration+ RBRACE) | (field_decleration)) NEWLINE*;
 
 //todo
@@ -44,7 +44,7 @@ field_decleration
 
 //todo
 method
-    : (type | VOID) IDENTIFIER methodArgsDec NEWLINE* methodBody;
+    : (type | VOID) identifier methodArgsDec NEWLINE* methodBody;
 
 //todo
 methodBody
@@ -57,7 +57,7 @@ methodArgsDec
 
 //todo
 argDec
-    : type IDENTIFIER ;
+    : type identifier ;
 
 //todo
 methodArgs
@@ -90,7 +90,7 @@ deleteStatement :
 
 //todo
 varDecStatement :
-    type IDENTIFIER (COMMA ID2=IDENTIFIER)*;
+    type identifier (COMMA ID2=IDENTIFIER)*;
 
 //todo
 ifStatement :
@@ -236,7 +236,6 @@ INITIALIZE: 'initialize';
 NEW: 'new';
 
 
-MAIN: 'Main';
 RETURN: 'return';
 VOID: 'void';
 

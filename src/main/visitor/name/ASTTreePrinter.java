@@ -1,7 +1,6 @@
 package main.visitor.name;
 
 import main.ast.nodes.*;
-import main.ast.nodes.declaration.MainDeclaration;
 import main.ast.nodes.declaration.classDec.ClassDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.ConstructorDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
@@ -58,12 +57,6 @@ public class ASTTreePrinter extends Visitor<Void> {
 
     @Override
     public Void visit(VariableDeclaration varDeclaration) {
-        //todo
-        return null;
-    }
-
-    @Override
-    public Void visit(MainDeclaration mainDeclaration) {
         //todo
         return null;
     }

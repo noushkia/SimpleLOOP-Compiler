@@ -1,7 +1,6 @@
 package main.visitor;
 
 import main.ast.nodes.Program;
-import main.ast.nodes.declaration.MainDeclaration;
 import main.ast.nodes.declaration.classDec.ClassDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.ConstructorDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
@@ -15,6 +14,7 @@ import main.ast.nodes.expression.values.primitive.BoolValue;
 import main.ast.nodes.expression.values.primitive.ClassValue;
 import main.ast.nodes.expression.values.primitive.IntValue;
 import main.ast.nodes.statement.*;
+import main.ast.nodes.statement.set.SetAdd;
 import main.ast.nodes.statement.set.SetDelete;
 import main.ast.nodes.statement.set.SetMerge;
 
@@ -47,11 +47,6 @@ public class Visitor<T> implements IVisitor<T> {
 
     @Override
     public T visit(VariableDeclaration varDeclaration) {
-        return null;
-    }
-
-    @Override
-    public T visit(MainDeclaration mainDeclaration) {
         return null;
     }
 
@@ -106,6 +101,11 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
+    public T visit(RangeExpression rangeExpression) {
+        return null;
+    }
+
+    @Override
     public T visit(ObjectOrArrayMemberAccess objectOrArrayMemberAccess) {
         return null;
     }
@@ -156,7 +156,7 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
-    public T visit(SetInclude setAdd) {
+    public T visit(ClassValue classValue) {
         return null;
     }
 
@@ -166,12 +166,12 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
-    public T visit(ClassValue classValue) {
+    public T visit(SetInclude setAdd) {
         return null;
     }
 
     @Override
-    public T visit(SetNew setMerge) {
+    public T visit(SetNew setNew) {
         return null;
     }
 
@@ -181,13 +181,12 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
-    public T visit(SetMerge setAdd) {
+    public T visit(SetMerge setMerge) {
         return null;
     }
 
     @Override
-    public T visit(RangeExpression rangeExpression) {
+    public T visit(SetAdd setAdd) {
         return null;
     }
-
 }

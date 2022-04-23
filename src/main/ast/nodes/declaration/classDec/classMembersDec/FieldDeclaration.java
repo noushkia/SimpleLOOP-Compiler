@@ -7,9 +7,11 @@ import main.visitor.IVisitor;
 //line -> IDENTIFIER
 public class FieldDeclaration extends Declaration {
     VariableDeclaration varDeclaration;
+    private boolean isPrivate;
 
-    public FieldDeclaration(VariableDeclaration varDeclaration) {
+    public FieldDeclaration(VariableDeclaration varDeclaration, boolean isPrivate) {
         this.varDeclaration = varDeclaration;
+        this.isPrivate = isPrivate;
     }
 
     public VariableDeclaration getVarDeclaration() {
@@ -18,6 +20,14 @@ public class FieldDeclaration extends Declaration {
 
     public void setVarDeclaration(VariableDeclaration varDeclaration) {
         this.varDeclaration = varDeclaration;
+    }
+
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(boolean aPrivate) {
+        isPrivate = aPrivate;
     }
 
     @Override
