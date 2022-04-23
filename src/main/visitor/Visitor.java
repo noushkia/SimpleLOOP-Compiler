@@ -8,7 +8,7 @@ import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
 import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.ast.nodes.expression.*;
-import main.ast.nodes.expression.values.ListValue;
+import main.ast.nodes.expression.values.ArrayValue;
 import main.ast.nodes.expression.values.NullValue;
 import main.ast.nodes.expression.values.SetValue;
 import main.ast.nodes.expression.values.primitive.BoolValue;
@@ -101,7 +101,12 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
-    public T visit(ObjectOrListMemberAccess objectOrListMemberAccess) {
+    public T visit(TernaryExpression ternaryExpression) {
+        return null;
+    }
+
+    @Override
+    public T visit(ObjectOrArrayMemberAccess objectOrArrayMemberAccess) {
         return null;
     }
 
@@ -111,7 +116,7 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
-    public T visit(ArrayAccessByIndex listAccessByIndex) {
+    public T visit(ArrayAccessByIndex arrayAccessByIndex) {
         return null;
     }
 
@@ -131,7 +136,7 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
-    public T visit(ListValue listValue) {
+    public T visit(ArrayValue arrayValue) {
         return null;
     }
 
@@ -171,17 +176,17 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
-    public T visit(TernaryExpression ternaryExpression) {
-        return null;
-    }
-
-    @Override
     public T visit(SetDelete setDelete) {
         return null;
     }
 
     @Override
     public T visit(SetMerge setAdd) {
+        return null;
+    }
+
+    @Override
+    public T visit(RangeExpression rangeExpression) {
         return null;
     }
 

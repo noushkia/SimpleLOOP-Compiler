@@ -175,11 +175,12 @@ postUnaryExpression:
 
 //todo
 accessExpression:
-    otherExpression ((LPAR methodArgs RPAR) | (DOT identifier))* ((DOT identifier) | (LBRACK expression RBRACK))*;
+    otherExpression ((LPAR methodArgs RPAR) | (DOT (identifier | NEW | INITIALIZE)))*
+            ((DOT (identifier)) | (LBRACK expression RBRACK))*;
 
 //todo
 otherExpression:
-    value | identifier | LPAR methodArgs RPAR | setNew | setInclude| accessByIndex;
+    class_identifier | value | identifier | LPAR methodArgs RPAR | setNew | setInclude| accessByIndex;
 
 //todo
 accessByIndex:

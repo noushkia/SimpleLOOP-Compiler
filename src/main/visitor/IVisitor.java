@@ -8,7 +8,7 @@ import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
 import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.ast.nodes.expression.*;
-import main.ast.nodes.expression.values.ListValue;
+import main.ast.nodes.expression.values.ArrayValue;
 import main.ast.nodes.expression.values.NullValue;
 import main.ast.nodes.expression.values.SetValue;
 import main.ast.nodes.expression.values.primitive.BoolValue;
@@ -39,13 +39,13 @@ public interface IVisitor<T> {
 
     T visit(BinaryExpression binaryExpression);
     T visit(UnaryExpression unaryExpression);
-    T visit(ObjectOrListMemberAccess objectOrListMemberAccess);
+    T visit(ObjectOrArrayMemberAccess objectOrListMemberAccess);
     T visit(Identifier identifier);
     T visit(ArrayAccessByIndex listAccessByIndex);
     T visit(MethodCall methodCall);
     T visit(NewClassInstance newClassInstance);
     T visit(SelfClass selfClass);
-    T visit(ListValue listValue);
+    T visit(ArrayValue listValue);
     T visit(NullValue nullValue);
     T visit(IntValue intValue);
     T visit(BoolValue boolValue);
