@@ -26,25 +26,30 @@ program returns[Program programRet]:
     {$programRet = new Program();
      int line = 1;
      $programRet.setLine(line);}
-    (v = varDecStatement (SEMICOLON)? NEWLINE+ {$programRet.addGlobalVariable($v.variableDeclarationRet);})*
+    (v = varDecStatement NEWLINE+ {$programRet.addGlobalVariable($v.variableDeclarationRet);})*
     (c = classDeclaration NEWLINE+ {$programRet.addClass($c.classDeclarationRet);})*;
 
 //todo
 constructor
-    : INITIALIZE methodArgsDec body;
+    : PUBLIC INITIALIZE methodArgsDec body;
 
 //todo
 classDeclaration
-    : CLASS name=(CLASS_IDENTIFIER | MAIN) (LESS_THAN PR=CLASS_IDENTIFIER)?
+    : CLASS name=(CLASS_IDENTIFIER | MAIN) (LESS_THAN CLASS_IDENTIFIER)?
     NEWLINE* ((LBRACE NEWLINE+ field_decleration+ RBRACE) | (field_decleration)) NEWLINE*;
 
 //todo
 field_decleration
-    : (PUBLIC | PRIVATE) (varDecStatement | method | constructor) (SEMICOLON)? NEWLINE+;
+    : (PUBLIC | PRIVATE) (varDecStatement | method | constructor) NEWLINE+;
 
 //todo
 method
-    : (type | VOID) IDENTIFIER methodArgsDec NEWLINE* body;
+    : (type | VOID) IDENTIFIER methodArgsDec NEWLINE* methodBody;
+
+//todo
+methodBody
+    : (LBRACE NEWLINE+ (varDecStatement NEWLINE+)* (singleStatement NEWLINE+)* RBRACE)
+    | ((varDecStatement NEWLINE+) | (singleStatement NEWLINE+));
 
 //todo
 methodArgsDec
@@ -60,16 +65,16 @@ methodArgs
 
 //todo
 body :
-     (blockStatement | (NEWLINE+ singleStatement (SEMICOLON)?));
+     (blockStatement | (NEWLINE+ singleStatement));
 
 //todo
 blockStatement :
-    LBRACE (NEWLINE+ singleStatement (SEMICOLON)?)+ NEWLINE+ RBRACE;
+    LBRACE NEWLINE+ (singleStatement NEWLINE+)* RBRACE;
 
 //todo
 singleStatement :
     ifStatement | printStatement | methodCallStmt | returnStatement | assignmentStatement
-    | varDecStatement | loopStatement | addStatement | mergeStatement | deleteStatement;
+    | loopStatement | addStatement | mergeStatement | deleteStatement;
 
 //todo
 addStatement :
@@ -292,7 +297,7 @@ RBRACE: '}';
 
 COMMA: ',';
 DOT: '.';
-SEMICOLON: ';';
+SEMICOLON: ';' -> skip;
 NEWLINE: '\n';
 
 INT_VALUE: '0' | [1-9][0-9]*;
