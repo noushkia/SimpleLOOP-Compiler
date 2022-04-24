@@ -26,8 +26,8 @@ public class FieldDeclaration extends Declaration {
         return isPrivate;
     }
 
-    public void setPrivate(boolean aPrivate) {
-        isPrivate = aPrivate;
+    public void setPrivate(boolean isPrivate) {
+        this.isPrivate = isPrivate;
     }
 
     @Override

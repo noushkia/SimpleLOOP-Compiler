@@ -3,11 +3,11 @@ package main.ast.nodes.expression;
 import main.visitor.IVisitor;
 
 //line -> IDENTIFIER
-public class ObjectOrArrayMemberAccess extends Expression{
+public class ObjectMemberAccess extends Expression{
     private Expression instance;
     private Identifier memberName;
 
-    public ObjectOrArrayMemberAccess(Expression instance, Identifier memberName) {
+    public ObjectMemberAccess(Expression instance, Identifier memberName) {
         this.instance = instance;
         this.memberName = memberName;
     }
@@ -30,7 +30,7 @@ public class ObjectOrArrayMemberAccess extends Expression{
 
     @Override
     public String toString() {
-        return "ObjectOrArrayMemberAccess_" + this.memberName.getName();
+        return "ObjectMemberAccess_" + this.memberName.getName();
     }
 
     @Override

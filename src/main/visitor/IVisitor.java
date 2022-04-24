@@ -7,16 +7,10 @@ import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
 import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.ast.nodes.expression.*;
-import main.ast.nodes.expression.values.ArrayValue;
-import main.ast.nodes.expression.values.NullValue;
-import main.ast.nodes.expression.values.SetValue;
-import main.ast.nodes.expression.values.primitive.BoolValue;
-import main.ast.nodes.expression.values.primitive.ClassValue;
-import main.ast.nodes.expression.values.primitive.IntValue;
+import main.ast.nodes.expression.values.*;
+import main.ast.nodes.expression.values.primitive.*;
 import main.ast.nodes.statement.*;
-import main.ast.nodes.statement.set.SetAdd;
-import main.ast.nodes.statement.set.SetMerge;
-import main.ast.nodes.statement.set.SetDelete;
+import main.ast.nodes.statement.set.*;
 
 public interface IVisitor<T> {
 
@@ -31,6 +25,7 @@ public interface IVisitor<T> {
     T visit(AssignmentStmt assignmentStmt);
     T visit(BlockStmt blockStmt);
     T visit(ConditionalStmt conditionalStmt);
+    T visit(ElsifStmt elsifStmt);
     T visit(MethodCallStmt methodCallStmt);
     T visit(PrintStmt print);
     T visit(ReturnStmt returnStmt);
@@ -40,17 +35,15 @@ public interface IVisitor<T> {
     T visit(UnaryExpression unaryExpression);
     T visit(TernaryExpression ternaryExpression);
     T visit(RangeExpression rangeExpression);
-    T visit(ObjectOrArrayMemberAccess objectOrListMemberAccess);
+    T visit(ObjectMemberAccess objectOrListMemberAccess);
     T visit(Identifier identifier);
     T visit(ArrayAccessByIndex listAccessByIndex);
     T visit(MethodCall methodCall);
     T visit(NewClassInstance newClassInstance);
     T visit(SelfClass selfClass);
-    T visit(ArrayValue listValue);
     T visit(NullValue nullValue);
     T visit(IntValue intValue);
     T visit(BoolValue boolValue);
-    T visit(ClassValue classValue);
     T visit(SetValue setValue);
 
 

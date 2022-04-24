@@ -7,14 +7,11 @@ import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
 import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.ast.nodes.expression.*;
-import main.ast.nodes.expression.values.ArrayValue;
 import main.ast.nodes.expression.values.NullValue;
 import main.ast.nodes.expression.values.SetValue;
 import main.ast.nodes.expression.values.primitive.*;
-import main.ast.nodes.expression.values.primitive.ClassValue;
 import main.ast.nodes.statement.*;
-import main.ast.nodes.statement.set.SetDelete;
-import main.ast.nodes.statement.set.SetMerge;
+import main.ast.nodes.statement.set.*;
 import main.visitor.*;
 
 public class ASTTreePrinter extends Visitor<Void> {
@@ -80,6 +77,12 @@ public class ASTTreePrinter extends Visitor<Void> {
     }
 
     @Override
+    public Void visit(ElsifStmt elsifStmt) {
+        //todo
+        return null;
+    }
+
+    @Override
     public Void visit(MethodCallStmt methodCallStmt) {
         //todo
         return null;
@@ -122,7 +125,7 @@ public class ASTTreePrinter extends Visitor<Void> {
     }
 
     @Override
-    public Void visit(ObjectOrArrayMemberAccess objectOrListMemberAccess) {
+    public Void visit(ObjectMemberAccess objectOrListMemberAccess) {
         //todo
         return null;
     }
@@ -158,12 +161,6 @@ public class ASTTreePrinter extends Visitor<Void> {
     }
 
     @Override
-    public Void visit(ArrayValue arrayValue) {
-        //todo
-        return null;
-    }
-
-    @Override
     public Void visit(NullValue nullValue) {
         //todo
         return null;
@@ -189,12 +186,6 @@ public class ASTTreePrinter extends Visitor<Void> {
 
     @Override
     public Void visit(SetValue setValue) {
-        //todo
-        return null;
-    }
-
-    @Override
-    public Void visit(ClassValue classValue) {
         //todo
         return null;
     }

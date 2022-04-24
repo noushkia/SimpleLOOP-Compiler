@@ -4,25 +4,30 @@ import main.ast.nodes.declaration.Declaration;
 import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.ast.nodes.expression.Identifier;
 import main.ast.nodes.statement.Statement;
+import main.ast.types.NullType;
 import main.ast.types.Type;
 import main.visitor.IVisitor;
 
 import java.util.ArrayList;
 
-//line -> DEF
+//line -> IDENTIFIER
 public class MethodDeclaration extends Declaration {
     protected Identifier methodName;
     protected Type returnType;
     protected ArrayList<VariableDeclaration> args = new ArrayList<>();
     protected ArrayList<VariableDeclaration> localVars = new ArrayList<>();
     protected ArrayList<Statement> body = new ArrayList<>();
-    //don't need this until code generation
+    protected boolean isPrivate;
     protected boolean doesReturn = false;
 
-    //returnType NullType on when it is Void
-    public MethodDeclaration(Identifier methodName, Type returnType) {
+    public MethodDeclaration(Identifier methodName, Type returnType, boolean isPrivate) {
         this.methodName = methodName;
         this.returnType = returnType;
+        this.isPrivate = isPrivate;
+    }
+
+    public MethodDeclaration() {
+
     }
 
     public Identifier getMethodName() {
@@ -75,6 +80,14 @@ public class MethodDeclaration extends Declaration {
 
     public void addBodyStatement(Statement statement) {
         this.body.add(statement);
+    }
+
+    public void setPrivate(boolean isPrivate) {
+        this.isPrivate = isPrivate;
+    }
+
+    public boolean getIsPrivate() {
+        return isPrivate;
     }
 
     public boolean getDoesReturn() {

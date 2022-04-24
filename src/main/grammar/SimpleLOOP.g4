@@ -1,37 +1,39 @@
 grammar SimpleLOOP;
 
-@header{
-     import main.ast.nodes.*;
-     import main.ast.nodes.declaration.*;
-     import main.ast.nodes.declaration.classDec.*;
-     import main.ast.nodes.declaration.variableDec.*;
-     import main.ast.nodes.expression.*;
-     import main.ast.nodes.expression.operators.*;
-     import main.ast.nodes.expression.values.*;
-     import main.ast.nodes.expression.values.primitive.*;
-     import main.ast.nodes.statement.*;
-     import main.ast.nodes.statement.set.*;
-     import main.ast.types.*;
-     import main.ast.types.primitives.*;
-     import main.ast.types.set.*;
-     import main.ast.types.functionPointer.*;
-     import main.ast.types.array.*;
-     import java.util.*;
- }
+//@header{
+//     import main.ast.nodes.*;
+//     import main.ast.nodes.declaration.*;
+//     import main.ast.nodes.declaration.classDec.*;
+//     import main.ast.nodes.declaration.variableDec.*;
+//     import main.ast.nodes.expression.*;
+//     import main.ast.nodes.expression.operators.*;
+//     import main.ast.nodes.expression.values.*;
+//     import main.ast.nodes.expression.values.primitive.*;
+//     import main.ast.nodes.statement.*;
+//     import main.ast.nodes.statement.set.*;
+//     import main.ast.types.*;
+//     import main.ast.types.primitives.*;
+//     import main.ast.types.set.*;
+//     import main.ast.types.functionPointer.*;
+//     import main.ast.types.array.*;
+//     import java.util.*;
+// }
 
-simpleLOOP returns [Program simpleLOOPProgram]:
-    NEWLINE* p = program {$simpleLOOPProgram = $p.programRet;} NEWLINE* EOF;
+simpleLOOP //returns [Program simpleLOOPProgram]
+    :
+    NEWLINE* p = program /*{$simpleLOOPProgram = $p.programRet;}*/ NEWLINE* EOF;
 
-program returns[Program programRet]:
-    {$programRet = new Program();
+program //returns[Program programRet]
+     :
+    /*{$programRet = new Program();
      int line = 1;
-     $programRet.setLine(line);}
-    (v = varDecStatement NEWLINE+ {$programRet.addGlobalVariable($v.variableDeclarationRet);})*
-    (c = classDeclaration NEWLINE+ {$programRet.addClass($c.classDeclarationRet);})*;
+     $programRet.setLine(line);}*/
+    (v = varDecStatement NEWLINE+ /*{$programRet.addGlobalVariable($v.variableDeclarationRet);}*/)*
+    (c = classDeclaration NEWLINE+ /*{$programRet.addClass($c.classDeclarationRet);}*/)*;
 
 //todo
 constructor
-    : PUBLIC INITIALIZE methodArgsDec body;
+    : PUBLIC INITIALIZE methodArgsDec methodBody;
 
 //todo
 classDeclaration
@@ -40,7 +42,7 @@ classDeclaration
 
 //todo
 field_decleration
-    : (PUBLIC | PRIVATE) (varDecStatement | method | constructor) NEWLINE+;
+    : (((PUBLIC | PRIVATE) (varDecStatement | method)) | constructor) NEWLINE+;
 
 //todo
 method

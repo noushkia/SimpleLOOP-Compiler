@@ -5,14 +5,12 @@ import main.visitor.IVisitor;
 
 import java.util.ArrayList;
 
-//line -> IF
-public class ConditionalStmt extends Statement{
+//line -> ELSIF
+public class ElsifStmt extends Statement{
     private Expression condition;
     private Statement thenBody;
-    private ArrayList<ElsifStmt> elsif = new ArrayList<>();
-    private Statement elseBody;
 
-    public ConditionalStmt(Expression expression, Statement thenBody) {
+    public ElsifStmt(Expression expression, Statement thenBody) {
         this.condition = expression;
         this.thenBody = thenBody;
     }
@@ -33,29 +31,9 @@ public class ConditionalStmt extends Statement{
         this.thenBody = thenBody;
     }
 
-    public ArrayList<ElsifStmt> getElsif() {
-        return elsif;
-    }
-
-    public void setElsif(ArrayList<ElsifStmt> elsif) {
-        this.elsif = elsif;
-    }
-
-    public void addElsif(ElsifStmt elsifStmt) {
-        this.elsif.add(elsifStmt);
-    }
-
-    public Statement getElseBody() {
-        return elseBody;
-    }
-
-    public void setElseBody(Statement elseBody) {
-        this.elseBody = elseBody;
-    }
-
     @Override
     public String toString() {
-        return "ConditionalStmt";
+        return "ElsifStmt";
     }
 
     @Override

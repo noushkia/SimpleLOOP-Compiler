@@ -7,16 +7,10 @@ import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
 import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.ast.nodes.expression.*;
-import main.ast.nodes.expression.values.ArrayValue;
-import main.ast.nodes.expression.values.NullValue;
-import main.ast.nodes.expression.values.SetValue;
-import main.ast.nodes.expression.values.primitive.BoolValue;
-import main.ast.nodes.expression.values.primitive.ClassValue;
-import main.ast.nodes.expression.values.primitive.IntValue;
+import main.ast.nodes.expression.values.*;
+import main.ast.nodes.expression.values.primitive.*;
 import main.ast.nodes.statement.*;
-import main.ast.nodes.statement.set.SetAdd;
-import main.ast.nodes.statement.set.SetDelete;
-import main.ast.nodes.statement.set.SetMerge;
+import main.ast.nodes.statement.set.*;
 
 public class Visitor<T> implements IVisitor<T> {
 
@@ -66,6 +60,11 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
+    public T visit(ElsifStmt elsifStmt) {
+        return null;
+    }
+
+    @Override
     public T visit(MethodCallStmt methodCallStmt) {
         return null;
     }
@@ -106,7 +105,7 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
-    public T visit(ObjectOrArrayMemberAccess objectOrArrayMemberAccess) {
+    public T visit(ObjectMemberAccess objectOrArrayMemberAccess) {
         return null;
     }
 
@@ -136,11 +135,6 @@ public class Visitor<T> implements IVisitor<T> {
     }
 
     @Override
-    public T visit(ArrayValue arrayValue) {
-        return null;
-    }
-
-    @Override
     public T visit(NullValue nullValue) {
         return null;
     }
@@ -152,11 +146,6 @@ public class Visitor<T> implements IVisitor<T> {
 
     @Override
     public T visit(BoolValue boolValue) {
-        return null;
-    }
-
-    @Override
-    public T visit(ClassValue classValue) {
         return null;
     }
 
