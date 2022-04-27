@@ -54,6 +54,12 @@ public interface SimpleLOOPVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitClassDeclaration(SimpleLOOPParser.ClassDeclarationContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SimpleLOOPParser#field_decleration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitField_decleration(SimpleLOOPParser.Field_declerationContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SimpleLOOPParser#method}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -257,12 +263,6 @@ public interface SimpleLOOPVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSetNew(SimpleLOOPParser.SetNewContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link SimpleLOOPParser#setInclude}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSetInclude(SimpleLOOPParser.SetIncludeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SimpleLOOPParser#value}.
 	 * @param ctx the parse tree

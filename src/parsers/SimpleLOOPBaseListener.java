@@ -83,6 +83,18 @@ public class SimpleLOOPBaseListener implements SimpleLOOPListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterField_decleration(SimpleLOOPParser.Field_declerationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitField_decleration(SimpleLOOPParser.Field_declerationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterMethod(SimpleLOOPParser.MethodContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -486,18 +498,6 @@ public class SimpleLOOPBaseListener implements SimpleLOOPListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSetNew(SimpleLOOPParser.SetNewContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSetInclude(SimpleLOOPParser.SetIncludeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSetInclude(SimpleLOOPParser.SetIncludeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

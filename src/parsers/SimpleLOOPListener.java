@@ -67,6 +67,16 @@ public interface SimpleLOOPListener extends ParseTreeListener {
 	 */
 	void exitClassDeclaration(SimpleLOOPParser.ClassDeclarationContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SimpleLOOPParser#field_decleration}.
+	 * @param ctx the parse tree
+	 */
+	void enterField_decleration(SimpleLOOPParser.Field_declerationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SimpleLOOPParser#field_decleration}.
+	 * @param ctx the parse tree
+	 */
+	void exitField_decleration(SimpleLOOPParser.Field_declerationContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SimpleLOOPParser#method}.
 	 * @param ctx the parse tree
 	 */
@@ -406,16 +416,6 @@ public interface SimpleLOOPListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSetNew(SimpleLOOPParser.SetNewContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link SimpleLOOPParser#setInclude}.
-	 * @param ctx the parse tree
-	 */
-	void enterSetInclude(SimpleLOOPParser.SetIncludeContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link SimpleLOOPParser#setInclude}.
-	 * @param ctx the parse tree
-	 */
-	void exitSetInclude(SimpleLOOPParser.SetIncludeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SimpleLOOPParser#value}.
 	 * @param ctx the parse tree

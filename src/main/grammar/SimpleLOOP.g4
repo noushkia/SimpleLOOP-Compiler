@@ -34,13 +34,13 @@ program returns[Program programRet]:
     })*
     (c = classDeclaration NEWLINE+ {$programRet.addClass($c.classDeclarationRet);})*;
 
-//todo
+//todo?? Check expression
 constructor returns [ConstructorDeclaration constructorRet]
     : PUBLIC init = INITIALIZE
     { $constructorRet = new ConstructorDeclaration();
         $constructorRet.setLine($init.getLine());
      }
-      args = methodArgsDec
+      args = methodArgsDec NEWLINE*
        { $constructorRet.setArgs($args.argsRet); }
        b = methodBody
        {
@@ -56,51 +56,42 @@ classDeclaration returns [ ClassDeclaration classDeclarationRet]
         $classDeclarationRet = new ClassDeclaration($name.idRet);
         $classDeclarationRet.setLine($cl.getLine());
     }
-    (
-    LESS_THAN parentName=class_identifier
+    (LESS_THAN parentName=class_identifier
     { $classDeclarationRet.setParentClassName($parentName.idRet); }
     )?
-    NEWLINE* ((LBRACE NEWLINE+
-    (
-    (( access=(PUBLIC | PRIVATE)
-        (v=varDecStatement
+    NEWLINE* ((LBRACE NEWLINE+ (mf=field_decleration
+                                 {
+                                     for (Declaration field : $mf.decRet)
+                                         $classDeclarationRet.addField(field);
+                                 } NEWLINE+)+ RBRACE)
+    | (sf=field_decleration
         {
+            for (Declaration field : $sf.decRet)
+                $classDeclarationRet.addField(field);
+        }));
+
+//todo
+field_decleration returns [ArrayList<Declaration> decRet]:
+    { $decRet = new ArrayList<>(); }
+    ((( access=(PUBLIC | PRIVATE)
+       (v=varDecStatement
+       {
             for (VariableDeclaration varDec: $v.varDecStmtRet) {
                 var newField = new FieldDeclaration(varDec, $access.toString() == "public" ? true : false );
-                $classDeclarationRet.addField(newField);
+                $decRet.add(newField);
             }
-        }
-        | m=method
-        {
+       }
+       | m=method
+       {
             var newMethod = $m.methodDecRet;
             newMethod.setPrivate($access.toString() == "public" ? false : true);
-            $classDeclarationRet.addMethod(newMethod);
-        }))
-        | c=constructor
-        {
-            $classDeclarationRet.setConstructor($c.constructorRet);
+            decRet.add(newMethod);
+       }))
+       | c=constructor
+       {
+           decRet.add($c.constructorRet);
         })
-    NEWLINE+)+ RBRACE)
-     | (
-       (( access=(PUBLIC | PRIVATE)
-           (v=varDecStatement
-           {
-                for (VariableDeclaration varDec: $v.varDecStmtRet) {
-                    var newField = new FieldDeclaration(varDec, $access.toString() == "public" ? true : false );
-                    $classDeclarationRet.addField(newField);
-                }
-           }
-           | m=method
-           {
-                var newMethod = $m.methodDecRet;
-                newMethod.setPrivate($access.toString() == "public" ? false : true);
-                $classDeclarationRet.addMethod(newMethod);
-           }))
-           | c=constructor
-           {
-               $classDeclarationRet.setConstructor($c.constructorRet);
-            })
-       NEWLINE+)) NEWLINE*;
+    );
 
 //todo
 method returns [MethodDeclaration methodDecRet]
@@ -135,13 +126,13 @@ methodBody returns [ArrayList<VariableDeclaration> localVars, ArrayList<Statemen
     { $statements.add($s.singleRet); })* RBRACE)
     |
     (
-    (v=varDecStatement NEWLINE+
+    (v=varDecStatement
     {
         for (VariableDeclaration varDec : $v.varDecStmtRet)
             $localVars.add(varDec);
     }
     )
-    | (s=singleStatement NEWLINE+
+    | (s=singleStatement
     { $statements.add($s.singleRet); })
     );
 
@@ -286,9 +277,12 @@ printStatement returns [PrintStmt printRet] :
     }
     RPAR;
 
-//todo????
-methodCallStmt returns [MethodCallStmt methRet]:
-    ax=accessExpression  (DOT (INITIALIZE | identifier))*
+//todo??
+methodCallStmt returns [MethodCallStmt methRet]
+    locals [Expression inst]:
+    ax=accessExpression { $inst = new Expression($inst); }
+    (DOT (INITIALIZE {$inst = new Expression(); }
+            | identifier))*
     ((l=LPAR methodArgs RPAR) | ((op = INC | op = DEC)));
 
 //todo
@@ -332,9 +326,9 @@ expression returns[Expression expRet]:
         BinaryOperator opr = BinaryOperator.assign;
         $expRet = new BinaryExpression($expRet, $ex.expRet, opr);
         $expRet.setLine($op.getLine());
-    })?;
+    })? (DOT inc=INCLUDE LPAR oe=orExpression RPAR { $expRet = new SetInclude($expRet, $oe.orExprRet); })?;
 
-//todo??
+//todo
 ternaryExpression returns [Expression ternaryExprRet]:
     oex=orExpression { $ternaryExprRet = $oex.orExprRet; }
     (q=TIF ttex=ternaryExpression TELSE ftex=ternaryExpression{
@@ -456,7 +450,7 @@ postUnaryExpression returns[Expression postUnaryExprRet]:
     )
     )?;
 
-//todo???
+//todo
 accessExpression returns[Expression accessExprRet]:
     oe=otherExpression { $accessExprRet = $oe.otherExprRet; }
     (
@@ -506,19 +500,11 @@ otherExpression returns [Expression otherExprRet]:
     { $otherExprRet = $v.valuesRet; }
     | id=identifier
     { $otherExprRet = $id.idRet; }
-    | LPAR m=methodArgs RPAR //todo???
-//    { $otherExprRet = $m.methodCallArgsRet; }
     | sn=setNew
     { $otherExprRet = $sn.setNewRet; }
-    | si=setInclude
-    { $otherExprRet = $si.setIncludeRet; }
+    | LPAR e=expression RPAR
+    { $otherExprRet = $e.expRet; }
     ;
-//    | ai=accessByIndex
-//    { $otherExprRet = $ai.accessByIndexRet; };
-
-//todo??
-//accessByIndex returns [Expression accessByIndexRet]:
-//    name=identifier LBRACK ex=expression RBRACK;
 
 //todo
 setNew returns [Expression setNewRet]
@@ -531,10 +517,6 @@ setNew returns [Expression setNewRet]
                 $setNewRet.setLine($n.getLine());
                }
                RPAR;
-
-//todo??
-setInclude returns [Expression setIncludeRet]:
-    name=identifier DOT INCLUDE LPAR orExpression RPAR;
 
 //todo
 value returns[Value valuesRet]:
@@ -584,7 +566,7 @@ identifier returns[Identifier idRet, int line]:
     }
     ;
 
-//todo???
+//todo
 type returns [Type typeRet]:
     INT
     { $typeRet = new IntType(); }
@@ -596,19 +578,20 @@ type returns [Type typeRet]:
     { $typeRet = $f.fptrTypeRet; }
     | s=set_type
     { $typeRet = $s.setTypeRet; }
-//    | cid=class_identifier ??
-//    { $typeRet = $cid.idRet; }
+    | cid=class_identifier
+    { $typeRet = new ClassType($cid.idRet); }
     ;
 
-//todo??? CHECK VOID TYPE IN METHOD CALL
+//todo
 array_type returns [ArrayType arrTypeRet]
     locals[Type t, ArrayList<Expression> dims]:
     { $dims = new ArrayList<>(); }
     (INT { $t = new IntType(); }
     | BOOL { $t = new BoolType(); }
-//    | cid=class_identifier { $t = $cid.idRet; }?
+    | cid=class_identifier { $t = new ClassType($cid.idRet); }
     )
-    (LBRACK ex=expression RBRACK { $dims.add($ex.expRet); })+;
+    (LBRACK ex=expression RBRACK { $dims.add($ex.expRet); })+
+    { $arrTypeRet = new ArrayType($t, $dims); };
 
 //todo
 fptr_type returns[FptrType fptrTypeRet]:
