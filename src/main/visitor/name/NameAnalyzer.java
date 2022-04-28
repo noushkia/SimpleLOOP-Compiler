@@ -2,119 +2,53 @@ package main.visitor.name;
 
 import main.ast.nodes.Program;
 import main.ast.nodes.declaration.classDec.ClassDeclaration;
-import main.ast.nodes.declaration.classDec.classMembersDec.ConstructorDeclaration;
-import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
-import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
-import main.ast.nodes.declaration.variableDec.VariableDeclaration;
-import main.ast.nodes.statement.*;
 import main.symbolTable.SymbolTable;
-import main.visitor.Visitor;
+import main.symbolTable.exceptions.ItemNotFoundException;
+import main.symbolTable.items.ClassSymbolTableItem;
+import main.symbolTable.utils.graph.Graph;
+import main.symbolTable.utils.graph.exceptions.GraphDoesNotContainNodeException;
+import main.symbolTable.utils.graph.exceptions.NodeAlreadyExistsException;
 
-public class NameAnalyzer extends Visitor<Void> {
-    @Override
-    public Void visit(Program program) {
-        SymbolTable root = new SymbolTable();
-        SymbolTable.root = root;
-        SymbolTable.push(root);
-        // visit classes and global variables
-        // add hierarchy
-        return null;
+public class NameAnalyzer {
+    private Program program;
+    private Graph<String> classHierarchy;
+
+    public NameAnalyzer(Program program) {
+        this.program = program;
     }
 
-    @Override
-    public Void visit(ClassDeclaration classDeclaration) {
-        if(classDeclaration.getParentClassName() != null) {
-//            if (this.classHierarchy.isSecondNodeAncestorOf(classDeclaration.getParentClassName().getName(), classDeclaration.getClassName().getName())) {
-//                ClassInCyclicInheritance exception = new ClassInCyclicInheritance(classDeclaration);
-//                classDeclaration.addError(exception);
-//            }
+    public void analyze() {
+        NameCollector nameCollector = new NameCollector();
+        this.program.accept(nameCollector);
+        this.linkParentSymbolTables();
+        NameChecker nameChecker = new NameChecker(classHierarchy);
+        this.program.accept(nameChecker);
+    }
+
+    private void linkParentSymbolTables() {
+        Graph<String> classHierarchy = new Graph<>();
+        for (ClassDeclaration classDeclaration : this.program.getClasses()) {
+            String className = classDeclaration.getClassName().getName();
+            try {
+                classHierarchy.addNode(className);
+            } catch (NodeAlreadyExistsException ignored) { }
+            if (classDeclaration.getParentClassName() == null)
+                continue;
+            String parentName = classDeclaration.getParentClassName().getName();
+            try {
+                classHierarchy.addNodeAsParentOf(className, parentName);
+                ClassSymbolTableItem parentSTI = (ClassSymbolTableItem) SymbolTable.root
+                        .getItem(ClassSymbolTableItem.START_KEY + parentName, true);
+                ClassSymbolTableItem thisClassSTI = (ClassSymbolTableItem) SymbolTable.root
+                        .getItem(ClassSymbolTableItem.START_KEY + className, true);
+                thisClassSTI.getClassSymbolTable().pre = parentSTI.getClassSymbolTable();
+            } catch (ItemNotFoundException | GraphDoesNotContainNodeException ignored) { }
         }
-        for(FieldDeclaration fieldDeclaration : classDeclaration.getFields()) {
-            fieldDeclaration.accept(this);
-        }
-        if(classDeclaration.getConstructor() != null) {
-            classDeclaration.getConstructor().accept(this);
-        }
-        for(MethodDeclaration methodDeclaration : classDeclaration.getMethods()) {
-            methodDeclaration.accept(this);
-        }
-        return null;
+        this.classHierarchy = classHierarchy;
     }
 
-    @Override
-    public Void visit(MethodDeclaration methodDeclaration) {
-        //check conflict with fields and other methods
-        // use Symbol Table
-        for (VariableDeclaration arg: methodDeclaration.getArgs())
-            arg.accept(this);
-        for (VariableDeclaration var: methodDeclaration.getLocalVars())
-            var.accept(this);
-        for (Statement statement: methodDeclaration.getBody())
-            statement.accept(this);
-        return null;
+    public Graph<String> getClassHierarchy() {
+        return classHierarchy;
     }
 
-    @Override
-    public Void visit(ConstructorDeclaration constructorDeclaration) {
-        this.visit((MethodDeclaration) constructorDeclaration);
-        return null;
-    }
-
-    @Override
-    public Void visit(FieldDeclaration fieldDeclaration) {
-        // check field conflicts
-        return null;
-    }
-
-    @Override
-    //todo: check
-    public Void visit(BlockStmt blockStmt) {
-        for (Statement stmt : blockStmt.getStatements()) {
-            stmt.accept(this);
-        }
-        return null;
-    }
-
-    @Override
-    public Void visit(ConditionalStmt conditionalStmt) {
-        SymbolTable ifScope = new SymbolTable(SymbolTable.top);
-        SymbolTable.push(ifScope);
-        conditionalStmt.getThenBody().accept(this);
-        SymbolTable.pop();
-
-        for (ElsifStmt elsifStmt: conditionalStmt.getElsif())
-            elsifStmt.accept(this);
-
-        if (conditionalStmt.getElseBody() != null) {
-            SymbolTable elseScope = new SymbolTable(SymbolTable.top);
-            SymbolTable.push(elseScope);
-            conditionalStmt.getElseBody().accept(this);
-            SymbolTable.pop();
-        }
-        return null;
-    }
-
-    @Override
-    public Void visit(ElsifStmt elsifStmt) {
-        SymbolTable elsifScope = new SymbolTable(SymbolTable.top);
-        SymbolTable.push(elsifScope);
-        elsifStmt.getThenBody().accept(this);
-        SymbolTable.pop();
-        return null;
-    }
-
-    @Override
-    public Void visit(EachStmt eachStmt) {
-        SymbolTable loopScope = new SymbolTable(SymbolTable.top);
-        SymbolTable.push(loopScope);
-        eachStmt.getBody().accept(this);
-        SymbolTable.pop();
-        return null;
-    }
-
-    @Override
-    public Void visit(VariableDeclaration variableDeclaration) {
-        //
-        return null;
-    }
 }

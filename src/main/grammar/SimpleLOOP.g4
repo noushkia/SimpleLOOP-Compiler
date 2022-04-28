@@ -34,7 +34,7 @@ program returns[Program programRet]:
     })*
     (c = classDeclaration NEWLINE+ {$programRet.addClass($c.classDeclarationRet);})*;
 
-//todo?? Check expression
+//todo
 constructor returns [ConstructorDeclaration constructorRet]
     : PUBLIC init = INITIALIZE
     { $constructorRet = new ConstructorDeclaration();
@@ -277,7 +277,7 @@ printStatement returns [PrintStmt printRet] :
     }
     RPAR;
 
-//todo??
+//todo
 methodCallStmt returns [MethodCallStmt methRet]
     locals [Expression inst]:
     ax=accessExpression { $inst = new Expression($inst); }

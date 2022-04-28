@@ -1,14 +1,18 @@
-package main.visitor.nameAnalyzer;
+package main.visitor.name;
 
 import main.ast.nodes.Program;
 import main.ast.nodes.declaration.classDec.ClassDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.ConstructorDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
-import main.compileErrorException.nameErrors.ClassInCyclicInheritance;
-import main.compileErrorException.nameErrors.FieldRedefinition;
-import main.compileErrorException.nameErrors.MethodNameConflictWithField;
-import main.compileErrorException.nameErrors.MethodRedefinition;
+import main.compileError.nameError.ClassInCyclicInheritance;
+import main.compileError.nameError.ClassRedefinition;
+import main.compileError.nameError.GlobalVarRedefinition;
+import main.compileError.nameError.LocalVarConflictWithGlobalVar;
+import main.compileError.nameError.LocalVarRedefinition;
+import main.compileError.nameError.FieldRedefinition;
+import main.compileError.nameError.MethodNameConflictWithField;
+import main.compileError.nameError.MethodRedefinition;
 import main.symbolTable.SymbolTable;
 import main.symbolTable.exceptions.ItemNotFoundException;
 import main.symbolTable.items.ClassSymbolTableItem;
@@ -50,7 +54,7 @@ public class NameChecker extends Visitor<Void> {
     public Void visit(ClassDeclaration classDeclaration) {
         if(classDeclaration.getParentClassName() != null) {
             if (this.classHierarchy.isSecondNodeAncestorOf(classDeclaration.getParentClassName().getName(), classDeclaration.getClassName().getName())) {
-                ClassInCyclicInheritance exception = new ClassInCyclicInheritance(classDeclaration);
+                ClassInCyclicInheritance exception = new ClassInCyclicInheritance(classDeclaration.getLine(), classDeclaration.toString());
                 classDeclaration.addError(exception);
             }
         }
@@ -78,7 +82,7 @@ public class NameChecker extends Visitor<Void> {
             try {
                 SymbolTable classSymbolTable = this.getCurrentClassSymbolTable();
                 classSymbolTable.getItem(MethodSymbolTableItem.START_KEY + methodDeclaration.getMethodName().getName(), false);
-                MethodRedefinition exception = new MethodRedefinition(methodDeclaration);
+                MethodRedefinition exception = new MethodRedefinition(methodDeclaration.getLine(), methodDeclaration.toString());
                 methodDeclaration.addError(exception);
             } catch (ItemNotFoundException ignored) {
             }
@@ -87,7 +91,7 @@ public class NameChecker extends Visitor<Void> {
         try {
             SymbolTable classSymbolTable = this.getCurrentClassSymbolTable();
             classSymbolTable.getItem(FieldSymbolTableItem.START_KEY + methodDeclaration.getMethodName().getName(), true);
-            MethodNameConflictWithField exception = new MethodNameConflictWithField(methodDeclaration);
+            MethodNameConflictWithField exception = new MethodNameConflictWithField(methodDeclaration.getLine(), methodDeclaration.toString());
             methodDeclaration.addError(exception);
             errored = true;
         } catch (ItemNotFoundException ignored) {
@@ -100,7 +104,7 @@ public class NameChecker extends Visitor<Void> {
                         ClassSymbolTableItem childSymbolTableItem = (ClassSymbolTableItem) SymbolTable.root.getItem(ClassSymbolTableItem.START_KEY + childName, true);
                         SymbolTable childSymbolTable = childSymbolTableItem.getClassSymbolTable();
                         childSymbolTable.getItem(FieldSymbolTableItem.START_KEY + methodDeclaration.getMethodName().getName(), true);
-                        MethodNameConflictWithField exception = new MethodNameConflictWithField(methodDeclaration);
+                        MethodNameConflictWithField exception = new MethodNameConflictWithField(methodDeclaration.getLine(), methodDeclaration.toString());
                         methodDeclaration.addError(exception);
                         break;
                     } catch (ItemNotFoundException ignored) {
@@ -116,7 +120,7 @@ public class NameChecker extends Visitor<Void> {
             try {
                 SymbolTable classSymbolTable = this.getCurrentClassSymbolTable();
                 classSymbolTable.getItem(FieldSymbolTableItem.START_KEY + fieldDeclaration.getVarDeclaration().getVarName().getName(), false);
-                FieldRedefinition exception = new FieldRedefinition(fieldDeclaration);
+                FieldRedefinition exception = new FieldRedefinition(fieldDeclaration.getLine(), fieldDeclaration.toString());
                 fieldDeclaration.addError(exception);
             } catch (ItemNotFoundException ignored) {
             }

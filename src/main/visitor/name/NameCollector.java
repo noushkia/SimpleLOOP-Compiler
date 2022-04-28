@@ -1,15 +1,19 @@
-package main.visitor.nameAnalyzer;
+package main.visitor.name;
 
 import main.ast.nodes.Program;
 import main.ast.nodes.declaration.classDec.ClassDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.ConstructorDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
-import main.ast.nodes.declaration.variableDec.VarDeclaration;
-import main.compileErrorException.nameErrors.ClassRedefinition;
-import main.compileErrorException.nameErrors.FieldRedefinition;
-import main.compileErrorException.nameErrors.LocalVarRedefinition;
-import main.compileErrorException.nameErrors.MethodRedefinition;
+import main.ast.nodes.declaration.variableDec.VariableDeclaration;
+import main.compileError.nameError.ClassInCyclicInheritance;
+import main.compileError.nameError.ClassRedefinition;
+import main.compileError.nameError.GlobalVarRedefinition;
+import main.compileError.nameError.LocalVarConflictWithGlobalVar;
+import main.compileError.nameError.LocalVarRedefinition;
+import main.compileError.nameError.FieldRedefinition;
+import main.compileError.nameError.MethodNameConflictWithField;
+import main.compileError.nameError.MethodRedefinition;
 import main.symbolTable.SymbolTable;
 import main.symbolTable.exceptions.ItemAlreadyExistsException;
 import main.symbolTable.items.ClassSymbolTableItem;
@@ -38,9 +42,9 @@ public class NameCollector extends Visitor<Void> {
         try {
             SymbolTable.root.put(classSymbolTableItem);
         } catch (ItemAlreadyExistsException e) {
-            ClassRedefinition exception = new ClassRedefinition(classDeclaration);
+            ClassRedefinition exception = new ClassRedefinition(classDeclaration.getLine(), classDeclaration.toString());
             classDeclaration.addError(exception);
-            exception.handleException();
+//            exception.handleException();
         }
         for(FieldDeclaration fieldDeclaration : classDeclaration.getFields()) {
             fieldDeclaration.accept(this);
@@ -69,14 +73,14 @@ public class NameCollector extends Visitor<Void> {
         try {
             SymbolTable.top.put(methodSymbolTableItem);
         } catch (ItemAlreadyExistsException e) {
-            MethodRedefinition exception = new MethodRedefinition(methodDeclaration);
+            MethodRedefinition exception = new MethodRedefinition(methodDeclaration.getLine(), methodDeclaration.toString());
             methodDeclaration.addError(exception);
         }
         SymbolTable.push(methodSymbolTable);
-        for(VarDeclaration varDeclaration : methodDeclaration.getArgs()) {
+        for(VariableDeclaration varDeclaration : methodDeclaration.getArgs()) {
             varDeclaration.accept(this);
         }
-        for(VarDeclaration varDeclaration : methodDeclaration.getLocalVars()) {
+        for(VariableDeclaration varDeclaration : methodDeclaration.getLocalVars()) {
             varDeclaration.accept(this);
         }
         SymbolTable.pop();
@@ -88,18 +92,18 @@ public class NameCollector extends Visitor<Void> {
         try {
             SymbolTable.top.put(new FieldSymbolTableItem(fieldDeclaration));
         } catch (ItemAlreadyExistsException e) {
-            FieldRedefinition exception = new FieldRedefinition(fieldDeclaration);
+            FieldRedefinition exception = new FieldRedefinition(fieldDeclaration.getLine(), fieldDeclaration.toString());
             fieldDeclaration.addError(exception);
         }
         return null;
     }
 
     @Override
-    public Void visit(VarDeclaration varDeclaration) {
+    public Void visit(VariableDeclaration varDeclaration) {
         try {
             SymbolTable.top.put(new LocalVariableSymbolTableItem(varDeclaration));
         } catch (ItemAlreadyExistsException e) {
-            LocalVarRedefinition exception = new LocalVarRedefinition(varDeclaration);
+            LocalVarRedefinition exception = new LocalVarRedefinition(varDeclaration.getLine(), varDeclaration.toString());
             varDeclaration.addError(exception);
         }
         return null;
