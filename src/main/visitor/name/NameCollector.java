@@ -6,6 +6,7 @@ import main.ast.nodes.declaration.classDec.classMembersDec.ConstructorDeclaratio
 import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
 import main.ast.nodes.declaration.variableDec.VariableDeclaration;
+import main.ast.nodes.expression.Identifier;
 import main.compileError.nameError.ClassInCyclicInheritance;
 import main.compileError.nameError.ClassRedefinition;
 import main.compileError.nameError.GlobalVarRedefinition;
@@ -24,10 +25,15 @@ import main.visitor.Visitor;
 
 public class NameCollector extends Visitor<Void> {
 
+    private int newId = 1;
+
     @Override
     public Void visit(Program program) {
         SymbolTable.push(new SymbolTable());
         SymbolTable.root = SymbolTable.top;
+        for (VariableDeclaration variableDeclaration : program.getGlobalVariables())
+            variableDeclaration.accept(this);
+
         for(ClassDeclaration classDeclaration : program.getClasses()) {
             classDeclaration.accept(this);
         }
@@ -44,6 +50,15 @@ public class NameCollector extends Visitor<Void> {
         } catch (ItemAlreadyExistsException e) {
             ClassRedefinition exception = new ClassRedefinition(classDeclaration.getLine(), classDeclaration.toString());
             classDeclaration.addError(exception);
+            String newName = newId + "@";
+            newId += 1;
+            classDeclaration.setClassName(new Identifier(newName));
+            try {
+                ClassSymbolTableItem newClassSym = new ClassSymbolTableItem(classDeclaration);
+                newClassSym.setClassSymbolTable(SymbolTable.top);
+                SymbolTable.root.put(newClassSym);
+            } catch (ItemAlreadyExistsException e1) { //Unreachable
+            }
 //            exception.handleException();
         }
         for(FieldDeclaration fieldDeclaration : classDeclaration.getFields()) {

@@ -62,28 +62,28 @@ classDeclaration returns [ ClassDeclaration classDeclarationRet]
     NEWLINE* ((LBRACE NEWLINE+ (mf=field_decleration
                                  {
                                      for (Declaration field : $sf.decRet) {
-                                         if (field instanceof VariableDeclaration)
-                                             $classDeclarationRet.addField(field);
+                                         if (field instanceof FieldDeclaration)
+                                             $classDeclarationRet.addField((FieldDeclaration) field);
                                          else if (field instanceof MethodDeclaration) {
-                                             $classDeclarationRet.addMethod(field);
+                                             $classDeclarationRet.addMethod((MethodDeclaration) field);
                                          }
                                          else if (field instanceof ConstructorDeclaration){
-                                            $classDeclarationRet.setConstructor(field);
+                                            $classDeclarationRet.setConstructor((ConstructorDeclaration) field);
                                          }
                                      }
                                  } NEWLINE+)+ RBRACE)
     | (sf=field_decleration
         {
             for (Declaration field : $sf.decRet) {
-                if (field instanceof VariableDeclaration)
-                    $classDeclarationRet.addField(field);
-                else if (field instanceof MethodDeclaration) {
-                     $classDeclarationRet.addMethod(field);
-                }
-                else if (field instanceof ConstructorDeclaration){
-                   $classDeclarationRet.setConstructor(field);
-                }
-            }
+             if (field instanceof FieldDeclaration)
+                 $classDeclarationRet.addField((FieldDeclaration) field);
+             else if (field instanceof MethodDeclaration) {
+                 $classDeclarationRet.addMethod((MethodDeclaration) field);
+             }
+             else if (field instanceof ConstructorDeclaration){
+                $classDeclarationRet.setConstructor((ConstructorDeclaration) field);
+             }
+}
         }));
 
 //todo
@@ -101,11 +101,11 @@ field_decleration returns [ArrayList<Declaration> decRet]:
        {
             var newMethod = $m.methodDecRet;
             newMethod.setPrivate($access.toString() == "public" ? false : true);
-            decRet.add(newMethod);
+            $decRet.add(newMethod);
        }))
        | c=constructor
        {
-           decRet.add($c.constructorRet);
+           $decRet.add($c.constructorRet);
         })
     );
 
@@ -295,11 +295,15 @@ printStatement returns [PrintStmt printRet] :
 
 //todo
 methodCallStmt returns [MethodCallStmt methRet]
-    locals [Expression inst]:
-    ax=accessExpression { $inst = new Expression($inst); }
-    (DOT (INITIALIZE {$inst = new Expression(); }
-            | identifier))*
-    ((l=LPAR methodArgs RPAR) | ((op = INC | op = DEC)));
+    locals [Expression inst, MethodCall methCallExpr]:
+    ax=accessExpression { $inst = $ax.accessExprRet; }
+    (DOT (init=INITIALIZE {$inst = new ObjectMemberAccess($inst, new Identifier($init.toString())); }
+            | id=identifier {$inst = new ObjectMemberAccess($inst, new Identifier($id.idRet.toString())); }))*
+    (l=LPAR args=methodArgs {$methCallExpr = new MethodCall($inst, $args.methodCallArgsRet); } RPAR)
+    {
+        $methRet = new MethodCallStmt($methCallExpr);
+        $methRet.setLine($l.getLine());
+    };
 
 //todo
 returnStatement returns [ReturnStmt returnRet]:
@@ -309,11 +313,11 @@ returnStatement returns [ReturnStmt returnRet]:
 
 //todo
 assignmentStatement returns [AssignmentStmt assignRet]:
-    e=orExpression a=ASSIGN ex=expression
+    e=orExpression ((a=ASSIGN ex=expression
     {
         $assignRet = new AssignmentStmt($e.orExprRet, $ex.expRet);
         $assignRet.setLine($a.getLine());
-    };
+    }) );
 
 //todo
 loopStatement returns [EachStmt loopRet]
