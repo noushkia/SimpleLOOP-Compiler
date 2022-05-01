@@ -28,9 +28,11 @@ public class ASTTreePrinter extends Visitor<Void> {
             classDeclaration.accept(this);
         return null;
     }
+
     @Override
     public Void visit(ClassDeclaration classDeclaration) {
         messagePrinter(classDeclaration.getLine(), classDeclaration.toString());
+        classDeclaration.getClassName().accept(this);
         for (FieldDeclaration fieldDeclaration : classDeclaration.getFields())
             fieldDeclaration.accept(this);
         if (classDeclaration.getConstructor() != null)
@@ -43,6 +45,7 @@ public class ASTTreePrinter extends Visitor<Void> {
     @Override
     public Void visit(ConstructorDeclaration constructorDeclaration) {
         messagePrinter(constructorDeclaration.getLine(), constructorDeclaration.toString());
+        constructorDeclaration.getMethodName().accept(this);
         for (VariableDeclaration variableDeclaration : constructorDeclaration.getArgs())
             variableDeclaration.accept(this);
         for (VariableDeclaration variableDeclaration : constructorDeclaration.getLocalVars())
@@ -55,6 +58,7 @@ public class ASTTreePrinter extends Visitor<Void> {
     @Override
     public Void visit(MethodDeclaration methodDeclaration) {
         messagePrinter(methodDeclaration.getLine(), methodDeclaration.toString());
+        methodDeclaration.getMethodName().accept(this);
         for (VariableDeclaration variableDeclaration : methodDeclaration.getArgs())
             variableDeclaration.accept(this);
         for (VariableDeclaration variableDeclaration : methodDeclaration.getLocalVars())
@@ -74,6 +78,7 @@ public class ASTTreePrinter extends Visitor<Void> {
     @Override
     public Void visit(VariableDeclaration varDeclaration) {
         messagePrinter(varDeclaration.getLine(), varDeclaration.toString());
+        varDeclaration.getVarName().accept(this);
         return null;
     }
 
