@@ -61,7 +61,7 @@ classDeclaration returns [ ClassDeclaration classDeclarationRet]
     )?
     NEWLINE* ((LBRACE NEWLINE+ (mf=field_decleration
                                  {
-                                     for (Declaration field : $sf.decRet) {
+                                     for (Declaration field : $mf.decRet) {
                                          if (field instanceof FieldDeclaration)
                                              $classDeclarationRet.addField((FieldDeclaration) field);
                                          else if (field instanceof MethodDeclaration) {
@@ -94,6 +94,7 @@ field_decleration returns [ArrayList<Declaration> decRet]:
        {
             for (VariableDeclaration varDec: $v.varDecStmtRet) {
                 var newField = new FieldDeclaration(varDec, $access.toString() == "public" ? true : false );
+                newField.setLine(varDec.getLine());
                 $decRet.add(newField);
             }
        }
@@ -170,7 +171,8 @@ methodArgsDec returns [ArrayList<VariableDeclaration> argsRet]
 argDec returns [VariableDeclaration arg]
     : typ=type
      name=identifier
-     { $arg = new VariableDeclaration($name.idRet, $typ.typeRet); };
+     { $arg = new VariableDeclaration($name.idRet, $typ.typeRet);
+       $arg.setLine($name.idRet.getLine()); };
 
 //todo
 methodArgs returns [ArrayList<Expression> methodCallArgsRet]
@@ -254,9 +256,15 @@ varDecStatement returns [ArrayList<VariableDeclaration> varDecStmtRet]:
     t=type name=identifier
     {
      $varDecStmtRet = new ArrayList<>();
-     $varDecStmtRet.add(new VariableDeclaration($name.idRet, $t.typeRet));
+     var newDec = new VariableDeclaration($name.idRet, $t.typeRet);
+     newDec.setLine($name.idRet.getLine());
+     $varDecStmtRet.add(newDec);
     }
-    (COMMA n=identifier { $varDecStmtRet.add(new VariableDeclaration($n.idRet, $t.typeRet));})*;
+    (COMMA n=identifier {
+                            var extraDec = new VariableDeclaration($n.idRet, $t.typeRet);
+                            extraDec.setLine($n.idRet.getLine());
+                            $varDecStmtRet.add(extraDec);
+                        })*;
 
 //todo
 ifStatement returns [ConditionalStmt ifRet]:
@@ -299,7 +307,8 @@ methodCallStmt returns [MethodCallStmt methRet]
     ax=accessExpression { $inst = $ax.accessExprRet; }
     (DOT (init=INITIALIZE {$inst = new ObjectMemberAccess($inst, new Identifier($init.toString())); }
             | id=identifier {$inst = new ObjectMemberAccess($inst, new Identifier($id.idRet.toString())); }))*
-    (l=LPAR args=methodArgs {$methCallExpr = new MethodCall($inst, $args.methodCallArgsRet); } RPAR)
+    (l=LPAR args=methodArgs {$methCallExpr = new MethodCall($inst, $args.methodCallArgsRet);
+                             $methCallExpr.setLine($l.getLine());} RPAR)
     {
         $methRet = new MethodCallStmt($methCallExpr);
         $methRet.setLine($l.getLine());
@@ -487,13 +496,17 @@ accessExpression returns[Expression accessExprRet]:
             }
         | n=NEW
             {
-                $accessExprRet = new ObjectMemberAccess($accessExprRet, new Identifier($n.toString()));
-                $accessExprRet.setLine($n.line);
+                var newId = new Identifier("new");
+                newId.setLine($n.getLine());
+                $accessExprRet = new ObjectMemberAccess($accessExprRet, newId);
+                $accessExprRet.setLine($n.getLine());
             }
         | i=INITIALIZE
             {
-                $accessExprRet = new ObjectMemberAccess($accessExprRet, new Identifier($i.toString()));
-                $accessExprRet.setLine($i.line);
+                var newInit = new Identifier("initialize");
+                newInit.setLine($n.getLine());
+                $accessExprRet = new ObjectMemberAccess($accessExprRet, newInit);
+                $accessExprRet.setLine($i.getLine());
             }
        ))
     )*
@@ -514,7 +527,12 @@ accessExpression returns[Expression accessExprRet]:
 
 //todo
 otherExpression returns [Expression otherExprRet]:
-    cid=class_identifier
+    s=SELF
+    {
+        $otherExprRet = new SelfClass();
+        $otherExprRet.setLine($s.getLine());
+    }
+    | cid=class_identifier
     { $otherExprRet = $cid.idRet; }
     | v=value
     { $otherExprRet = $v.valuesRet; }

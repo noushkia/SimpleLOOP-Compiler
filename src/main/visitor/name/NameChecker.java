@@ -6,10 +6,6 @@ import main.ast.nodes.declaration.classDec.classMembersDec.ConstructorDeclaratio
 import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
 import main.compileError.nameError.ClassInCyclicInheritance;
-import main.compileError.nameError.ClassRedefinition;
-import main.compileError.nameError.GlobalVarRedefinition;
-import main.compileError.nameError.LocalVarConflictWithGlobalVar;
-import main.compileError.nameError.LocalVarRedefinition;
 import main.compileError.nameError.FieldRedefinition;
 import main.compileError.nameError.MethodNameConflictWithField;
 import main.compileError.nameError.MethodRedefinition;

@@ -580,7 +580,7 @@ public class SimpleLOOPParser extends Parser {
 					setState(172);
 					((ClassDeclarationContext)_localctx).mf = field_decleration();
 
-					                                     for (Declaration field : ((ClassDeclarationContext)_localctx).sf.decRet) {
+					                                     for (Declaration field : ((ClassDeclarationContext)_localctx).mf.decRet) {
 					                                         if (field instanceof FieldDeclaration)
 					                                             _localctx.classDeclarationRet.addField((FieldDeclaration) field);
 					                                         else if (field instanceof MethodDeclaration) {
@@ -725,6 +725,7 @@ public class SimpleLOOPParser extends Parser {
 
 					            for (VariableDeclaration varDec: ((Field_declerationContext)_localctx).v.varDecStmtRet) {
 					                var newField = new FieldDeclaration(varDec, ((Field_declerationContext)_localctx).access.toString() == "public" ? true : false );
+					                newField.setLine(varDec.getLine());
 					                _localctx.decRet.add(newField);
 					            }
 					       
@@ -995,7 +996,7 @@ public class SimpleLOOPParser extends Parser {
 				setState(253);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RETURN) | (1L << PRINT) | (1L << IF) | (1L << MINUS) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << SET) | (1L << LPAR) | (1L << INT_VALUE) | (1L << IDENTIFIER) | (1L << CLASS_IDENTIFIER))) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << SELF) | (1L << RETURN) | (1L << PRINT) | (1L << IF) | (1L << MINUS) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << SET) | (1L << LPAR) | (1L << INT_VALUE) | (1L << IDENTIFIER) | (1L << CLASS_IDENTIFIER))) != 0)) {
 					{
 					{
 					setState(243);
@@ -1026,6 +1027,7 @@ public class SimpleLOOPParser extends Parser {
 				}
 				}
 				break;
+			case SELF:
 			case RETURN:
 			case PRINT:
 			case IF:
@@ -1266,7 +1268,8 @@ public class SimpleLOOPParser extends Parser {
 			((ArgDecContext)_localctx).typ = type();
 			setState(300);
 			((ArgDecContext)_localctx).name = identifier();
-			 ((ArgDecContext)_localctx).arg =  new VariableDeclaration(((ArgDecContext)_localctx).name.idRet, ((ArgDecContext)_localctx).typ.typeRet); 
+			 ((ArgDecContext)_localctx).arg =  new VariableDeclaration(((ArgDecContext)_localctx).name.idRet, ((ArgDecContext)_localctx).typ.typeRet);
+			       _localctx.arg.setLine(((ArgDecContext)_localctx).name.idRet.getLine()); 
 			}
 		}
 		catch (RecognitionException re) {
@@ -1324,7 +1327,7 @@ public class SimpleLOOPParser extends Parser {
 			setState(315);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MINUS) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << SET) | (1L << LPAR) | (1L << INT_VALUE) | (1L << IDENTIFIER) | (1L << CLASS_IDENTIFIER))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << SELF) | (1L << MINUS) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << SET) | (1L << LPAR) | (1L << INT_VALUE) | (1L << IDENTIFIER) | (1L << CLASS_IDENTIFIER))) != 0)) {
 				{
 				setState(304);
 				((MethodArgsContext)_localctx).e1 = expression();
@@ -1514,7 +1517,7 @@ public class SimpleLOOPParser extends Parser {
 			setState(346);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RETURN) | (1L << PRINT) | (1L << IF) | (1L << MINUS) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << SET) | (1L << LPAR) | (1L << INT_VALUE) | (1L << IDENTIFIER) | (1L << CLASS_IDENTIFIER))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << SELF) | (1L << RETURN) | (1L << PRINT) | (1L << IF) | (1L << MINUS) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << SET) | (1L << LPAR) | (1L << INT_VALUE) | (1L << IDENTIFIER) | (1L << CLASS_IDENTIFIER))) != 0)) {
 				{
 				{
 				setState(337);
@@ -1991,7 +1994,9 @@ public class SimpleLOOPParser extends Parser {
 			((VarDecStatementContext)_localctx).name = identifier();
 
 			     ((VarDecStatementContext)_localctx).varDecStmtRet =  new ArrayList<>();
-			     _localctx.varDecStmtRet.add(new VariableDeclaration(((VarDecStatementContext)_localctx).name.idRet, ((VarDecStatementContext)_localctx).t.typeRet));
+			     var newDec = new VariableDeclaration(((VarDecStatementContext)_localctx).name.idRet, ((VarDecStatementContext)_localctx).t.typeRet);
+			     newDec.setLine(((VarDecStatementContext)_localctx).name.idRet.getLine());
+			     _localctx.varDecStmtRet.add(newDec);
 			    
 			setState(423);
 			_errHandler.sync(this);
@@ -2003,7 +2008,11 @@ public class SimpleLOOPParser extends Parser {
 				match(COMMA);
 				setState(418);
 				((VarDecStatementContext)_localctx).n = identifier();
-				 _localctx.varDecStmtRet.add(new VariableDeclaration(((VarDecStatementContext)_localctx).n.idRet, ((VarDecStatementContext)_localctx).t.typeRet));
+
+				                            var extraDec = new VariableDeclaration(((VarDecStatementContext)_localctx).n.idRet, ((VarDecStatementContext)_localctx).t.typeRet);
+				                            extraDec.setLine(((VarDecStatementContext)_localctx).n.idRet.getLine());
+				                            _localctx.varDecStmtRet.add(extraDec);
+				                        
 				}
 				}
 				setState(425);
@@ -2501,7 +2510,8 @@ public class SimpleLOOPParser extends Parser {
 			((MethodCallStmtContext)_localctx).l = match(LPAR);
 			setState(496);
 			((MethodCallStmtContext)_localctx).args = methodArgs();
-			((MethodCallStmtContext)_localctx).methCallExpr =  new MethodCall(_localctx.inst, ((MethodCallStmtContext)_localctx).args.methodCallArgsRet); 
+			((MethodCallStmtContext)_localctx).methCallExpr =  new MethodCall(_localctx.inst, ((MethodCallStmtContext)_localctx).args.methodCallArgsRet);
+			                             _localctx.methCallExpr.setLine(((MethodCallStmtContext)_localctx).l.getLine());
 			setState(498);
 			match(RPAR);
 			}
@@ -2563,7 +2573,7 @@ public class SimpleLOOPParser extends Parser {
 			setState(507);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MINUS) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << SET) | (1L << LPAR) | (1L << INT_VALUE) | (1L << IDENTIFIER) | (1L << CLASS_IDENTIFIER))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << SELF) | (1L << MINUS) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << SET) | (1L << LPAR) | (1L << INT_VALUE) | (1L << IDENTIFIER) | (1L << CLASS_IDENTIFIER))) != 0)) {
 				{
 				setState(504);
 				((ReturnStatementContext)_localctx).e = expression();
@@ -3572,6 +3582,7 @@ public class SimpleLOOPParser extends Parser {
 				}
 				}
 				break;
+			case SELF:
 			case TRUE:
 			case FALSE:
 			case SET:
@@ -3824,8 +3835,10 @@ public class SimpleLOOPParser extends Parser {
 							setState(679);
 							((AccessExpressionContext)_localctx).n = match(NEW);
 
-							                ((AccessExpressionContext)_localctx).accessExprRet =  new ObjectMemberAccess(_localctx.accessExprRet, new Identifier(((AccessExpressionContext)_localctx).n.toString()));
-							                _localctx.accessExprRet.setLine((((AccessExpressionContext)_localctx).n!=null?((AccessExpressionContext)_localctx).n.getLine():0));
+							                var newId = new Identifier("new");
+							                newId.setLine(((AccessExpressionContext)_localctx).n.getLine());
+							                ((AccessExpressionContext)_localctx).accessExprRet =  new ObjectMemberAccess(_localctx.accessExprRet, newId);
+							                _localctx.accessExprRet.setLine(((AccessExpressionContext)_localctx).n.getLine());
 							            
 							}
 							break;
@@ -3834,8 +3847,10 @@ public class SimpleLOOPParser extends Parser {
 							setState(681);
 							((AccessExpressionContext)_localctx).i = match(INITIALIZE);
 
-							                ((AccessExpressionContext)_localctx).accessExprRet =  new ObjectMemberAccess(_localctx.accessExprRet, new Identifier(((AccessExpressionContext)_localctx).i.toString()));
-							                _localctx.accessExprRet.setLine((((AccessExpressionContext)_localctx).i!=null?((AccessExpressionContext)_localctx).i.getLine():0));
+							                var newInit = new Identifier("initialize");
+							                newInit.setLine(((AccessExpressionContext)_localctx).n.getLine());
+							                ((AccessExpressionContext)_localctx).accessExprRet =  new ObjectMemberAccess(_localctx.accessExprRet, newInit);
+							                _localctx.accessExprRet.setLine(((AccessExpressionContext)_localctx).i.getLine());
 							            
 							}
 							break;
@@ -3919,11 +3934,13 @@ public class SimpleLOOPParser extends Parser {
 
 	public static class OtherExpressionContext extends ParserRuleContext {
 		public Expression otherExprRet;
+		public Token s;
 		public Class_identifierContext cid;
 		public ValueContext v;
 		public IdentifierContext id;
 		public SetNewContext sn;
 		public ExpressionContext e;
+		public TerminalNode SELF() { return getToken(SimpleLOOPParser.SELF, 0); }
 		public Class_identifierContext class_identifier() {
 			return getRuleContext(Class_identifierContext.class,0);
 		}
@@ -3964,13 +3981,24 @@ public class SimpleLOOPParser extends Parser {
 		OtherExpressionContext _localctx = new OtherExpressionContext(_ctx, getState());
 		enterRule(_localctx, 74, RULE_otherExpression);
 		try {
-			setState(721);
+			setState(723);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case CLASS_IDENTIFIER:
+			case SELF:
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(704);
+				((OtherExpressionContext)_localctx).s = match(SELF);
+
+				        ((OtherExpressionContext)_localctx).otherExprRet =  new SelfClass();
+				        _localctx.otherExprRet.setLine(((OtherExpressionContext)_localctx).s.getLine());
+				    
+				}
+				break;
+			case CLASS_IDENTIFIER:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(706);
 				((OtherExpressionContext)_localctx).cid = class_identifier();
 				 ((OtherExpressionContext)_localctx).otherExprRet =  ((OtherExpressionContext)_localctx).cid.idRet; 
 				}
@@ -3978,37 +4006,37 @@ public class SimpleLOOPParser extends Parser {
 			case TRUE:
 			case FALSE:
 			case INT_VALUE:
-				enterOuterAlt(_localctx, 2);
+				enterOuterAlt(_localctx, 3);
 				{
-				setState(707);
+				setState(709);
 				((OtherExpressionContext)_localctx).v = value();
 				 ((OtherExpressionContext)_localctx).otherExprRet =  ((OtherExpressionContext)_localctx).v.valuesRet; 
 				}
 				break;
 			case IDENTIFIER:
-				enterOuterAlt(_localctx, 3);
+				enterOuterAlt(_localctx, 4);
 				{
-				setState(710);
+				setState(712);
 				((OtherExpressionContext)_localctx).id = identifier();
 				 ((OtherExpressionContext)_localctx).otherExprRet =  ((OtherExpressionContext)_localctx).id.idRet; 
 				}
 				break;
 			case SET:
-				enterOuterAlt(_localctx, 4);
+				enterOuterAlt(_localctx, 5);
 				{
-				setState(713);
+				setState(715);
 				((OtherExpressionContext)_localctx).sn = setNew();
 				 ((OtherExpressionContext)_localctx).otherExprRet =  ((OtherExpressionContext)_localctx).sn.setNewRet; 
 				}
 				break;
 			case LPAR:
-				enterOuterAlt(_localctx, 5);
+				enterOuterAlt(_localctx, 6);
 				{
-				setState(716);
-				match(LPAR);
-				setState(717);
-				((OtherExpressionContext)_localctx).e = expression();
 				setState(718);
+				match(LPAR);
+				setState(719);
+				((OtherExpressionContext)_localctx).e = expression();
+				setState(720);
 				match(RPAR);
 				 ((OtherExpressionContext)_localctx).otherExprRet =  ((OtherExpressionContext)_localctx).e.expRet; 
 				}
@@ -4082,42 +4110,42 @@ public class SimpleLOOPParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			 ((SetNewContext)_localctx).args =  new ArrayList<>();
-			setState(724);
-			match(SET);
-			setState(725);
-			match(DOT);
 			setState(726);
-			((SetNewContext)_localctx).n = match(NEW);
+			match(SET);
 			setState(727);
+			match(DOT);
+			setState(728);
+			((SetNewContext)_localctx).n = match(NEW);
+			setState(729);
 			match(LPAR);
-			setState(742);
+			setState(744);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==LPAR) {
 				{
-				setState(728);
+				setState(730);
 				match(LPAR);
-				setState(729);
+				setState(731);
 				((SetNewContext)_localctx).oe = orExpression();
 				 _localctx.args.add(((SetNewContext)_localctx).oe.orExprRet);
-				setState(737);
+				setState(739);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==COMMA) {
 					{
 					{
-					setState(731);
+					setState(733);
 					match(COMMA);
-					setState(732);
+					setState(734);
 					((SetNewContext)_localctx).oex = orExpression();
 					 _localctx.args.add(((SetNewContext)_localctx).oex.orExprRet);
 					}
 					}
-					setState(739);
+					setState(741);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(740);
+				setState(742);
 				match(RPAR);
 				}
 			}
@@ -4126,7 +4154,7 @@ public class SimpleLOOPParser extends Parser {
 			                ((SetNewContext)_localctx).setNewRet =  new SetNew(_localctx.args);
 			                _localctx.setNewRet.setLine(((SetNewContext)_localctx).n.getLine());
 			               
-			setState(745);
+			setState(747);
 			match(RPAR);
 			}
 		}
@@ -4172,14 +4200,14 @@ public class SimpleLOOPParser extends Parser {
 		ValueContext _localctx = new ValueContext(_ctx, getState());
 		enterRule(_localctx, 78, RULE_value);
 		try {
-			setState(752);
+			setState(754);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case TRUE:
 			case FALSE:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(747);
+				setState(749);
 				((ValueContext)_localctx).b = boolValue();
 
 				        ((ValueContext)_localctx).valuesRet =  new BoolValue(((ValueContext)_localctx).b.boolValueRet);
@@ -4190,7 +4218,7 @@ public class SimpleLOOPParser extends Parser {
 			case INT_VALUE:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(750);
+				setState(752);
 				((ValueContext)_localctx).i = match(INT_VALUE);
 
 				        ((ValueContext)_localctx).valuesRet =  new IntValue((((ValueContext)_localctx).i!=null?Integer.valueOf(((ValueContext)_localctx).i.getText()):0));
@@ -4243,13 +4271,13 @@ public class SimpleLOOPParser extends Parser {
 		BoolValueContext _localctx = new BoolValueContext(_ctx, getState());
 		enterRule(_localctx, 80, RULE_boolValue);
 		try {
-			setState(758);
+			setState(760);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case TRUE:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(754);
+				setState(756);
 				((BoolValueContext)_localctx).t = match(TRUE);
 
 				        ((BoolValueContext)_localctx).boolValueRet =  true;
@@ -4260,7 +4288,7 @@ public class SimpleLOOPParser extends Parser {
 			case FALSE:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(756);
+				setState(758);
 				((BoolValueContext)_localctx).f = match(FALSE);
 
 				        ((BoolValueContext)_localctx).boolValueRet =  false;
@@ -4313,7 +4341,7 @@ public class SimpleLOOPParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(760);
+			setState(762);
 			((Class_identifierContext)_localctx).cid = match(CLASS_IDENTIFIER);
 
 			        ((Class_identifierContext)_localctx).idRet =  new Identifier((((Class_identifierContext)_localctx).cid!=null?((Class_identifierContext)_localctx).cid.getText():null));
@@ -4363,7 +4391,7 @@ public class SimpleLOOPParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(763);
+			setState(765);
 			((IdentifierContext)_localctx).id = match(IDENTIFIER);
 
 			        ((IdentifierContext)_localctx).idRet =  new Identifier((((IdentifierContext)_localctx).id!=null?((IdentifierContext)_localctx).id.getText():null));
@@ -4426,13 +4454,13 @@ public class SimpleLOOPParser extends Parser {
 		TypeContext _localctx = new TypeContext(_ctx, getState());
 		enterRule(_localctx, 86, RULE_type);
 		try {
-			setState(782);
+			setState(784);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,73,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(766);
+				setState(768);
 				match(INT);
 				 ((TypeContext)_localctx).typeRet =  new IntType(); 
 				}
@@ -4440,7 +4468,7 @@ public class SimpleLOOPParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(768);
+				setState(770);
 				match(BOOL);
 				 ((TypeContext)_localctx).typeRet =  new BoolType(); 
 				}
@@ -4448,7 +4476,7 @@ public class SimpleLOOPParser extends Parser {
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(770);
+				setState(772);
 				((TypeContext)_localctx).arr = array_type();
 				 ((TypeContext)_localctx).typeRet =  ((TypeContext)_localctx).arr.arrTypeRet; 
 				}
@@ -4456,7 +4484,7 @@ public class SimpleLOOPParser extends Parser {
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(773);
+				setState(775);
 				((TypeContext)_localctx).f = fptr_type();
 				 ((TypeContext)_localctx).typeRet =  ((TypeContext)_localctx).f.fptrTypeRet; 
 				}
@@ -4464,7 +4492,7 @@ public class SimpleLOOPParser extends Parser {
 			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(776);
+				setState(778);
 				((TypeContext)_localctx).s = set_type();
 				 ((TypeContext)_localctx).typeRet =  ((TypeContext)_localctx).s.setTypeRet; 
 				}
@@ -4472,7 +4500,7 @@ public class SimpleLOOPParser extends Parser {
 			case 6:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(779);
+				setState(781);
 				((TypeContext)_localctx).cid = class_identifier();
 				 ((TypeContext)_localctx).typeRet =  new ClassType(((TypeContext)_localctx).cid.idRet); 
 				}
@@ -4542,26 +4570,26 @@ public class SimpleLOOPParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			 ((Array_typeContext)_localctx).dims =  new ArrayList<>(); 
-			setState(792);
+			setState(794);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case INT:
 				{
-				setState(785);
+				setState(787);
 				match(INT);
 				 ((Array_typeContext)_localctx).t =  new IntType(); 
 				}
 				break;
 			case BOOL:
 				{
-				setState(787);
+				setState(789);
 				match(BOOL);
 				 ((Array_typeContext)_localctx).t =  new BoolType(); 
 				}
 				break;
 			case CLASS_IDENTIFIER:
 				{
-				setState(789);
+				setState(791);
 				((Array_typeContext)_localctx).cid = class_identifier();
 				 ((Array_typeContext)_localctx).t =  new ClassType(((Array_typeContext)_localctx).cid.idRet); 
 				}
@@ -4569,22 +4597,22 @@ public class SimpleLOOPParser extends Parser {
 			default:
 				throw new NoViableAltException(this);
 			}
-			setState(799); 
+			setState(801); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(794);
-				match(LBRACK);
-				setState(795);
-				((Array_typeContext)_localctx).ex = expression();
 				setState(796);
+				match(LBRACK);
+				setState(797);
+				((Array_typeContext)_localctx).ex = expression();
+				setState(798);
 				match(RBRACK);
 				 _localctx.dims.add(((Array_typeContext)_localctx).ex.expRet); 
 				}
 				}
-				setState(801); 
+				setState(803); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==LBRACK );
@@ -4652,16 +4680,16 @@ public class SimpleLOOPParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			 ArrayList<Type> args = new ArrayList<>(); 
-			setState(806);
+			setState(808);
 			match(FPTR);
-			setState(807);
+			setState(809);
 			match(LESS_THAN);
-			setState(820);
+			setState(822);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case VOID:
 				{
-				setState(808);
+				setState(810);
 				match(VOID);
 				}
 				break;
@@ -4672,23 +4700,23 @@ public class SimpleLOOPParser extends Parser {
 			case CLASS_IDENTIFIER:
 				{
 				{
-				setState(809);
+				setState(811);
 				((Fptr_typeContext)_localctx).t1 = type();
 				 args.add(((Fptr_typeContext)_localctx).t1.typeRet); 
-				setState(817);
+				setState(819);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==COMMA) {
 					{
 					{
-					setState(811);
+					setState(813);
 					match(COMMA);
-					setState(812);
+					setState(814);
 					((Fptr_typeContext)_localctx).t2 = type();
 					 args.add(((Fptr_typeContext)_localctx).t2.typeRet); 
 					}
 					}
-					setState(819);
+					setState(821);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
@@ -4698,9 +4726,9 @@ public class SimpleLOOPParser extends Parser {
 			default:
 				throw new NoViableAltException(this);
 			}
-			setState(822);
+			setState(824);
 			match(ARROW);
-			setState(828);
+			setState(830);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case INT:
@@ -4709,14 +4737,14 @@ public class SimpleLOOPParser extends Parser {
 			case SET:
 			case CLASS_IDENTIFIER:
 				{
-				setState(823);
+				setState(825);
 				((Fptr_typeContext)_localctx).t3 = type();
 				((Fptr_typeContext)_localctx).fptrTypeRet =  new FptrType(args, ((Fptr_typeContext)_localctx).t3.typeRet);
 				}
 				break;
 			case VOID:
 				{
-				setState(826);
+				setState(828);
 				match(VOID);
 				((Fptr_typeContext)_localctx).fptrTypeRet =  new FptrType(args, new VoidType());
 				}
@@ -4724,7 +4752,7 @@ public class SimpleLOOPParser extends Parser {
 			default:
 				throw new NoViableAltException(this);
 			}
-			setState(830);
+			setState(832);
 			match(GREATER_THAN);
 			}
 		}
@@ -4770,15 +4798,15 @@ public class SimpleLOOPParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(832);
+			setState(834);
 			match(SET);
-			setState(833);
+			setState(835);
 			match(LESS_THAN);
 			{
-			setState(834);
+			setState(836);
 			match(INT);
 			}
-			setState(835);
+			setState(837);
 			match(GREATER_THAN);
 			 ((Set_typeContext)_localctx).setTypeRet =  new SetType(); 
 			}
@@ -4795,7 +4823,7 @@ public class SimpleLOOPParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3@\u0349\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3@\u034b\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -4848,26 +4876,26 @@ public class SimpleLOOPParser extends Parser {
 		"\n$\3%\3%\3%\3%\3%\3%\5%\u029b\n%\5%\u029d\n%\3&\3&\3&\3&\3&\3&\3&\3&"+
 		"\3&\3&\3&\3&\3&\3&\3&\5&\u02ae\n&\7&\u02b0\n&\f&\16&\u02b3\13&\3&\3&\3"+
 		"&\3&\3&\3&\3&\3&\3&\7&\u02be\n&\f&\16&\u02c1\13&\3\'\3\'\3\'\3\'\3\'\3"+
-		"\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\5\'\u02d4\n\'\3(\3(\3("+
-		"\3(\3(\3(\3(\3(\3(\3(\3(\3(\7(\u02e2\n(\f(\16(\u02e5\13(\3(\3(\5(\u02e9"+
-		"\n(\3(\3(\3(\3)\3)\3)\3)\3)\5)\u02f3\n)\3*\3*\3*\3*\5*\u02f9\n*\3+\3+"+
-		"\3+\3,\3,\3,\3-\3-\3-\3-\3-\3-\3-\3-\3-\3-\3-\3-\3-\3-\3-\3-\5-\u0311"+
-		"\n-\3.\3.\3.\3.\3.\3.\3.\3.\5.\u031b\n.\3.\3.\3.\3.\3.\6.\u0322\n.\r."+
-		"\16.\u0323\3.\3.\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\7/\u0332\n/\f/\16/\u0335"+
-		"\13/\5/\u0337\n/\3/\3/\3/\3/\3/\3/\5/\u033f\n/\3/\3/\3\60\3\60\3\60\3"+
-		"\60\3\60\3\60\3\60\2\2\61\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&"+
-		"(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^\2\3\3\2\5\6\2\u0378\2c\3\2\2\2\4"+
-		"p\3\2\2\2\6\u008b\3\2\2\2\b\u0099\3\2\2\2\n\u00c0\3\2\2\2\f\u00d4\3\2"+
-		"\2\2\16\u010b\3\2\2\2\20\u010d\3\2\2\2\22\u012d\3\2\2\2\24\u0131\3\2\2"+
-		"\2\26\u014a\3\2\2\2\30\u014c\3\2\2\2\32\u017c\3\2\2\2\34\u017e\3\2\2\2"+
-		"\36\u0186\3\2\2\2 \u0198\3\2\2\2\"\u01a0\3\2\2\2$\u01ac\3\2\2\2&\u01c0"+
+		"\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\5\'\u02d6\n\'\3"+
+		"(\3(\3(\3(\3(\3(\3(\3(\3(\3(\3(\3(\7(\u02e4\n(\f(\16(\u02e7\13(\3(\3("+
+		"\5(\u02eb\n(\3(\3(\3(\3)\3)\3)\3)\3)\5)\u02f5\n)\3*\3*\3*\3*\5*\u02fb"+
+		"\n*\3+\3+\3+\3,\3,\3,\3-\3-\3-\3-\3-\3-\3-\3-\3-\3-\3-\3-\3-\3-\3-\3-"+
+		"\5-\u0313\n-\3.\3.\3.\3.\3.\3.\3.\3.\5.\u031d\n.\3.\3.\3.\3.\3.\6.\u0324"+
+		"\n.\r.\16.\u0325\3.\3.\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\7/\u0334\n/\f/\16"+
+		"/\u0337\13/\5/\u0339\n/\3/\3/\3/\3/\3/\3/\5/\u0341\n/\3/\3/\3\60\3\60"+
+		"\3\60\3\60\3\60\3\60\3\60\2\2\61\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36"+
+		" \"$&(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^\2\3\3\2\5\6\2\u037b\2c\3\2"+
+		"\2\2\4p\3\2\2\2\6\u008b\3\2\2\2\b\u0099\3\2\2\2\n\u00c0\3\2\2\2\f\u00d4"+
+		"\3\2\2\2\16\u010b\3\2\2\2\20\u010d\3\2\2\2\22\u012d\3\2\2\2\24\u0131\3"+
+		"\2\2\2\26\u014a\3\2\2\2\30\u014c\3\2\2\2\32\u017c\3\2\2\2\34\u017e\3\2"+
+		"\2\2\36\u0186\3\2\2\2 \u0198\3\2\2\2\"\u01a0\3\2\2\2$\u01ac\3\2\2\2&\u01c0"+
 		"\3\2\2\2(\u01d0\3\2\2\2*\u01d5\3\2\2\2,\u01dc\3\2\2\2.\u01e2\3\2\2\2\60"+
 		"\u01f8\3\2\2\2\62\u01ff\3\2\2\2\64\u020f\3\2\2\2\66\u021a\3\2\2\28\u022b"+
 		"\3\2\2\2:\u0235\3\2\2\2<\u0240\3\2\2\2>\u024b\3\2\2\2@\u0256\3\2\2\2B"+
 		"\u0266\3\2\2\2D\u0276\3\2\2\2F\u0292\3\2\2\2H\u0294\3\2\2\2J\u029e\3\2"+
-		"\2\2L\u02d3\3\2\2\2N\u02d5\3\2\2\2P\u02f2\3\2\2\2R\u02f8\3\2\2\2T\u02fa"+
-		"\3\2\2\2V\u02fd\3\2\2\2X\u0310\3\2\2\2Z\u0312\3\2\2\2\\\u0327\3\2\2\2"+
-		"^\u0342\3\2\2\2`b\7:\2\2a`\3\2\2\2be\3\2\2\2ca\3\2\2\2cd\3\2\2\2df\3\2"+
+		"\2\2L\u02d5\3\2\2\2N\u02d7\3\2\2\2P\u02f4\3\2\2\2R\u02fa\3\2\2\2T\u02fc"+
+		"\3\2\2\2V\u02ff\3\2\2\2X\u0312\3\2\2\2Z\u0314\3\2\2\2\\\u0329\3\2\2\2"+
+		"^\u0344\3\2\2\2`b\7:\2\2a`\3\2\2\2be\3\2\2\2ca\3\2\2\2cd\3\2\2\2df\3\2"+
 		"\2\2ec\3\2\2\2fg\5\4\3\2gk\b\2\1\2hj\7:\2\2ih\3\2\2\2jm\3\2\2\2ki\3\2"+
 		"\2\2kl\3\2\2\2ln\3\2\2\2mk\3\2\2\2no\7\2\2\3o\3\3\2\2\2p{\b\3\1\2qs\5"+
 		"\"\22\2rt\7:\2\2sr\3\2\2\2tu\3\2\2\2us\3\2\2\2uv\3\2\2\2vw\3\2\2\2wx\b"+
@@ -5055,55 +5083,56 @@ public class SimpleLOOPParser extends Parser {
 		"\2\u02b9\u02ba\5\66\34\2\u02ba\u02bb\7\64\2\2\u02bb\u02bc\b&\1\2\u02bc"+
 		"\u02be\3\2\2\2\u02bd\u02b4\3\2\2\2\u02bd\u02b8\3\2\2\2\u02be\u02c1\3\2"+
 		"\2\2\u02bf\u02bd\3\2\2\2\u02bf\u02c0\3\2\2\2\u02c0K\3\2\2\2\u02c1\u02bf"+
-		"\3\2\2\2\u02c2\u02c3\5T+\2\u02c3\u02c4\b\'\1\2\u02c4\u02d4\3\2\2\2\u02c5"+
-		"\u02c6\5P)\2\u02c6\u02c7\b\'\1\2\u02c7\u02d4\3\2\2\2\u02c8\u02c9\5V,\2"+
-		"\u02c9\u02ca\b\'\1\2\u02ca\u02d4\3\2\2\2\u02cb\u02cc\5N(\2\u02cc\u02cd"+
-		"\b\'\1\2\u02cd\u02d4\3\2\2\2\u02ce\u02cf\7\61\2\2\u02cf\u02d0\5\66\34"+
-		"\2\u02d0\u02d1\7\62\2\2\u02d1\u02d2\b\'\1\2\u02d2\u02d4\3\2\2\2\u02d3"+
-		"\u02c2\3\2\2\2\u02d3\u02c5\3\2\2\2\u02d3\u02c8\3\2\2\2\u02d3\u02cb\3\2"+
-		"\2\2\u02d3\u02ce\3\2\2\2\u02d4M\3\2\2\2\u02d5\u02d6\b(\1\2\u02d6\u02d7"+
-		"\7,\2\2\u02d7\u02d8\78\2\2\u02d8\u02d9\7\b\2\2\u02d9\u02e8\7\61\2\2\u02da"+
-		"\u02db\7\61\2\2\u02db\u02dc\5:\36\2\u02dc\u02e3\b(\1\2\u02dd\u02de\7\67"+
-		"\2\2\u02de\u02df\5:\36\2\u02df\u02e0\b(\1\2\u02e0\u02e2\3\2\2\2\u02e1"+
-		"\u02dd\3\2\2\2\u02e2\u02e5\3\2\2\2\u02e3\u02e1\3\2\2\2\u02e3\u02e4\3\2"+
-		"\2\2\u02e4\u02e6\3\2\2\2\u02e5\u02e3\3\2\2\2\u02e6\u02e7\7\62\2\2\u02e7"+
-		"\u02e9\3\2\2\2\u02e8\u02da\3\2\2\2\u02e8\u02e9\3\2\2\2\u02e9\u02ea\3\2"+
-		"\2\2\u02ea\u02eb\b(\1\2\u02eb\u02ec\7\62\2\2\u02ecO\3\2\2\2\u02ed\u02ee"+
-		"\5R*\2\u02ee\u02ef\b)\1\2\u02ef\u02f3\3\2\2\2\u02f0\u02f1\7;\2\2\u02f1"+
-		"\u02f3\b)\1\2\u02f2\u02ed\3\2\2\2\u02f2\u02f0\3\2\2\2\u02f3Q\3\2\2\2\u02f4"+
-		"\u02f5\7$\2\2\u02f5\u02f9\b*\1\2\u02f6\u02f7\7%\2\2\u02f7\u02f9\b*\1\2"+
-		"\u02f8\u02f4\3\2\2\2\u02f8\u02f6\3\2\2\2\u02f9S\3\2\2\2\u02fa\u02fb\7"+
-		"=\2\2\u02fb\u02fc\b+\1\2\u02fcU\3\2\2\2\u02fd\u02fe\7<\2\2\u02fe\u02ff"+
-		"\b,\1\2\u02ffW\3\2\2\2\u0300\u0301\7)\2\2\u0301\u0311\b-\1\2\u0302\u0303"+
-		"\7*\2\2\u0303\u0311\b-\1\2\u0304\u0305\5Z.\2\u0305\u0306\b-\1\2\u0306"+
-		"\u0311\3\2\2\2\u0307\u0308\5\\/\2\u0308\u0309\b-\1\2\u0309\u0311\3\2\2"+
-		"\2\u030a\u030b\5^\60\2\u030b\u030c\b-\1\2\u030c\u0311\3\2\2\2\u030d\u030e"+
-		"\5T+\2\u030e\u030f\b-\1\2\u030f\u0311\3\2\2\2\u0310\u0300\3\2\2\2\u0310"+
-		"\u0302\3\2\2\2\u0310\u0304\3\2\2\2\u0310\u0307\3\2\2\2\u0310\u030a\3\2"+
-		"\2\2\u0310\u030d\3\2\2\2\u0311Y\3\2\2\2\u0312\u031a\b.\1\2\u0313\u0314"+
-		"\7)\2\2\u0314\u031b\b.\1\2\u0315\u0316\7*\2\2\u0316\u031b\b.\1\2\u0317"+
-		"\u0318\5T+\2\u0318\u0319\b.\1\2\u0319\u031b\3\2\2\2\u031a\u0313\3\2\2"+
-		"\2\u031a\u0315\3\2\2\2\u031a\u0317\3\2\2\2\u031b\u0321\3\2\2\2\u031c\u031d"+
-		"\7\63\2\2\u031d\u031e\5\66\34\2\u031e\u031f\7\64\2\2\u031f\u0320\b.\1"+
-		"\2\u0320\u0322\3\2\2\2\u0321\u031c\3\2\2\2\u0322\u0323\3\2\2\2\u0323\u0321"+
-		"\3\2\2\2\u0323\u0324\3\2\2\2\u0324\u0325\3\2\2\2\u0325\u0326\b.\1\2\u0326"+
-		"[\3\2\2\2\u0327\u0328\b/\1\2\u0328\u0329\7+\2\2\u0329\u0336\7\34\2\2\u032a"+
-		"\u0337\7\13\2\2\u032b\u032c\5X-\2\u032c\u0333\b/\1\2\u032d\u032e\7\67"+
-		"\2\2\u032e\u032f\5X-\2\u032f\u0330\b/\1\2\u0330\u0332\3\2\2\2\u0331\u032d"+
-		"\3\2\2\2\u0332\u0335\3\2\2\2\u0333\u0331\3\2\2\2\u0333\u0334\3\2\2\2\u0334"+
-		"\u0337\3\2\2\2\u0335\u0333\3\2\2\2\u0336\u032a\3\2\2\2\u0336\u032b\3\2"+
-		"\2\2\u0337\u0338\3\2\2\2\u0338\u033e\7\35\2\2\u0339\u033a\5X-\2\u033a"+
-		"\u033b\b/\1\2\u033b\u033f\3\2\2\2\u033c\u033d\7\13\2\2\u033d\u033f\b/"+
-		"\1\2\u033e\u0339\3\2\2\2\u033e\u033c\3\2\2\2\u033f\u0340\3\2\2\2\u0340"+
-		"\u0341\7\33\2\2\u0341]\3\2\2\2\u0342\u0343\7,\2\2\u0343\u0344\7\34\2\2"+
-		"\u0344\u0345\7)\2\2\u0345\u0346\7\33\2\2\u0346\u0347\b\60\1\2\u0347_\3"+
-		"\2\2\2Qcku{\u0082\u0088\u0092\u00a0\u00a5\u00ac\u00b3\u00b7\u00be\u00c8"+
-		"\u00cd\u00d4\u00db\u00e6\u00ec\u00f2\u00f9\u00ff\u0109\u010b\u0119\u011c"+
-		"\u0126\u0129\u013a\u013d\u0145\u014a\u0151\u0158\u015c\u017c\u0192\u01a9"+
-		"\u01b5\u01bb\u01c0\u01d0\u01d5\u01ea\u01ee\u01fd\u020f\u0220\u0229\u0233"+
-		"\u023d\u0248\u0253\u025c\u0263\u026c\u0273\u027c\u0283\u028a\u0292\u029a"+
-		"\u029c\u02ad\u02af\u02b1\u02bd\u02bf\u02d3\u02e3\u02e8\u02f2\u02f8\u0310"+
-		"\u031a\u0323\u0333\u0336\u033e";
+		"\3\2\2\2\u02c2\u02c3\7\t\2\2\u02c3\u02d6\b\'\1\2\u02c4\u02c5\5T+\2\u02c5"+
+		"\u02c6\b\'\1\2\u02c6\u02d6\3\2\2\2\u02c7\u02c8\5P)\2\u02c8\u02c9\b\'\1"+
+		"\2\u02c9\u02d6\3\2\2\2\u02ca\u02cb\5V,\2\u02cb\u02cc\b\'\1\2\u02cc\u02d6"+
+		"\3\2\2\2\u02cd\u02ce\5N(\2\u02ce\u02cf\b\'\1\2\u02cf\u02d6\3\2\2\2\u02d0"+
+		"\u02d1\7\61\2\2\u02d1\u02d2\5\66\34\2\u02d2\u02d3\7\62\2\2\u02d3\u02d4"+
+		"\b\'\1\2\u02d4\u02d6\3\2\2\2\u02d5\u02c2\3\2\2\2\u02d5\u02c4\3\2\2\2\u02d5"+
+		"\u02c7\3\2\2\2\u02d5\u02ca\3\2\2\2\u02d5\u02cd\3\2\2\2\u02d5\u02d0\3\2"+
+		"\2\2\u02d6M\3\2\2\2\u02d7\u02d8\b(\1\2\u02d8\u02d9\7,\2\2\u02d9\u02da"+
+		"\78\2\2\u02da\u02db\7\b\2\2\u02db\u02ea\7\61\2\2\u02dc\u02dd\7\61\2\2"+
+		"\u02dd\u02de\5:\36\2\u02de\u02e5\b(\1\2\u02df\u02e0\7\67\2\2\u02e0\u02e1"+
+		"\5:\36\2\u02e1\u02e2\b(\1\2\u02e2\u02e4\3\2\2\2\u02e3\u02df\3\2\2\2\u02e4"+
+		"\u02e7\3\2\2\2\u02e5\u02e3\3\2\2\2\u02e5\u02e6\3\2\2\2\u02e6\u02e8\3\2"+
+		"\2\2\u02e7\u02e5\3\2\2\2\u02e8\u02e9\7\62\2\2\u02e9\u02eb\3\2\2\2\u02ea"+
+		"\u02dc\3\2\2\2\u02ea\u02eb\3\2\2\2\u02eb\u02ec\3\2\2\2\u02ec\u02ed\b("+
+		"\1\2\u02ed\u02ee\7\62\2\2\u02eeO\3\2\2\2\u02ef\u02f0\5R*\2\u02f0\u02f1"+
+		"\b)\1\2\u02f1\u02f5\3\2\2\2\u02f2\u02f3\7;\2\2\u02f3\u02f5\b)\1\2\u02f4"+
+		"\u02ef\3\2\2\2\u02f4\u02f2\3\2\2\2\u02f5Q\3\2\2\2\u02f6\u02f7\7$\2\2\u02f7"+
+		"\u02fb\b*\1\2\u02f8\u02f9\7%\2\2\u02f9\u02fb\b*\1\2\u02fa\u02f6\3\2\2"+
+		"\2\u02fa\u02f8\3\2\2\2\u02fbS\3\2\2\2\u02fc\u02fd\7=\2\2\u02fd\u02fe\b"+
+		"+\1\2\u02feU\3\2\2\2\u02ff\u0300\7<\2\2\u0300\u0301\b,\1\2\u0301W\3\2"+
+		"\2\2\u0302\u0303\7)\2\2\u0303\u0313\b-\1\2\u0304\u0305\7*\2\2\u0305\u0313"+
+		"\b-\1\2\u0306\u0307\5Z.\2\u0307\u0308\b-\1\2\u0308\u0313\3\2\2\2\u0309"+
+		"\u030a\5\\/\2\u030a\u030b\b-\1\2\u030b\u0313\3\2\2\2\u030c\u030d\5^\60"+
+		"\2\u030d\u030e\b-\1\2\u030e\u0313\3\2\2\2\u030f\u0310\5T+\2\u0310\u0311"+
+		"\b-\1\2\u0311\u0313\3\2\2\2\u0312\u0302\3\2\2\2\u0312\u0304\3\2\2\2\u0312"+
+		"\u0306\3\2\2\2\u0312\u0309\3\2\2\2\u0312\u030c\3\2\2\2\u0312\u030f\3\2"+
+		"\2\2\u0313Y\3\2\2\2\u0314\u031c\b.\1\2\u0315\u0316\7)\2\2\u0316\u031d"+
+		"\b.\1\2\u0317\u0318\7*\2\2\u0318\u031d\b.\1\2\u0319\u031a\5T+\2\u031a"+
+		"\u031b\b.\1\2\u031b\u031d\3\2\2\2\u031c\u0315\3\2\2\2\u031c\u0317\3\2"+
+		"\2\2\u031c\u0319\3\2\2\2\u031d\u0323\3\2\2\2\u031e\u031f\7\63\2\2\u031f"+
+		"\u0320\5\66\34\2\u0320\u0321\7\64\2\2\u0321\u0322\b.\1\2\u0322\u0324\3"+
+		"\2\2\2\u0323\u031e\3\2\2\2\u0324\u0325\3\2\2\2\u0325\u0323\3\2\2\2\u0325"+
+		"\u0326\3\2\2\2\u0326\u0327\3\2\2\2\u0327\u0328\b.\1\2\u0328[\3\2\2\2\u0329"+
+		"\u032a\b/\1\2\u032a\u032b\7+\2\2\u032b\u0338\7\34\2\2\u032c\u0339\7\13"+
+		"\2\2\u032d\u032e\5X-\2\u032e\u0335\b/\1\2\u032f\u0330\7\67\2\2\u0330\u0331"+
+		"\5X-\2\u0331\u0332\b/\1\2\u0332\u0334\3\2\2\2\u0333\u032f\3\2\2\2\u0334"+
+		"\u0337\3\2\2\2\u0335\u0333\3\2\2\2\u0335\u0336\3\2\2\2\u0336\u0339\3\2"+
+		"\2\2\u0337\u0335\3\2\2\2\u0338\u032c\3\2\2\2\u0338\u032d\3\2\2\2\u0339"+
+		"\u033a\3\2\2\2\u033a\u0340\7\35\2\2\u033b\u033c\5X-\2\u033c\u033d\b/\1"+
+		"\2\u033d\u0341\3\2\2\2\u033e\u033f\7\13\2\2\u033f\u0341\b/\1\2\u0340\u033b"+
+		"\3\2\2\2\u0340\u033e\3\2\2\2\u0341\u0342\3\2\2\2\u0342\u0343\7\33\2\2"+
+		"\u0343]\3\2\2\2\u0344\u0345\7,\2\2\u0345\u0346\7\34\2\2\u0346\u0347\7"+
+		")\2\2\u0347\u0348\7\33\2\2\u0348\u0349\b\60\1\2\u0349_\3\2\2\2Qcku{\u0082"+
+		"\u0088\u0092\u00a0\u00a5\u00ac\u00b3\u00b7\u00be\u00c8\u00cd\u00d4\u00db"+
+		"\u00e6\u00ec\u00f2\u00f9\u00ff\u0109\u010b\u0119\u011c\u0126\u0129\u013a"+
+		"\u013d\u0145\u014a\u0151\u0158\u015c\u017c\u0192\u01a9\u01b5\u01bb\u01c0"+
+		"\u01d0\u01d5\u01ea\u01ee\u01fd\u020f\u0220\u0229\u0233\u023d\u0248\u0253"+
+		"\u025c\u0263\u026c\u0273\u027c\u0283\u028a\u0292\u029a\u029c\u02ad\u02af"+
+		"\u02b1\u02bd\u02bf\u02d5\u02e5\u02ea\u02f4\u02fa\u0312\u031c\u0325\u0335"+
+		"\u0338\u0340";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
