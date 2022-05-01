@@ -61,13 +61,29 @@ classDeclaration returns [ ClassDeclaration classDeclarationRet]
     )?
     NEWLINE* ((LBRACE NEWLINE+ (mf=field_decleration
                                  {
-                                     for (Declaration field : $mf.decRet)
-                                         $classDeclarationRet.addField(field);
+                                     for (Declaration field : $sf.decRet) {
+                                         if (field instanceof VariableDeclaration)
+                                             $classDeclarationRet.addField(field);
+                                         else if (field instanceof MethodDeclaration) {
+                                             $classDeclarationRet.addMethod(field);
+                                         }
+                                         else if (field instanceof ConstructorDeclaration){
+                                            $classDeclarationRet.setConstructor(field);
+                                         }
+                                     }
                                  } NEWLINE+)+ RBRACE)
     | (sf=field_decleration
         {
-            for (Declaration field : $sf.decRet)
-                $classDeclarationRet.addField(field);
+            for (Declaration field : $sf.decRet) {
+                if (field instanceof VariableDeclaration)
+                    $classDeclarationRet.addField(field);
+                else if (field instanceof MethodDeclaration) {
+                     $classDeclarationRet.addMethod(field);
+                }
+                else if (field instanceof ConstructorDeclaration){
+                   $classDeclarationRet.setConstructor(field);
+                }
+            }
         }));
 
 //todo

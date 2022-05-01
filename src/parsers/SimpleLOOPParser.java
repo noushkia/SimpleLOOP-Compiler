@@ -580,8 +580,16 @@ public class SimpleLOOPParser extends Parser {
 					setState(172);
 					((ClassDeclarationContext)_localctx).mf = field_decleration();
 
-					                                     for (Declaration field : ((ClassDeclarationContext)_localctx).mf.decRet)
-					                                         _localctx.classDeclarationRet.addField(field);
+					                                     for (Declaration field : ((ClassDeclarationContext)_localctx).sf.decRet) {
+					                                         if (field instanceof VariableDeclaration)
+					                                             _localctx.classDeclarationRet.addField(field);
+					                                         else if (field instanceof MethodDeclaration) {
+					                                             _localctx.classDeclarationRet.addMethod(field);
+					                                         }
+					                                         else if (field instanceof ConstructorDeclaration){
+					                                            _localctx.classDeclarationRet.setConstructor(field);
+					                                         }
+					                                     }
 					                                 
 					setState(175); 
 					_errHandler.sync(this);
@@ -615,8 +623,16 @@ public class SimpleLOOPParser extends Parser {
 				setState(185);
 				((ClassDeclarationContext)_localctx).sf = field_decleration();
 
-				            for (Declaration field : ((ClassDeclarationContext)_localctx).sf.decRet)
-				                _localctx.classDeclarationRet.addField(field);
+				            for (Declaration field : ((ClassDeclarationContext)_localctx).sf.decRet) {
+				                if (field instanceof VariableDeclaration)
+				                    _localctx.classDeclarationRet.addField(field);
+				                else if (field instanceof MethodDeclaration) {
+				                     _localctx.classDeclarationRet.addMethod(field);
+				                }
+				                else if (field instanceof ConstructorDeclaration){
+				                   _localctx.classDeclarationRet.setConstructor(field);
+				                }
+				            }
 				        
 				}
 				}
