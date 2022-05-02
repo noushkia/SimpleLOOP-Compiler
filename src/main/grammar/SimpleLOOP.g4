@@ -67,11 +67,11 @@ classDeclaration returns [ ClassDeclaration classDeclarationRet]
                                      for (Declaration field : $mf.decRet) {
                                          if (field instanceof FieldDeclaration)
                                              $classDeclarationRet.addField((FieldDeclaration) field);
+                                         else if (field instanceof ConstructorDeclaration){
+                                             $classDeclarationRet.setConstructor((ConstructorDeclaration) field);
+                                         }
                                          else if (field instanceof MethodDeclaration) {
                                              $classDeclarationRet.addMethod((MethodDeclaration) field);
-                                         }
-                                         else if (field instanceof ConstructorDeclaration){
-                                            $classDeclarationRet.setConstructor((ConstructorDeclaration) field);
                                          }
                                      }
                                  } NEWLINE+)+ RBRACE)
@@ -80,12 +80,13 @@ classDeclaration returns [ ClassDeclaration classDeclarationRet]
             for (Declaration field : $sf.decRet) {
              if (field instanceof FieldDeclaration)
                  $classDeclarationRet.addField((FieldDeclaration) field);
+             else if (field instanceof ConstructorDeclaration){
+                 $classDeclarationRet.setConstructor((ConstructorDeclaration) field);
+             }
              else if (field instanceof MethodDeclaration) {
                  $classDeclarationRet.addMethod((MethodDeclaration) field);
              }
-             else if (field instanceof ConstructorDeclaration){
-                $classDeclarationRet.setConstructor((ConstructorDeclaration) field);
-             }
+
 }
         }));
 
