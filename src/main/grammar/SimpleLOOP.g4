@@ -36,17 +36,20 @@ program returns[Program programRet]:
 
 //todo
 constructor returns [ConstructorDeclaration constructorRet]
-    : PUBLIC init = INITIALIZE
-    { $constructorRet = new ConstructorDeclaration();
-        $constructorRet.setLine($init.getLine());
-     }
-      args = methodArgsDec NEWLINE*
-       { $constructorRet.setArgs($args.argsRet); }
-       b = methodBody
-       {
+    : PUBLIC i = INITIALIZE
+    {
+        $constructorRet = new ConstructorDeclaration();
+        var newInit = new Identifier("initialize");
+        newInit.setLine($i.getLine());
+        $constructorRet.setLine(newInit.getLine());
+    }
+    args = methodArgsDec NEWLINE*
+    { $constructorRet.setArgs($args.argsRet); }
+    b = methodBody
+    {
         $constructorRet.setLocalVars($b.localVars);
         $constructorRet.setBody($b.statements);
-       };
+    };
 
 
 //todo
@@ -504,7 +507,7 @@ accessExpression returns[Expression accessExprRet]:
         | i=INITIALIZE
             {
                 var newInit = new Identifier("initialize");
-                newInit.setLine($n.getLine());
+                newInit.setLine($i.getLine());
                 $accessExprRet = new ObjectMemberAccess($accessExprRet, newInit);
                 $accessExprRet.setLine($i.getLine());
             }

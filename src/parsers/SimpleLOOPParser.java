@@ -377,7 +377,7 @@ public class SimpleLOOPParser extends Parser {
 
 	public static class ConstructorContext extends ParserRuleContext {
 		public ConstructorDeclaration constructorRet;
-		public Token init;
+		public Token i;
 		public MethodArgsDecContext args;
 		public MethodBodyContext b;
 		public TerminalNode PUBLIC() { return getToken(SimpleLOOPParser.PUBLIC, 0); }
@@ -421,10 +421,13 @@ public class SimpleLOOPParser extends Parser {
 			setState(137);
 			match(PUBLIC);
 			setState(138);
-			((ConstructorContext)_localctx).init = match(INITIALIZE);
-			 ((ConstructorContext)_localctx).constructorRet =  new ConstructorDeclaration();
-			        _localctx.constructorRet.setLine(((ConstructorContext)_localctx).init.getLine());
-			     
+			((ConstructorContext)_localctx).i = match(INITIALIZE);
+
+			        ((ConstructorContext)_localctx).constructorRet =  new ConstructorDeclaration();
+			        var newInit = new Identifier("initialize");
+			        newInit.setLine(((ConstructorContext)_localctx).i.getLine());
+			        _localctx.constructorRet.setLine(newInit.getLine());
+			    
 			setState(140);
 			((ConstructorContext)_localctx).args = methodArgsDec();
 			setState(144);
@@ -447,7 +450,7 @@ public class SimpleLOOPParser extends Parser {
 
 			        _localctx.constructorRet.setLocalVars(((ConstructorContext)_localctx).b.localVars);
 			        _localctx.constructorRet.setBody(((ConstructorContext)_localctx).b.statements);
-			       
+			    
 			}
 		}
 		catch (RecognitionException re) {
@@ -3848,7 +3851,7 @@ public class SimpleLOOPParser extends Parser {
 							((AccessExpressionContext)_localctx).i = match(INITIALIZE);
 
 							                var newInit = new Identifier("initialize");
-							                newInit.setLine(((AccessExpressionContext)_localctx).n.getLine());
+							                newInit.setLine(((AccessExpressionContext)_localctx).i.getLine());
 							                ((AccessExpressionContext)_localctx).accessExprRet =  new ObjectMemberAccess(_localctx.accessExprRet, newInit);
 							                _localctx.accessExprRet.setLine(((AccessExpressionContext)_localctx).i.getLine());
 							            
