@@ -17,6 +17,7 @@ import main.compileError.nameError.MethodNameConflictWithField;
 import main.compileError.nameError.MethodRedefinition;
 import main.symbolTable.SymbolTable;
 import main.symbolTable.exceptions.ItemAlreadyExistsException;
+import main.symbolTable.exceptions.ItemNotFoundException;
 import main.symbolTable.items.ClassSymbolTableItem;
 import main.symbolTable.items.FieldSymbolTableItem;
 import main.symbolTable.items.LocalVariableSymbolTableItem;
@@ -48,7 +49,7 @@ public class NameCollector extends Visitor<Void> {
         try {
             SymbolTable.root.put(classSymbolTableItem);
         } catch (ItemAlreadyExistsException e) {
-            ClassRedefinition exception = new ClassRedefinition(classDeclaration.getLine(), classDeclaration.toString());
+            ClassRedefinition exception = new ClassRedefinition(classDeclaration.getLine(), classDeclaration.getClassName().getName());
             classDeclaration.addError(exception);
             String newName = newId + "@";
             newId += 1;
@@ -88,15 +89,28 @@ public class NameCollector extends Visitor<Void> {
         try {
             SymbolTable.top.put(methodSymbolTableItem);
         } catch (ItemAlreadyExistsException e) {
-            MethodRedefinition exception = new MethodRedefinition(methodDeclaration.getLine(), methodDeclaration.toString());
+            MethodRedefinition exception = new MethodRedefinition(methodDeclaration.getLine(), methodDeclaration.getMethodName().getName());
             methodDeclaration.addError(exception);
         }
         SymbolTable.push(methodSymbolTable);
         for(VariableDeclaration varDeclaration : methodDeclaration.getArgs()) {
-            varDeclaration.accept(this);
+            try {
+                SymbolTable.root.getItem(LocalVariableSymbolTableItem.START_KEY + varDeclaration.getVarName().getName(), true);
+                LocalVarConflictWithGlobalVar exception = new LocalVarConflictWithGlobalVar(varDeclaration.getLine(), varDeclaration.getVarName().getName());
+                varDeclaration.addError(exception);
+            } catch (ItemNotFoundException ignored){
+                varDeclaration.accept(this);
+            }
+
         }
         for(VariableDeclaration varDeclaration : methodDeclaration.getLocalVars()) {
-            varDeclaration.accept(this);
+            try {
+                SymbolTable.root.getItem(LocalVariableSymbolTableItem.START_KEY + varDeclaration.getVarName().getName(), true);
+                LocalVarConflictWithGlobalVar exception = new LocalVarConflictWithGlobalVar(varDeclaration.getLine(), varDeclaration.getVarName().getName());
+                varDeclaration.addError(exception);
+            } catch (ItemNotFoundException ignored){
+                varDeclaration.accept(this);
+            }
         }
         SymbolTable.pop();
         return null;
@@ -107,7 +121,7 @@ public class NameCollector extends Visitor<Void> {
         try {
             SymbolTable.top.put(new FieldSymbolTableItem(fieldDeclaration));
         } catch (ItemAlreadyExistsException e) {
-            FieldRedefinition exception = new FieldRedefinition(fieldDeclaration.getLine(), fieldDeclaration.toString());
+            FieldRedefinition exception = new FieldRedefinition(fieldDeclaration.getLine(), fieldDeclaration.getVarDeclaration().getVarName().getName());
             fieldDeclaration.addError(exception);
         }
         return null;
@@ -118,7 +132,7 @@ public class NameCollector extends Visitor<Void> {
         try {
             SymbolTable.top.put(new LocalVariableSymbolTableItem(varDeclaration));
         } catch (ItemAlreadyExistsException e) {
-            LocalVarRedefinition exception = new LocalVarRedefinition(varDeclaration.getLine(), varDeclaration.toString());
+            LocalVarRedefinition exception = new LocalVarRedefinition(varDeclaration.getLine(), varDeclaration.getVarName().getName());
             varDeclaration.addError(exception);
         }
         return null;

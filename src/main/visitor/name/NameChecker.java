@@ -50,7 +50,7 @@ public class NameChecker extends Visitor<Void> {
     public Void visit(ClassDeclaration classDeclaration) {
         if(classDeclaration.getParentClassName() != null) {
             if (this.classHierarchy.isSecondNodeAncestorOf(classDeclaration.getParentClassName().getName(), classDeclaration.getClassName().getName())) {
-                ClassInCyclicInheritance exception = new ClassInCyclicInheritance(classDeclaration.getLine(), classDeclaration.toString());
+                ClassInCyclicInheritance exception = new ClassInCyclicInheritance(classDeclaration.getLine(), classDeclaration.getClassName().getName());
                 classDeclaration.addError(exception);
             }
         }
@@ -77,8 +77,9 @@ public class NameChecker extends Visitor<Void> {
         if(!methodDeclaration.hasError()) {
             try {
                 SymbolTable classSymbolTable = this.getCurrentClassSymbolTable();
+                assert classSymbolTable != null;
                 classSymbolTable.getItem(MethodSymbolTableItem.START_KEY + methodDeclaration.getMethodName().getName(), false);
-                MethodRedefinition exception = new MethodRedefinition(methodDeclaration.getLine(), methodDeclaration.toString());
+                MethodRedefinition exception = new MethodRedefinition(methodDeclaration.getLine(), methodDeclaration.getMethodName().getName());
                 methodDeclaration.addError(exception);
             } catch (ItemNotFoundException ignored) {
             }
@@ -86,8 +87,9 @@ public class NameChecker extends Visitor<Void> {
         boolean errored = false;
         try {
             SymbolTable classSymbolTable = this.getCurrentClassSymbolTable();
+            assert classSymbolTable != null;
             classSymbolTable.getItem(FieldSymbolTableItem.START_KEY + methodDeclaration.getMethodName().getName(), true);
-            MethodNameConflictWithField exception = new MethodNameConflictWithField(methodDeclaration.getLine(), methodDeclaration.toString());
+            MethodNameConflictWithField exception = new MethodNameConflictWithField(methodDeclaration.getLine(), methodDeclaration.getMethodName().getName());
             methodDeclaration.addError(exception);
             errored = true;
         } catch (ItemNotFoundException ignored) {
@@ -100,7 +102,7 @@ public class NameChecker extends Visitor<Void> {
                         ClassSymbolTableItem childSymbolTableItem = (ClassSymbolTableItem) SymbolTable.root.getItem(ClassSymbolTableItem.START_KEY + childName, true);
                         SymbolTable childSymbolTable = childSymbolTableItem.getClassSymbolTable();
                         childSymbolTable.getItem(FieldSymbolTableItem.START_KEY + methodDeclaration.getMethodName().getName(), true);
-                        MethodNameConflictWithField exception = new MethodNameConflictWithField(methodDeclaration.getLine(), methodDeclaration.toString());
+                        MethodNameConflictWithField exception = new MethodNameConflictWithField(methodDeclaration.getLine(), methodDeclaration.getMethodName().getName());
                         methodDeclaration.addError(exception);
                         break;
                     } catch (ItemNotFoundException ignored) {
@@ -115,8 +117,9 @@ public class NameChecker extends Visitor<Void> {
         if(!fieldDeclaration.hasError()) {
             try {
                 SymbolTable classSymbolTable = this.getCurrentClassSymbolTable();
+                assert classSymbolTable != null;
                 classSymbolTable.getItem(FieldSymbolTableItem.START_KEY + fieldDeclaration.getVarDeclaration().getVarName().getName(), false);
-                FieldRedefinition exception = new FieldRedefinition(fieldDeclaration.getLine(), fieldDeclaration.toString());
+                FieldRedefinition exception = new FieldRedefinition(fieldDeclaration.getLine(), fieldDeclaration.getVarDeclaration().getVarName().getName());
                 fieldDeclaration.addError(exception);
             } catch (ItemNotFoundException ignored) {
             }
