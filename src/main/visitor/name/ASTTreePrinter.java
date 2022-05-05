@@ -33,10 +33,10 @@ public class ASTTreePrinter extends Visitor<Void> {
     public Void visit(ClassDeclaration classDeclaration) {
         messagePrinter(classDeclaration.getLine(), classDeclaration.toString());
         classDeclaration.getClassName().accept(this);
-        if (classDeclaration.getConstructor() != null)
-            classDeclaration.getConstructor().accept(this);
         for (FieldDeclaration fieldDeclaration : classDeclaration.getFields())
             fieldDeclaration.accept(this);
+        if (classDeclaration.getConstructor() != null)
+            classDeclaration.getConstructor().accept(this);
         for (MethodDeclaration methodDeclaration : classDeclaration.getMethods())
             methodDeclaration.accept(this);
         return null;
