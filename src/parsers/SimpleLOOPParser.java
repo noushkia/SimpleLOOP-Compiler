@@ -586,11 +586,11 @@ public class SimpleLOOPParser extends Parser {
 					                                     for (Declaration field : ((ClassDeclarationContext)_localctx).mf.decRet) {
 					                                         if (field instanceof FieldDeclaration)
 					                                             _localctx.classDeclarationRet.addField((FieldDeclaration) field);
+					                                         else if (field instanceof ConstructorDeclaration){
+					                                             _localctx.classDeclarationRet.setConstructor((ConstructorDeclaration) field);
+					                                         }
 					                                         else if (field instanceof MethodDeclaration) {
 					                                             _localctx.classDeclarationRet.addMethod((MethodDeclaration) field);
-					                                         }
-					                                         else if (field instanceof ConstructorDeclaration){
-					                                            _localctx.classDeclarationRet.setConstructor((ConstructorDeclaration) field);
 					                                         }
 					                                     }
 					                                 
@@ -629,12 +629,13 @@ public class SimpleLOOPParser extends Parser {
 				            for (Declaration field : ((ClassDeclarationContext)_localctx).sf.decRet) {
 				             if (field instanceof FieldDeclaration)
 				                 _localctx.classDeclarationRet.addField((FieldDeclaration) field);
+				             else if (field instanceof ConstructorDeclaration){
+				                 _localctx.classDeclarationRet.setConstructor((ConstructorDeclaration) field);
+				             }
 				             else if (field instanceof MethodDeclaration) {
 				                 _localctx.classDeclarationRet.addMethod((MethodDeclaration) field);
 				             }
-				             else if (field instanceof ConstructorDeclaration){
-				                _localctx.classDeclarationRet.setConstructor((ConstructorDeclaration) field);
-				             }
+
 				}
 				        
 				}
@@ -3807,8 +3808,12 @@ public class SimpleLOOPParser extends Parser {
 						setState(671);
 						((AccessExpressionContext)_localctx).m = methodArgs();
 
-						        ((AccessExpressionContext)_localctx).accessExprRet =  new MethodCall(_localctx.accessExprRet, ((AccessExpressionContext)_localctx).m.methodCallArgsRet);
-						        _localctx.accessExprRet.setLine((((AccessExpressionContext)_localctx).l!=null?((AccessExpressionContext)_localctx).l.getLine():0));
+						        if (_localctx.accessExprRet instanceof NewClassInstance)
+						            ((NewClassInstance) _localctx.accessExprRet).setArgs(((AccessExpressionContext)_localctx).m.methodCallArgsRet);
+						        else {
+						            ((AccessExpressionContext)_localctx).accessExprRet =  new MethodCall(_localctx.accessExprRet, ((AccessExpressionContext)_localctx).m.methodCallArgsRet);
+						            _localctx.accessExprRet.setLine((((AccessExpressionContext)_localctx).l!=null?((AccessExpressionContext)_localctx).l.getLine():0));
+						        }
 						    
 						setState(673);
 						match(RPAR);
@@ -3838,9 +3843,8 @@ public class SimpleLOOPParser extends Parser {
 							setState(679);
 							((AccessExpressionContext)_localctx).n = match(NEW);
 
-							                var newId = new Identifier("new");
-							                newId.setLine(((AccessExpressionContext)_localctx).n.getLine());
-							                ((AccessExpressionContext)_localctx).accessExprRet =  new ObjectMemberAccess(_localctx.accessExprRet, newId);
+							                var classType = new ClassType((Identifier) _localctx.accessExprRet);
+							                ((AccessExpressionContext)_localctx).accessExprRet =  new NewClassInstance(classType);
 							                _localctx.accessExprRet.setLine(((AccessExpressionContext)_localctx).n.getLine());
 							            
 							}

@@ -489,8 +489,12 @@ accessExpression returns[Expression accessExprRet]:
     (
     (l=LPAR m=methodArgs
     {
-        $accessExprRet = new MethodCall($accessExprRet, $m.methodCallArgsRet);
-        $accessExprRet.setLine($l.line);
+        if ($accessExprRet instanceof NewClassInstance)
+            ((NewClassInstance) $accessExprRet).setArgs($m.methodCallArgsRet);
+        else {
+            $accessExprRet = new MethodCall($accessExprRet, $m.methodCallArgsRet);
+            $accessExprRet.setLine($l.line);
+        }
     }
     RPAR)
     | (DOT (name=identifier
@@ -500,9 +504,8 @@ accessExpression returns[Expression accessExprRet]:
             }
         | n=NEW
             {
-                var newId = new Identifier("new");
-                newId.setLine($n.getLine());
-                $accessExprRet = new ObjectMemberAccess($accessExprRet, newId);
+                var classType = new ClassType((Identifier) $accessExprRet);
+                $accessExprRet = new NewClassInstance(classType);
                 $accessExprRet.setLine($n.getLine());
             }
         | i=INITIALIZE
