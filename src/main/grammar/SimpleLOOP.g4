@@ -133,11 +133,12 @@ method returns [MethodDeclaration methodDecRet]
 //todo
 methodBody returns [ArrayList<VariableDeclaration> localVars, ArrayList<Statement> statements]
     :
+    (
     {
         $localVars = new ArrayList<>();
         $statements = new ArrayList<>();
     }
-    (LBRACE NEWLINE+
+    LBRACE NEWLINE+
     (v=varDecStatement NEWLINE+
     {
         for (VariableDeclaration varDec : $v.varDecStmtRet)
@@ -146,6 +147,10 @@ methodBody returns [ArrayList<VariableDeclaration> localVars, ArrayList<Statemen
     (s=singleStatement NEWLINE+
     { $statements.add($s.singleRet); })* RBRACE)
     |
+    {
+        $localVars = new ArrayList<>();
+        $statements = new ArrayList<>();
+    }
     (
     (v=varDecStatement
     {
@@ -359,7 +364,8 @@ expression returns[Expression expRet]:
         BinaryOperator opr = BinaryOperator.assign;
         $expRet = new BinaryExpression($expRet, $ex.expRet, opr);
         $expRet.setLine($op.getLine());
-    })? (DOT inc=INCLUDE LPAR oe=orExpression RPAR { $expRet = new SetInclude($expRet, $oe.orExprRet); })?;
+    })? (DOT inc=INCLUDE LPAR oe=orExpression RPAR { $expRet = new SetInclude($expRet, $oe.orExprRet);
+                                                     $expRet.setLine($inc.getLine()); })?;
 
 //todo
 ternaryExpression returns [Expression ternaryExprRet]:

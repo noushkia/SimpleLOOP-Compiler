@@ -193,8 +193,7 @@ public class ErrorReporter extends Visitor<Integer> {
 
     @Override
     public Integer visit(Identifier identifier) {
-        int numOfErrors = printErrors(identifier);
-        return numOfErrors;
+        return printErrors(identifier);
     }
 
     @Override
@@ -245,10 +244,10 @@ public class ErrorReporter extends Visitor<Integer> {
     }
 
     @Override
-    public Integer visit(SetInclude setAdd) {
-        int numOfErrors = printErrors(setAdd);
-        numOfErrors += setAdd.getSetArg().accept(this);
-        numOfErrors += setAdd.getSetArg().accept(this);
+    public Integer visit(SetInclude setInclude) {
+        int numOfErrors = printErrors(setInclude);
+        numOfErrors += setInclude.getSetArg().accept(this);
+        numOfErrors += setInclude.getSetArg().accept(this);
         return numOfErrors;
     }
 
@@ -261,9 +260,9 @@ public class ErrorReporter extends Visitor<Integer> {
     }
 
     @Override
-    public Integer visit(SetNew setMerge) {
-        int numOfErrors = printErrors(setMerge);
-        for (Expression expression : setMerge.getArgs())
+    public Integer visit(SetNew setNew) {
+        int numOfErrors = printErrors(setNew);
+        for (Expression expression : setNew.getArgs())
             numOfErrors += expression.accept(this);
         return numOfErrors;
     }
@@ -277,11 +276,19 @@ public class ErrorReporter extends Visitor<Integer> {
     }
 
     @Override
-    public Integer visit(SetMerge setAdd) {
+    public Integer visit(SetMerge setMerge) {
+        int numOfErrors = printErrors(setMerge);
+        numOfErrors += setMerge.getSetArg().accept(this);
+        for (Expression expression : setMerge.getElementArgs())
+            numOfErrors += expression.accept(this);
+        return numOfErrors;
+    }
+
+    @Override
+    public Integer visit(SetAdd setAdd) {
         int numOfErrors = printErrors(setAdd);
         numOfErrors += setAdd.getSetArg().accept(this);
-        for (Expression expression : setAdd.getElementArgs())
-            numOfErrors += expression.accept(this);
+        numOfErrors += setAdd.getElementArg().accept(this);
         return numOfErrors;
     }
 

@@ -235,10 +235,10 @@ public class ASTTreePrinter extends Visitor<Void> {
     }
 
     @Override
-    public Void visit(SetInclude setAdd) {
-        messagePrinter(setAdd.getLine(), setAdd.toString());
-        setAdd.getSetArg().accept(this);
-        setAdd.getSetArg().accept(this);
+    public Void visit(SetInclude setInclude) {
+        messagePrinter(setInclude.getLine(), setInclude.toString());
+        setInclude.getSetArg().accept(this);
+        setInclude.getElementArg().accept(this);
         return null;
     }
 
@@ -251,9 +251,9 @@ public class ASTTreePrinter extends Visitor<Void> {
     }
 
     @Override
-    public Void visit(SetNew setMerge) {
-        messagePrinter(setMerge.getLine(), setMerge.toString());
-        for (Expression expression : setMerge.getArgs())
+    public Void visit(SetNew setNew) {
+        messagePrinter(setNew.getLine(), setNew.toString());
+        for (Expression expression : setNew.getArgs())
             expression.accept(this);
         return null;
     }
@@ -267,10 +267,18 @@ public class ASTTreePrinter extends Visitor<Void> {
     }
 
     @Override
-    public Void visit(SetMerge setAdd) {
+    public Void visit(SetAdd setAdd) {
         messagePrinter(setAdd.getLine(), setAdd.toString());
         setAdd.getSetArg().accept(this);
-        for (Expression expression : setAdd.getElementArgs())
+        setAdd.getElementArg().accept(this);
+        return null;
+    }
+
+    @Override
+    public Void visit(SetMerge setMerge) {
+        messagePrinter(setMerge.getLine(), setMerge.toString());
+        setMerge.getSetArg().accept(this);
+        for (Expression expression : setMerge.getElementArgs())
             expression.accept(this);
         return null;
     }
