@@ -27,13 +27,16 @@ import main.visitor.Visitor;
 public class NameCollector extends Visitor<Void> {
 
     private int newId = 1;
+    private boolean isGlobal = false;
 
     @Override
     public Void visit(Program program) {
         SymbolTable.push(new SymbolTable());
         SymbolTable.root = SymbolTable.top;
+        isGlobal = true;
         for (VariableDeclaration variableDeclaration : program.getGlobalVariables())
             variableDeclaration.accept(this);
+        isGlobal = false;
 
         for(ClassDeclaration classDeclaration : program.getClasses()) {
             classDeclaration.accept(this);
@@ -132,8 +135,14 @@ public class NameCollector extends Visitor<Void> {
         try {
             SymbolTable.top.put(new LocalVariableSymbolTableItem(varDeclaration));
         } catch (ItemAlreadyExistsException e) {
-            LocalVarRedefinition exception = new LocalVarRedefinition(varDeclaration.getLine(), varDeclaration.getVarName().getName());
-            varDeclaration.addError(exception);
+            if (!isGlobal) {
+                LocalVarRedefinition exception = new LocalVarRedefinition(varDeclaration.getLine(), varDeclaration.getVarName().getName());
+                varDeclaration.addError(exception);
+            }
+            else {
+                GlobalVarRedefinition exception = new GlobalVarRedefinition(varDeclaration.getLine(), varDeclaration.getVarName().getName());
+                varDeclaration.addError(exception);
+            }
         }
         return null;
     }
