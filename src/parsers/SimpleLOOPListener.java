@@ -4,6 +4,7 @@ package parsers;
      import main.ast.nodes.*;
      import main.ast.nodes.declaration.*;
      import main.ast.nodes.declaration.classDec.*;
+     import main.ast.nodes.declaration.classDec.classMembersDec.*;
      import main.ast.nodes.declaration.variableDec.*;
      import main.ast.nodes.expression.*;
      import main.ast.nodes.expression.operators.*;
@@ -406,16 +407,6 @@ public interface SimpleLOOPListener extends ParseTreeListener {
 	 */
 	void exitOtherExpression(SimpleLOOPParser.OtherExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SimpleLOOPParser#accessByIndex}.
-	 * @param ctx the parse tree
-	 */
-	void enterAccessByIndex(SimpleLOOPParser.AccessByIndexContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link SimpleLOOPParser#accessByIndex}.
-	 * @param ctx the parse tree
-	 */
-	void exitAccessByIndex(SimpleLOOPParser.AccessByIndexContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link SimpleLOOPParser#setNew}.
 	 * @param ctx the parse tree
 	 */
@@ -425,16 +416,6 @@ public interface SimpleLOOPListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSetNew(SimpleLOOPParser.SetNewContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link SimpleLOOPParser#setInclude}.
-	 * @param ctx the parse tree
-	 */
-	void enterSetInclude(SimpleLOOPParser.SetIncludeContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link SimpleLOOPParser#setInclude}.
-	 * @param ctx the parse tree
-	 */
-	void exitSetInclude(SimpleLOOPParser.SetIncludeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SimpleLOOPParser#value}.
 	 * @param ctx the parse tree

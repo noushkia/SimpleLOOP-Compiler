@@ -4,6 +4,7 @@ import main.visitor.IVisitor;
 
 import java.util.ArrayList;
 
+//line -> NEW
 public class SetNew extends Expression{
     private ArrayList<Expression> args;
 

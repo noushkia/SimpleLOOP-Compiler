@@ -4,6 +4,7 @@ package parsers;
      import main.ast.nodes.*;
      import main.ast.nodes.declaration.*;
      import main.ast.nodes.declaration.classDec.*;
+     import main.ast.nodes.declaration.classDec.classMembersDec.*;
      import main.ast.nodes.declaration.variableDec.*;
      import main.ast.nodes.expression.*;
      import main.ast.nodes.expression.operators.*;
@@ -257,23 +258,11 @@ public interface SimpleLOOPVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOtherExpression(SimpleLOOPParser.OtherExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SimpleLOOPParser#accessByIndex}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAccessByIndex(SimpleLOOPParser.AccessByIndexContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link SimpleLOOPParser#setNew}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitSetNew(SimpleLOOPParser.SetNewContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link SimpleLOOPParser#setInclude}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSetInclude(SimpleLOOPParser.SetIncludeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SimpleLOOPParser#value}.
 	 * @param ctx the parse tree

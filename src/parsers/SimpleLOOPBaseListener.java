@@ -4,6 +4,7 @@ package parsers;
      import main.ast.nodes.*;
      import main.ast.nodes.declaration.*;
      import main.ast.nodes.declaration.classDec.*;
+     import main.ast.nodes.declaration.classDec.classMembersDec.*;
      import main.ast.nodes.declaration.variableDec.*;
      import main.ast.nodes.expression.*;
      import main.ast.nodes.expression.operators.*;
@@ -490,18 +491,6 @@ public class SimpleLOOPBaseListener implements SimpleLOOPListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAccessByIndex(SimpleLOOPParser.AccessByIndexContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAccessByIndex(SimpleLOOPParser.AccessByIndexContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterSetNew(SimpleLOOPParser.SetNewContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -509,18 +498,6 @@ public class SimpleLOOPBaseListener implements SimpleLOOPListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSetNew(SimpleLOOPParser.SetNewContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSetInclude(SimpleLOOPParser.SetIncludeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSetInclude(SimpleLOOPParser.SetIncludeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

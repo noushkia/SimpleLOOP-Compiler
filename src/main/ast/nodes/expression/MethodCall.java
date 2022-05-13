@@ -4,7 +4,7 @@ import main.visitor.IVisitor;
 
 import java.util.ArrayList;
 
-//line -> LPAR before arguments
+//line -> LPAR before arguments or INC or DEC
 public class MethodCall extends Expression {
     private Expression instance;
     private ArrayList<Expression> args = new ArrayList<>();
