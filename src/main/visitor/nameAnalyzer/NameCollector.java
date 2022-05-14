@@ -1,4 +1,4 @@
-package main.visitor.name;
+package main.visitor.nameAnalyzer;
 
 import main.ast.nodes.Program;
 import main.ast.nodes.declaration.classDec.ClassDeclaration;
@@ -7,13 +7,11 @@ import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
 import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.ast.nodes.expression.Identifier;
-import main.compileError.nameError.ClassInCyclicInheritance;
 import main.compileError.nameError.ClassRedefinition;
 import main.compileError.nameError.GlobalVarRedefinition;
 import main.compileError.nameError.LocalVarConflictWithGlobalVar;
 import main.compileError.nameError.LocalVarRedefinition;
 import main.compileError.nameError.FieldRedefinition;
-import main.compileError.nameError.MethodNameConflictWithField;
 import main.compileError.nameError.MethodRedefinition;
 import main.symbolTable.SymbolTable;
 import main.symbolTable.exceptions.ItemAlreadyExistsException;

@@ -74,12 +74,13 @@
 
 package main;
 
+import main.visitor.utils.ASTTreePrinter;
 import main.visitor.utils.ErrorReporter;
 import parsers.*;
 import main.ast.nodes.Program;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import main.visitor.name.*;
+import main.visitor.nameAnalyzer.*;
 
 public class SimpleLOOPCompiler {
     public void compile(CharStream textStream) {
