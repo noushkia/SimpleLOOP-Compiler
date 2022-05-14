@@ -109,110 +109,21 @@ public class TypeChecker extends Visitor<Void> {
     }
 
     @Override
-    public Void visit(BinaryExpression binaryExpression) {
-        //todo
-        return null;
-    }
-
-    @Override
-    public Void visit(UnaryExpression unaryExpression) {
-        //todo
-        return null;
-    }
-
-    @Override
-    public Void visit(TernaryExpression ternaryExpression) {
-        //todo
-        return null;
-    }
-
-    @Override
-    public Void visit(ObjectMemberAccess objectOrListMemberAccess) {
-        //todo
-        return null;
-    }
-
-    @Override
-    public Void visit(Identifier identifier) {
-        //todo
-        return null;
-    }
-
-    @Override
-    public Void visit(ArrayAccessByIndex arrayAccessByIndex) {
-        //todo
-        return null;
-    }
-
-    @Override
-    public Void visit(MethodCall methodCall) {
-        //todo
-        return null;
-    }
-
-    @Override
-    public Void visit(NewClassInstance newClassInstance) {
-        //todo
-        return null;
-    }
-
-    @Override
-    public Void visit(SelfClass selfClass) {
-        //todo
-        return null;
-    }
-
-    @Override
-    public Void visit(NullValue nullValue) {
-        //todo
-        return null;
-    }
-
-    @Override
-    public Void visit(IntValue intValue) {
-        //todo
-        return null;
-    }
-
-    @Override
-    public Void visit(BoolValue boolValue) {
-        //todo
-        return null;
-    }
-
-    @Override
-    public Void visit(SetInclude setAdd) {
-        //todo
-        return null;
-    }
-
-    @Override
-    public Void visit(SetValue setValue) {
-        //todo
-        return null;
-    }
-
-    @Override
-    public Void visit(SetNew setMerge) {
-        //todo
-        return null;
-    }
-
-    @Override
     public Void visit(SetDelete setDelete) {
         //todo
         return null;
     }
 
     @Override
-    public Void visit(SetMerge setAdd) {
+    public Void visit(SetMerge setMerge) {
         //todo
         return null;
     }
 
     @Override
-    public Void visit(RangeExpression rangeExpression) {
+    public Void visit(SetAdd setAdd) {
         //todo
         return null;
     }
+
 }

@@ -1,6 +1,8 @@
 package main.visitor.typeChecker;
 
 import main.ast.nodes.expression.*;
+import main.ast.nodes.expression.values.NullValue;
+import main.ast.nodes.expression.values.SetValue;
 import main.ast.nodes.expression.values.primitive.BoolValue;
 import main.ast.nodes.expression.values.primitive.IntValue;
 import main.ast.types.Type;
@@ -17,6 +19,12 @@ public class ExpressionTypeChecker extends Visitor<Type> {
     @Override
     public Type visit(BinaryExpression binaryExpression) {
         //Todo
+        return null;
+    }
+
+    @Override
+    public Type visit(NewClassInstance newClassInstance) {
+        //todo
         return null;
     }
 
@@ -57,7 +65,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
     }
 
     @Override
-    public Type visit(SetInclude setAdd) {
+    public Type visit(SetInclude setInclude) {
         //Todo
         return null;
     }
@@ -83,6 +91,24 @@ public class ExpressionTypeChecker extends Visitor<Type> {
     @Override
     public Type visit(BoolValue boolValue) {
         //Todo
+        return null;
+    }
+
+    @Override
+    public Type visit(SelfClass selfClass) {
+        //todo
+        return null;
+    }
+
+    @Override
+    public Type visit(SetValue setValue) {
+        //todo
+        return null;
+    }
+
+    @Override
+    public Type visit(NullValue nullValue) {
+        //todo
         return null;
     }
 }
