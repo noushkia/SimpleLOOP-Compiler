@@ -6,18 +6,18 @@ import main.ast.nodes.declaration.classDec.classMembersDec.ConstructorDeclaratio
 import main.ast.nodes.declaration.classDec.classMembersDec.FieldDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
 import main.ast.nodes.declaration.variableDec.VariableDeclaration;
-import main.ast.nodes.expression.*;
-import main.ast.nodes.expression.values.NullValue;
-import main.ast.nodes.expression.values.SetValue;
-import main.ast.nodes.expression.values.primitive.*;
 import main.ast.nodes.statement.*;
 import main.ast.nodes.statement.set.*;
+import main.compileError.typeError.NoMainClass;
 import main.symbolTable.utils.graph.Graph;
 import main.visitor.*;
 
 public class TypeChecker extends Visitor<Void> {
     private Graph<String> classHierarchy;
     ExpressionTypeChecker expressionTypeChecker;
+    private ClassDeclaration currentClass;
+    private MethodDeclaration currentMethod;
+    private boolean isInFor = false;
 
     public TypeChecker(Graph<String> classHierarchy){
         this.classHierarchy = classHierarchy;
@@ -26,7 +26,18 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(Program program) {
-        //todo
+        boolean mainCheck = false;
+        for(ClassDeclaration classDeclaration : program.getClasses()) {
+            this.expressionTypeChecker.setCurrentClass(classDeclaration);
+            this.currentClass = classDeclaration;
+            classDeclaration.accept(this);
+            if(classDeclaration.getClassName().getName().equals("Main"))
+                mainCheck = true;
+        }
+        if(!mainCheck) {
+            NoMainClass exception = new NoMainClass();
+            program.addError(exception);
+        }
         return null;
     }
 
