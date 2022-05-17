@@ -28,7 +28,7 @@ public class TypeChecker extends Visitor<Void> {
     public Void visit(Program program) {
         boolean mainCheck = false;
         for(ClassDeclaration classDeclaration : program.getClasses()) {
-            this.expressionTypeChecker.setCurrentClass(classDeclaration);
+            this.expressionTypeChecker.setObjectMemberAccess(classDeclaration);
             this.currentClass = classDeclaration;
             classDeclaration.accept(this);
             if(classDeclaration.getClassName().getName().equals("Main"))

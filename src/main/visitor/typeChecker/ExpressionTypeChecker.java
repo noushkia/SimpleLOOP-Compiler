@@ -4,24 +4,21 @@ import main.ast.nodes.Node;
 import main.ast.nodes.declaration.classDec.ClassDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
 import main.ast.nodes.expression.*;
-import main.ast.nodes.expression.operators.BinaryOperator;
-import main.ast.nodes.expression.values.NullValue;
-import main.ast.nodes.expression.values.SetValue;
-import main.ast.nodes.expression.values.primitive.BoolValue;
-import main.ast.nodes.expression.values.primitive.IntValue;
-import main.ast.types.NoType;
-import main.ast.types.NullType;
-import main.ast.types.Type;
+import main.ast.nodes.expression.operators.*;
+import main.ast.nodes.expression.values.*;
+import main.ast.nodes.expression.values.primitive.*;
+import main.ast.types.*;
 import main.ast.types.array.ArrayType;
 import main.ast.types.functionPointer.FptrType;
-import main.ast.types.primitives.BoolType;
-import main.ast.types.primitives.ClassType;
-import main.ast.types.primitives.IntType;
+import main.ast.types.primitives.*;
 import main.ast.types.set.SetType;
-import main.compileError.typeError.CannotHaveEmptyArray;
-import main.compileError.typeError.ClassNotDeclared;
-import main.compileError.typeError.LeftSideNotLvalue;
-import main.compileError.typeError.UnsupportedOperandType;
+import main.compileError.typeError.*;
+import main.symbolTable.SymbolTable;
+import main.symbolTable.exceptions.ItemNotFoundException;
+import main.symbolTable.items.ClassSymbolTableItem;
+import main.symbolTable.items.FieldSymbolTableItem;
+import main.symbolTable.items.LocalVariableSymbolTableItem;
+import main.symbolTable.items.MethodSymbolTableItem;
 import main.symbolTable.utils.graph.Graph;
 import main.visitor.Visitor;
 
@@ -39,8 +36,8 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         this.classHierarchy = classHierarchy;
     }
 
-    public void setCurrentClass(ClassDeclaration currentClass) {
-        this.currentClass = currentClass;
+    public void setCurrentClass(ClassDeclaration classDeclaration) {
+        this.currentClass = classDeclaration;
     }
 
     public void setCurrentMethod(MethodDeclaration currentMethod) {
@@ -250,43 +247,210 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     @Override
     public Type visit(NewClassInstance newClassInstance) {
-
-        return null;
+        this.seenNoneLvalue = true;
+        String className = newClassInstance.getClassType().getClassName().getName();
+        ArrayList<Type> newInstanceTypes = new ArrayList<>();
+        for(Expression expression : newClassInstance.getArgs())
+            newInstanceTypes.add(expression.accept(this));
+        if(this.classHierarchy.doesGraphContainNode(className)) {
+            try {
+                ClassSymbolTableItem classSymbolTableItem = (ClassSymbolTableItem) SymbolTable.root.getItem(ClassSymbolTableItem.START_KEY + className, true);
+                MethodSymbolTableItem methodSymbolTableItem = (MethodSymbolTableItem) classSymbolTableItem.getClassSymbolTable().getItem(MethodSymbolTableItem.START_KEY + className, true);
+                ArrayList<Type> constructorActualTypes = methodSymbolTableItem.getArgTypes();
+                if(this.isFirstSubTypeOfSecondMultiple(newInstanceTypes, constructorActualTypes)) {
+                    return newClassInstance.getClassType();
+                }
+                else {
+                        ConstructorArgsNotMatchDefinition exception = new ConstructorArgsNotMatchDefinition(newClassInstance);
+                    newClassInstance.addError(exception);
+                    return new NoType();
+                }
+            } catch (ItemNotFoundException ignored) {
+                if(newInstanceTypes.size() != 0) {
+                    ConstructorArgsNotMatchDefinition exception = new ConstructorArgsNotMatchDefinition(newClassInstance);
+                    newClassInstance.addError(exception);
+                    return new NoType();
+                }
+                else {
+                    return newClassInstance.getClassType();
+                }
+            }
+        }
+        else {
+            ClassNotDeclared exception = new ClassNotDeclared(newClassInstance.getLine(), className);
+            newClassInstance.addError(exception);
+            return new NoType();
+        }
     }
 
     @Override
     public Type visit(UnaryExpression unaryExpression) {
-        //Todo
-        return null;
+        this.seenNoneLvalue = true;
+        Type operandType = unaryExpression.getOperand().accept(this);
+        UnaryOperator operator = unaryExpression.getOperator();
+        if(operator == UnaryOperator.not) {
+            if(operandType instanceof NoType)
+                return new NoType();
+            if(operandType instanceof BoolType)
+                return operandType;
+            UnsupportedOperandType exception = new UnsupportedOperandType(unaryExpression.getLine(), operator.name());
+            unaryExpression.addError(exception);
+            return new NoType();
+        }
+        else if(operator == UnaryOperator.minus) {
+            if(operandType instanceof NoType)
+                return new NoType();
+            if(operandType instanceof IntType)
+                return operandType;
+            UnsupportedOperandType exception = new UnsupportedOperandType(unaryExpression.getLine(), operator.name());
+            unaryExpression.addError(exception);
+            return new NoType();
+        }
+        else {
+            boolean isOperandLvalue = this.isLvalue(unaryExpression.getOperand());
+            if(!isOperandLvalue) {
+                IncDecOperandNotLvalue exception = new IncDecOperandNotLvalue(unaryExpression.getLine(), operator.name());
+                unaryExpression.addError(exception);
+            }
+            if(operandType instanceof NoType)
+                return new NoType();
+            if(operandType instanceof IntType) {
+                if(isOperandLvalue)
+                    return operandType;
+                return new NoType();
+            }
+            UnsupportedOperandType exception = new UnsupportedOperandType(unaryExpression.getLine(), operator.name());
+            unaryExpression.addError(exception);
+            return new NoType();
+        }
     }
 
     @Override
     public Type visit(MethodCall methodCall) {
-        //Todo
-        return null;
+        this.seenNoneLvalue = true;
+        Type instanceType = methodCall.getInstance().accept(this);
+        boolean prevIsInMethodCallStmt = this.isInMethodCallStmt;
+        this.setIsInMethodCallStmt(false);
+        ArrayList<Type> argsTypes = new ArrayList<>();
+        for(Expression arg : methodCall.getArgs()) {
+            argsTypes.add(arg.accept(this));
+        }
+        this.setIsInMethodCallStmt(prevIsInMethodCallStmt);
+        if(!(instanceType instanceof FptrType || instanceType instanceof NoType)) {
+            CallOnNoneCallable exception = new CallOnNoneCallable(methodCall.getLine());
+            methodCall.addError(exception);
+            return new NoType();
+        }
+        else if(instanceType instanceof NoType) {
+            return new NoType();
+        }
+        else {
+            ArrayList<Type> actualArgsTypes = ((FptrType) instanceType).getArgumentsTypes();
+            Type returnType = ((FptrType) instanceType).getReturnType();
+            boolean hasError = false;
+            if(!isInMethodCallStmt && (returnType instanceof NullType)) {
+                CantUseValueOfVoidMethod exception = new CantUseValueOfVoidMethod(methodCall.getLine());
+                methodCall.addError(exception);
+                hasError = true;
+            }
+            if(this.isFirstSubTypeOfSecondMultiple(argsTypes, actualArgsTypes)) {
+                if(hasError)
+                    return new NoType();
+                return this.refineType(returnType);
+            }
+            else {
+                MethodCallNotMatchDefinition exception = new MethodCallNotMatchDefinition(methodCall.getLine());
+                methodCall.addError(exception);
+                return new NoType();
+            }
+        }
     }
 
     @Override
     public Type visit(Identifier identifier) {
-        //Todo
-        return null;
+        try {
+            ClassSymbolTableItem classSymbolTableItem = (ClassSymbolTableItem) SymbolTable.root.getItem(ClassSymbolTableItem.START_KEY + this.currentClass.getClassName().getName(), true);
+            SymbolTable classSymbolTable = classSymbolTableItem.getClassSymbolTable();
+            MethodSymbolTableItem methodSymbolTableItem = (MethodSymbolTableItem) classSymbolTable.getItem(MethodSymbolTableItem.START_KEY + this.currentMethod.getMethodName().getName(), true);
+            SymbolTable methodSymbolTable = methodSymbolTableItem.getMethodSymbolTable();
+            LocalVariableSymbolTableItem localVariableSymbolTableItem = (LocalVariableSymbolTableItem) methodSymbolTable.getItem(LocalVariableSymbolTableItem.START_KEY + identifier.getName(), true);
+            return this.refineType(localVariableSymbolTableItem.getType());
+        } catch (ItemNotFoundException e) {
+            VarNotDeclared exception = new VarNotDeclared(identifier.getLine(), identifier.getName());
+            identifier.addError(exception);
+            return new NoType();
+        }
     }
 
     @Override
     public Type visit(ArrayAccessByIndex arrayAccessByIndex) {
-        //Todo
-        return null;
+        Type instanceType = arrayAccessByIndex.getInstance().accept(this);
+        boolean prevSeenNoneLvalue = this.seenNoneLvalue;
+        Type indexType = arrayAccessByIndex.getIndex().accept(this);
+        this.seenNoneLvalue = prevSeenNoneLvalue;
+        boolean indexErrored = false;
+        if(!(indexType instanceof NoType || indexType instanceof IntType)) {
+            ArrayIndexNotInt exception = new ArrayIndexNotInt(arrayAccessByIndex.getLine());
+            arrayAccessByIndex.addError(exception);
+            indexErrored = true;
+        }
+        if(instanceType instanceof ArrayType) {
+            if(indexErrored)
+                return new NoType();
+        }
+        else if(!(instanceType instanceof NoType)) {
+            AccessByIndexOnNoneArray exception = new AccessByIndexOnNoneArray(arrayAccessByIndex.getLine());
+            arrayAccessByIndex.addError(exception);
+        }
+        return new NoType();
     }
 
     @Override
     public Type visit(ObjectMemberAccess objectMemberAccess) {
-        //Todo
-        return null;
+        boolean prevSeenNoneLvalue = this.seenNoneLvalue;
+        Type instanceType = objectMemberAccess.getInstance().accept(this);
+        if(objectMemberAccess.getInstance() instanceof SelfClass)
+            this.seenNoneLvalue = prevSeenNoneLvalue;
+        String memberName = objectMemberAccess.getMemberName().getName();
+        if(instanceType instanceof NoType)
+            return new NoType();
+        else if(instanceType instanceof ClassType) {
+            String className = ((ClassType) instanceType).getClassName().getName();
+            SymbolTable classSymbolTable;
+            try {
+                classSymbolTable = ((ClassSymbolTableItem) SymbolTable.root.getItem(ClassSymbolTableItem.START_KEY + className, true)).getClassSymbolTable();
+            } catch (ItemNotFoundException classNotFound) {
+                return new NoType();
+            }
+            try {
+                FieldSymbolTableItem fieldSymbolTableItem = (FieldSymbolTableItem) classSymbolTable.getItem(FieldSymbolTableItem.START_KEY + memberName, true);
+                return this.refineType(fieldSymbolTableItem.getType());
+            } catch (ItemNotFoundException memberNotField) {
+                try {
+                    MethodSymbolTableItem methodSymbolTableItem = (MethodSymbolTableItem) classSymbolTable.getItem(MethodSymbolTableItem.START_KEY + memberName, true);
+                    this.seenNoneLvalue = true;
+                    return new FptrType(methodSymbolTableItem.getArgTypes(), methodSymbolTableItem.getReturnType());
+                } catch (ItemNotFoundException memberNotFound) {
+                    if(memberName.equals(className)) {
+                        this.seenNoneLvalue = true;
+                        return new FptrType(new ArrayList<>(), new NullType());
+                    }
+                    MemberNotAvailableInClass exception = new MemberNotAvailableInClass(objectMemberAccess.getLine(), memberName, className);
+                    objectMemberAccess.addError(exception);
+                    return new NoType();
+                }
+            }
+        }
+        else {
+            AccessOnNonClass exception = new AccessOnNonClass(objectMemberAccess.getLine());
+            objectMemberAccess.addError(exception);
+            return new NoType();
+        }
     }
 
     @Override
     public Type visit(SetNew setNew) {
-        //Todo
+        ArrayList<Expression>
         return null;
     }
 
@@ -310,14 +474,14 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     @Override
     public Type visit(IntValue intValue) {
-        //Todo
-        return null;
+        this.seenNoneLvalue = true;
+        return new IntType();
     }
 
     @Override
     public Type visit(BoolValue boolValue) {
-        //Todo
-        return null;
+        this.seenNoneLvalue = true;
+        return new BoolType();
     }
 
     @Override
@@ -328,13 +492,13 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     @Override
     public Type visit(SetValue setValue) {
-        //todo
-        return null;
+        this.seenNoneLvalue = true;
+        return new SetType();
     }
 
     @Override
     public Type visit(NullValue nullValue) {
-        //todo
-        return null;
+        this.seenNoneLvalue = true;
+        return new NullType();
     }
 }
