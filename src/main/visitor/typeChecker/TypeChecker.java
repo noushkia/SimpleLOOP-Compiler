@@ -8,7 +8,14 @@ import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
 import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.ast.nodes.statement.*;
 import main.ast.nodes.statement.set.*;
+import main.ast.types.NoType;
+import main.ast.types.Type;
+import main.ast.types.array.ArrayType;
+import main.ast.types.primitives.BoolType;
+import main.ast.types.primitives.IntType;
+import main.ast.types.set.SetType;
 import main.compileError.typeError.NoMainClass;
+import main.compileError.typeError.UnsupportedTypeForPrint;
 import main.symbolTable.utils.graph.Graph;
 import main.visitor.*;
 
@@ -17,7 +24,6 @@ public class TypeChecker extends Visitor<Void> {
     ExpressionTypeChecker expressionTypeChecker;
     private ClassDeclaration currentClass;
     private MethodDeclaration currentMethod;
-    private boolean isInFor = false;
 
     public TypeChecker(Graph<String> classHierarchy){
         this.classHierarchy = classHierarchy;
@@ -28,7 +34,7 @@ public class TypeChecker extends Visitor<Void> {
     public Void visit(Program program) {
         boolean mainCheck = false;
         for(ClassDeclaration classDeclaration : program.getClasses()) {
-            this.expressionTypeChecker.setObjectMemberAccess(classDeclaration);
+            this.expressionTypeChecker.setCurrentClass(classDeclaration);
             this.currentClass = classDeclaration;
             classDeclaration.accept(this);
             if(classDeclaration.getClassName().getName().equals("Main"))
@@ -103,7 +109,12 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(PrintStmt print) {
-        //todo
+        Type argType = print.getArg().accept(expressionTypeChecker);
+        if(!(argType instanceof IntType || argType instanceof ArrayType || argType instanceof SetType ||
+                argType instanceof BoolType || argType instanceof NoType)) {
+            UnsupportedTypeForPrint exception = new UnsupportedTypeForPrint(print.getLine());
+            print.addError(exception);
+        }
         return null;
     }
 

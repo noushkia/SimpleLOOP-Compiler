@@ -23,6 +23,7 @@ import main.symbolTable.utils.graph.Graph;
 import main.visitor.Visitor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ExpressionTypeChecker extends Visitor<Type> {
     private Graph<String> classHierarchy;
@@ -48,11 +49,11 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         this.isInMethodCallStmt = isInMethodCallStmt;
     }
 
-    public boolean isSameType(Type t1, Type t2) {
+    private boolean isSameType(Type t1, Type t2) {
         return (t1 instanceof NoType) || (t2 instanceof NoType) || (isFirstSubTypeOfSecond(t1, t2) && isFirstSubTypeOfSecond(t2, t1));
     }
 
-    public boolean isFirstSubTypeOfSecondMultiple(ArrayList<Type> first, ArrayList<Type> second) {
+    private boolean isFirstSubTypeOfSecondMultiple(ArrayList<Type> first, ArrayList<Type> second) {
         if(first.size() != second.size())
             return false;
         for(int i = 0; i < first.size(); i++) {
@@ -62,7 +63,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         return true;
     }
 
-    public boolean isFirstSubTypeOfSecond(Type first, Type second) {
+    private boolean isFirstSubTypeOfSecond(Type first, Type second) {
         if(first instanceof NoType)
             return true;
         else if(first instanceof IntType || first instanceof BoolType || first instanceof SetType)
@@ -131,7 +132,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         }
     }
 
-    public boolean isLvalue(Expression expression) {
+    private boolean isLvalue(Expression expression) {
         boolean prevIsCatchErrorsActive = Node.isCatchErrorsActive;
         boolean prevSeenNoneLvalue = this.seenNoneLvalue;
         Node.isCatchErrorsActive = false;
@@ -450,26 +451,66 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     @Override
     public Type visit(SetNew setNew) {
-        ArrayList<Expression>
-        return null;
+        for (var arg : setNew.getArgs()) {
+            Type argType = arg.accept(this);
+            if (!(argType instanceof IntType || argType instanceof NoType)) {
+                NewInputNotSet exception = new NewInputNotSet(setNew.getLine());
+                setNew.addError(exception);
+                return new NoType();
+            }
+        }
+        return new SetType();
     }
 
     @Override
     public Type visit(SetInclude setInclude) {
-        //Todo
-        return null;
+        //todo check instance type
+        Type argType = setInclude.getElementArg().accept(this);
+        if (!(argType instanceof SetType || argType instanceof NoType)) {
+            SetIncludeInputNotInt exception = new SetIncludeInputNotInt(setInclude.getLine());
+            setInclude.addError(exception);
+            return new NoType();
+        }
+        return new BoolType();
     }
 
     @Override
     public Type visit(RangeExpression rangeExpression) {
-        //Todo
-        return null;
+        Type leftExpressionType = rangeExpression.getLeftExpression().accept(this);
+        Type rightExpressionType = rangeExpression.getRightExpression().accept(this);
+        if (!(leftExpressionType instanceof IntType || leftExpressionType instanceof NoType)) {
+            EachRangeNotInt exception = new EachRangeNotInt(rangeExpression.getLine());
+            rangeExpression.addError(exception);
+            return new NoType();
+        }
+        else if (!(rightExpressionType instanceof IntType || rightExpressionType instanceof NoType)) {
+            EachRangeNotInt exception = new EachRangeNotInt(rangeExpression.getLine());
+            rangeExpression.addError(exception);
+            return new NoType();
+        }
+
+        return new ArrayType(new IntType(), new ArrayList<Expression>(List.of(new IntValue(1))));
     }
 
     @Override
     public Type visit(TernaryExpression ternaryExpression) {
-        //Todo
-        return null;
+        Type conditionType = ternaryExpression.getCondition().accept(this);
+        Type trueExpressionType = ternaryExpression.getTrueExpression().accept(this);
+        Type falseExpressionType = ternaryExpression.getFalseExpression().accept(this);
+
+        if (!(conditionType instanceof BoolType || conditionType instanceof NoType)) {
+            UnsupportedOperandType exception = new UnsupportedOperandType(ternaryExpression.getLine(), TernaryOperator.ternary.name());
+            ternaryExpression.addError(exception);
+            return new NoType();
+        }
+        else if (!isSameType(trueExpressionType, falseExpressionType)) {
+            //todo ??
+            UnsupportedOperandType exception = new UnsupportedOperandType(ternaryExpression.getLine(), TernaryOperator.ternary.name());
+            ternaryExpression.addError(exception);
+            return new NoType();
+        }
+
+        return trueExpressionType;
     }
 
     @Override
@@ -486,8 +527,8 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     @Override
     public Type visit(SelfClass selfClass) {
-        //todo
-        return null;
+        this.seenNoneLvalue = true;
+        return new ClassType(currentClass.getClassName());
     }
 
     @Override
