@@ -374,8 +374,14 @@ public class ExpressionTypeChecker extends Visitor<Type> {
             SymbolTable classSymbolTable = classSymbolTableItem.getClassSymbolTable();
             MethodSymbolTableItem methodSymbolTableItem = (MethodSymbolTableItem) classSymbolTable.getItem(MethodSymbolTableItem.START_KEY + this.currentMethod.getMethodName().getName(), true);
             SymbolTable methodSymbolTable = methodSymbolTableItem.getMethodSymbolTable();
-            LocalVariableSymbolTableItem localVariableSymbolTableItem = (LocalVariableSymbolTableItem) methodSymbolTable.getItem(LocalVariableSymbolTableItem.START_KEY + identifier.getName(), true);
-            return this.refineType(localVariableSymbolTableItem.getType());
+            try{
+                LocalVariableSymbolTableItem localVariableSymbolTableItem = (LocalVariableSymbolTableItem) methodSymbolTable.getItem(LocalVariableSymbolTableItem.START_KEY + identifier.getName(), true);
+                return this.refineType(localVariableSymbolTableItem.getType());
+            }catch (ItemNotFoundException e){
+                FieldSymbolTableItem field = (FieldSymbolTableItem) classSymbolTable.getItem(FieldSymbolTableItem.START_KEY + identifier.getName(), true);
+                return this.refineType(field.getType());
+            }
+
         } catch (ItemNotFoundException e) {
             VarNotDeclared exception = new VarNotDeclared(identifier.getLine(), identifier.getName());
             identifier.addError(exception);
@@ -464,13 +470,22 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     @Override
     public Type visit(SetInclude setInclude) {
-        //todo check instance type
         Type argType = setInclude.getElementArg().accept(this);
-        if (!(argType instanceof SetType || argType instanceof NoType)) {
+        Type instanceType = setInclude.getSetArg().accept(this);
+        if (!(argType instanceof IntType || argType instanceof NoType)) {
             SetIncludeInputNotInt exception = new SetIncludeInputNotInt(setInclude.getLine());
             setInclude.addError(exception);
             return new NoType();
         }
+        if (!(instanceType instanceof SetType || instanceType instanceof NoType)) {
+            //todo add error for notSetInstance
+            CallOnNoneCallable exception = new CallOnNoneCallable(setInclude.getLine());
+            setInclude.addError(exception);
+            return new NoType();
+        }
+
+
+
         return new BoolType();
     }
 

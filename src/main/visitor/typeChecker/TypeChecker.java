@@ -83,6 +83,7 @@ public class TypeChecker extends Visitor<Void> {
         for(MethodDeclaration methodDeclaration : classDeclaration.getMethods()) {
             this.expressionTypeChecker.setCurrentMethod(methodDeclaration);
             this.currentMethod = methodDeclaration;
+            methodDeclaration.accept(this);
             // todo
 //            boolean doesReturn = methodDeclaration.accept(this).doesReturn;
 //            methodDeclaration.setDoesReturn(doesReturn);
@@ -118,6 +119,7 @@ public class TypeChecker extends Visitor<Void> {
         this.methodReturns = false;
 //        boolean doesReturn = false, doesMethodReturn = false;
         for(Statement statement : methodDeclaration.getBody()) {
+            statement.accept(this);
 //            if(doesReturn) {
 //                UnreachableStatements exception = new UnreachableStatements(statement);
 //                statement.addError(exception);
