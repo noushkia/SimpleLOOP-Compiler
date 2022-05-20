@@ -2,9 +2,9 @@ package main.symbolTable.items;
 
 
 import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
-import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.ast.types.Type;
 import main.symbolTable.SymbolTable;
+import main.util.ArgPair;
 
 import java.util.ArrayList;
 
@@ -18,8 +18,8 @@ public class MethodSymbolTableItem extends SymbolTableItem {
     public MethodSymbolTableItem(MethodDeclaration methodDeclaration) {
         this.methodDeclaration = methodDeclaration;
         this.returnType = methodDeclaration.getReturnType();
-        for(VariableDeclaration varDeclaration : methodDeclaration.getArgs()) {
-            this.argTypes.add(varDeclaration.getType());
+        for(ArgPair argPair : methodDeclaration.getArgs()) {
+            this.argTypes.add(argPair.getVariableDeclaration().getType());
         }
         this.name = methodDeclaration.getMethodName().getName();
     }

@@ -13,6 +13,7 @@ import main.ast.nodes.expression.values.primitive.*;
 import main.ast.nodes.statement.*;
 import main.ast.nodes.statement.set.*;
 import main.compileError.CompileError;
+import main.util.ArgPair;
 import main.visitor.*;
 
 import java.util.ArrayList;
@@ -67,8 +68,8 @@ public class ErrorReporter extends Visitor<Integer> {
     public Integer visit(MethodDeclaration methodDeclaration) {
         int numOfErrors = printErrors(methodDeclaration);
         numOfErrors += methodDeclaration.getMethodName().accept(this);
-        for(VariableDeclaration varDeclaration : methodDeclaration.getArgs()) {
-            numOfErrors += varDeclaration.accept(this);
+        for(ArgPair argPair : methodDeclaration.getArgs()) {
+            numOfErrors += argPair.getVariableDeclaration().accept(this);
         }
         for(VariableDeclaration varDeclaration : methodDeclaration.getLocalVars()) {
             numOfErrors += varDeclaration.accept(this);
@@ -115,6 +116,8 @@ public class ErrorReporter extends Visitor<Integer> {
         int numOfErrors = printErrors(conditionalStmt);
         numOfErrors += conditionalStmt.getCondition().accept(this);
         numOfErrors += conditionalStmt.getThenBody().accept(this);
+        for (ElsifStmt elsifStmt : conditionalStmt.getElsif())
+            numOfErrors += elsifStmt.accept(this);
         if(conditionalStmt.getElseBody() != null) {
             numOfErrors += conditionalStmt.getElseBody().accept(this);
         }

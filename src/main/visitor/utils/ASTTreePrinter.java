@@ -12,6 +12,7 @@ import main.ast.nodes.expression.values.SetValue;
 import main.ast.nodes.expression.values.primitive.*;
 import main.ast.nodes.statement.*;
 import main.ast.nodes.statement.set.*;
+import main.util.ArgPair;
 import main.visitor.*;
 
 public class ASTTreePrinter extends Visitor<Void> {
@@ -47,8 +48,8 @@ public class ASTTreePrinter extends Visitor<Void> {
     @Override
     public Void visit(ConstructorDeclaration constructorDeclaration) {
         messagePrinter(constructorDeclaration.getLine(), constructorDeclaration.toString());
-        for (VariableDeclaration variableDeclaration : constructorDeclaration.getArgs())
-            variableDeclaration.accept(this);
+        for (ArgPair argPair : constructorDeclaration.getArgs())
+            argPair.getVariableDeclaration().accept(this);
         for (VariableDeclaration variableDeclaration : constructorDeclaration.getLocalVars())
             variableDeclaration.accept(this);
         for (Statement statement : constructorDeclaration.getBody())
@@ -60,8 +61,11 @@ public class ASTTreePrinter extends Visitor<Void> {
     public Void visit(MethodDeclaration methodDeclaration) {
         messagePrinter(methodDeclaration.getLine(), methodDeclaration.toString());
         methodDeclaration.getMethodName().accept(this);
-        for (VariableDeclaration variableDeclaration : methodDeclaration.getArgs())
-            variableDeclaration.accept(this);
+        for (ArgPair argPair : methodDeclaration.getArgs()) {
+            argPair.getVariableDeclaration().accept(this);
+            if (argPair.getDefaultValue() != null)
+                argPair.getDefaultValue().accept(this);
+        }
         for (VariableDeclaration variableDeclaration : methodDeclaration.getLocalVars())
             variableDeclaration.accept(this);
         for (Statement statement : methodDeclaration.getBody())

@@ -11,7 +11,6 @@ import main.ast.nodes.expression.operators.BinaryOperator;
 import main.ast.nodes.statement.*;
 import main.ast.nodes.statement.set.*;
 import main.ast.types.NoType;
-import main.ast.types.NullType;
 import main.ast.types.Type;
 import main.ast.types.array.ArrayType;
 import main.ast.types.primitives.BoolType;
@@ -21,6 +20,7 @@ import main.ast.types.primitives.VoidType;
 import main.ast.types.set.SetType;
 import main.compileError.typeError.*;
 import main.symbolTable.utils.graph.Graph;
+import main.util.ArgPair;
 import main.visitor.*;
 
 public class TypeChecker extends Visitor<Void> {
@@ -108,8 +108,9 @@ public class TypeChecker extends Visitor<Void> {
     @Override
     public Void visit(MethodDeclaration methodDeclaration) {
         this.expressionTypeChecker.checkTypeValidation(methodDeclaration.getReturnType(), methodDeclaration);
-        for(VariableDeclaration varDeclaration : methodDeclaration.getArgs()) {
-            varDeclaration.accept(this);
+        for(ArgPair argPair : methodDeclaration.getArgs()) {
+            //todo
+            argPair.getVariableDeclaration().accept(this);
         }
         for(VariableDeclaration varDeclaration : methodDeclaration.getLocalVars()) {
             varDeclaration.accept(this);

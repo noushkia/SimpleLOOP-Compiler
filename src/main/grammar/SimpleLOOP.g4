@@ -18,6 +18,7 @@ grammar SimpleLOOP;
      import main.ast.types.functionPointer.*;
      import main.ast.types.array.*;
      import java.util.*;
+     import main.util.*;
  }
 
 simpleLOOP returns [Program simpleLOOPProgram]:
@@ -34,7 +35,6 @@ program returns[Program programRet]:
     })*
     (c = classDeclaration NEWLINE+ {$programRet.addClass($c.classDeclarationRet);})*;
 
-//todo
 constructor returns [ConstructorDeclaration constructorRet]
     : PUBLIC i = INITIALIZE
     {
@@ -52,7 +52,6 @@ constructor returns [ConstructorDeclaration constructorRet]
     };
 
 
-//todo
 classDeclaration returns [ ClassDeclaration classDeclarationRet]
     : cl=CLASS name=class_identifier
     {
@@ -90,7 +89,6 @@ classDeclaration returns [ ClassDeclaration classDeclarationRet]
 }
         }));
 
-//todo
 field_decleration returns [ArrayList<Declaration> decRet]:
     { $decRet = new ArrayList<>(); }
     ((( access=(PUBLIC | PRIVATE)
@@ -114,7 +112,6 @@ field_decleration returns [ArrayList<Declaration> decRet]:
         })
     );
 
-//todo
 method returns [MethodDeclaration methodDecRet]
     locals [Type returnType]
     : (t=type { $returnType = $t.typeRet; }
@@ -130,7 +127,6 @@ method returns [MethodDeclaration methodDecRet]
         $methodDecRet.setBody($b.statements);
       };
 
-//todo
 methodBody returns [ArrayList<VariableDeclaration> localVars, ArrayList<Statement> statements]
     :
     (
@@ -162,28 +158,32 @@ methodBody returns [ArrayList<VariableDeclaration> localVars, ArrayList<Statemen
     { $statements.add($s.singleRet); })
     );
 
-//todo
-methodArgsDec returns [ArrayList<VariableDeclaration> argsRet]
+methodArgsDec returns [ArrayList<ArgPair> argsRet]
     : LPAR
     { $argsRet = new ArrayList<>(); }
-    (arg=argDec
-       { $argsRet.add($arg.arg); }
-     ((ASSIGN orExpression)
-    | (COMMA arg=argDec
-       { $argsRet.add($arg.arg); }
-      )*) (COMMA arg=argDec
-       { $argsRet.add($arg.arg); }
-        ASSIGN orExpression)*)?
-      RPAR ;
+    (
+        arg=argDec { $argsRet.add(new ArgPair($arg.arg)); }
+        (
+            (ASSIGN oe=orExpression {
+                                        $argsRet.get(0).setDefaultValue($oe.orExprRet);
+                                    }
+            )
+            | (COMMA arg=argDec { $argsRet.add(new ArgPair($arg.arg)); })*
+        )
+        (
+            COMMA arg=argDec
+            ASSIGN oe=orExpression
+            { $argsRet.add(new ArgPair($arg.arg, $oe.orExprRet)); }
+        )*
+    )?
+    RPAR ;
 
-//todo
 argDec returns [VariableDeclaration arg]
     : typ=type
      name=identifier
      { $arg = new VariableDeclaration($name.idRet, $typ.typeRet);
        $arg.setLine($name.idRet.getLine()); };
 
-//todo
 methodArgs returns [ArrayList<Expression> methodCallArgsRet]
     : { $methodCallArgsRet = new ArrayList<>(); }
       (e1=expression
@@ -193,13 +193,11 @@ methodArgs returns [ArrayList<Expression> methodCallArgsRet]
       )*
       )?;
 
-//todo
 body returns [Statement statementRet]:
      (bs=blockStatement
       { $statementRet = $bs.blockRet; }
       | (NEWLINE+ ss=singleStatement { $statementRet = $ss.singleRet; }));
 
-//todo
 blockStatement returns [BlockStmt blockRet]:
     lb=LBRACE
      { $blockRet = new BlockStmt();
@@ -208,7 +206,6 @@ blockStatement returns [BlockStmt blockRet]:
                 { $blockRet.addStatement($ss.singleRet);}
                  NEWLINE+)* RBRACE;
 
-//todo
 singleStatement returns [Statement singleRet]:
     i=ifStatement
     { $singleRet = $i.ifRet; }
@@ -230,7 +227,6 @@ singleStatement returns [Statement singleRet]:
     { $singleRet = $d.deleteRet;}
     ;
 
-//todo
 addStatement returns [SetAdd addRet]:
     exp=expression DOT add=ADD LPAR orexp=orExpression RPAR
     {
@@ -238,7 +234,6 @@ addStatement returns [SetAdd addRet]:
         $addRet.setLine($add.getLine());
     };
 
-//todo
 mergeStatement returns [SetMerge mergeRet]
     locals [ArrayList<Expression> expArgs]:
     exp=expression DOT merge=MERGE LPAR orexp=orExpression
@@ -252,7 +247,6 @@ mergeStatement returns [SetMerge mergeRet]
         $mergeRet.setLine($merge.getLine());
     } RPAR;
 
-//todo
 deleteStatement returns [SetDelete deleteRet]:
     exp=expression DOT delete=DELETE LPAR orexp=orExpression RPAR
     {
@@ -260,7 +254,6 @@ deleteStatement returns [SetDelete deleteRet]:
         $deleteRet.setLine($delete.getLine());
     };
 
-//todo
 varDecStatement returns [ArrayList<VariableDeclaration> varDecStmtRet]:
     t=type name=identifier
     {
@@ -275,7 +268,6 @@ varDecStatement returns [ArrayList<VariableDeclaration> varDecStmtRet]:
                             $varDecStmtRet.add(extraDec);
                         })*;
 
-//todo
 ifStatement returns [ConditionalStmt ifRet]:
     i=IF c=condition b=body
     {
@@ -285,7 +277,6 @@ ifStatement returns [ConditionalStmt ifRet]:
     (ei=elsifStatement { $ifRet.addElsif($ei.elsifRet); })*
     (e=elseStatement { $ifRet.setElseBody($e.elseRet); })?;
 
-//todo
 elsifStatement returns [ElsifStmt elsifRet]:
      NEWLINE* el=ELSIF c=condition b=body
      {
@@ -293,15 +284,12 @@ elsifStatement returns [ElsifStmt elsifRet]:
         $elsifRet.setLine($el.getLine());
       };
 
-//todo
 condition returns [Expression conditionRet] :
     (LPAR ex=expression {$conditionRet = $ex.expRet;} RPAR) | (ex=expression {$conditionRet = $ex.expRet;});
 
-//todo
 elseStatement returns [Statement elseRet]:
      NEWLINE* ELSE b=body {$elseRet = $b.statementRet;};
 
-//todo
 printStatement returns [PrintStmt printRet] :
     p=PRINT LPAR e=expression
     {
@@ -310,7 +298,6 @@ printStatement returns [PrintStmt printRet] :
     }
     RPAR;
 
-//todo
 methodCallStmt returns [MethodCallStmt methRet]
     locals [Expression inst, MethodCall methCallExpr]:
     ax=accessExpression { $inst = $ax.accessExprRet; }
@@ -323,13 +310,11 @@ methodCallStmt returns [MethodCallStmt methRet]
         $methRet.setLine($l.getLine());
     };
 
-//todo
 returnStatement returns [ReturnStmt returnRet]:
     r=RETURN { $returnRet = new ReturnStmt();
                $returnRet.setLine($r.getLine()); }
     (e=expression { $returnRet.setReturnedExpr($e.expRet); })?;
 
-//todo
 assignmentStatement returns [AssignmentStmt assignRet]:
     e=orExpression ((a=ASSIGN ex=expression
     {
@@ -337,7 +322,6 @@ assignmentStatement returns [AssignmentStmt assignRet]:
         $assignRet.setLine($a.getLine());
     }) );
 
-//todo
 loopStatement returns [EachStmt loopRet]
     locals [Expression list]:
     (
@@ -357,7 +341,6 @@ loopStatement returns [EachStmt loopRet]
         $loopRet.setLine($each.getLine());
      };
 
-//todo
 expression returns[Expression expRet]:
     tex=ternaryExpression {$expRet = $tex.ternaryExprRet;}
     (op=ASSIGN ex=expression{
@@ -367,7 +350,6 @@ expression returns[Expression expRet]:
     })? (DOT inc=INCLUDE LPAR oe=orExpression RPAR { $expRet = new SetInclude($expRet, $oe.orExprRet);
                                                      $expRet.setLine($inc.getLine()); })?;
 
-//todo
 ternaryExpression returns [Expression ternaryExprRet]:
     oex=orExpression { $ternaryExprRet = $oex.orExprRet; }
     (q=TIF ttex=ternaryExpression TELSE ftex=ternaryExpression{
@@ -377,7 +359,6 @@ ternaryExpression returns [Expression ternaryExprRet]:
       }
     )?;
 
-//todo
 orExpression returns[Expression orExprRet]:
     expl = andExpression {$orExprRet = $expl.andExprRet;}
     (op = OR expr = andExpression{
@@ -387,7 +368,6 @@ orExpression returns[Expression orExprRet]:
     })*
     ;
 
-//todo
 andExpression returns[Expression andExprRet]:
     expl = equalityExpression {$andExprRet = $expl.equalityExprRet;}
     (op = AND expr = equalityExpression{
@@ -396,7 +376,6 @@ andExpression returns[Expression andExprRet]:
         $andExprRet.setLine($op.getLine());
     })*;
 
-//todo
 equalityExpression returns[Expression equalityExprRet]:
     expl = relationalExpression {$equalityExprRet = $expl.relationalExprRet;}
     (op = EQUAL expr = relationalExpression{
@@ -405,7 +384,6 @@ equalityExpression returns[Expression equalityExprRet]:
         $equalityExprRet.setLine($op.getLine());
     })*;
 
-//todo
 relationalExpression returns [Expression relationalExprRet]
     locals [BinaryOperator op, int line]:
     l = additiveExpression
@@ -421,7 +399,6 @@ relationalExpression returns [Expression relationalExprRet]
      $relationalExprRet.setLine($line);}
     )*;
 
-//todo
 additiveExpression returns [Expression expr]
     locals [BinaryOperator op, int line]:
     l = multiplicativeExpression
@@ -432,13 +409,11 @@ additiveExpression returns [Expression expr]
     | op2 = MINUS
     {$op = BinaryOperator.sub;
      $line = $op2.getLine();}
-
     ) r = multiplicativeExpression
     {$expr = new BinaryExpression($expr,$r.expr,$op);
      $expr.setLine($line);}
     )*;
 
-//todo
 multiplicativeExpression returns [Expression expr]
     locals [BinaryOperator op, int line]:
     l = preUnaryExpression
@@ -454,7 +429,6 @@ multiplicativeExpression returns [Expression expr]
     $expr.setLine($line);}
     )*;
 
-//todo
 preUnaryExpression returns [Expression expr]
     locals[UnaryOperator op, int line]:
     ((op1 = NOT
@@ -470,7 +444,6 @@ preUnaryExpression returns [Expression expr]
     {$expr = $post.postUnaryExprRet;}
     ;
 
-//todo
 postUnaryExpression returns[Expression postUnaryExprRet]:
     ae=accessExpression { $postUnaryExprRet = $ae.accessExprRet; }
     (
@@ -489,7 +462,6 @@ postUnaryExpression returns[Expression postUnaryExprRet]:
     )
     )?;
 
-//todo
 accessExpression returns[Expression accessExprRet]:
     oe=otherExpression { $accessExprRet = $oe.otherExprRet; }
     (
@@ -514,13 +486,6 @@ accessExpression returns[Expression accessExprRet]:
                 $accessExprRet = new NewClassInstance(classType);
                 $accessExprRet.setLine($n.getLine());
             }
-        | i=INITIALIZE
-            {
-                var newInit = new Identifier("initialize");
-                newInit.setLine($i.getLine());
-                $accessExprRet = new ObjectMemberAccess($accessExprRet, newInit);
-                $accessExprRet.setLine($i.getLine());
-            }
        ))
     )*
     (
@@ -538,7 +503,6 @@ accessExpression returns[Expression accessExprRet]:
         )
     )*;
 
-//todo
 otherExpression returns [Expression otherExprRet]:
     s=SELF
     {
@@ -557,7 +521,6 @@ otherExpression returns [Expression otherExprRet]:
     { $otherExprRet = $e.expRet; }
     ;
 
-//todo
 setNew returns [Expression setNewRet]
     locals [ArrayList<Expression> args]:
     { $args = new ArrayList<>();}
@@ -569,7 +532,6 @@ setNew returns [Expression setNewRet]
                }
                RPAR;
 
-//todo
 value returns[Value valuesRet]:
     b=boolValue
     {
@@ -583,7 +545,6 @@ value returns[Value valuesRet]:
     }
     ;
 
-//todo
 boolValue returns[boolean boolValueRet, int line]:
     t=TRUE
     {
@@ -597,7 +558,6 @@ boolValue returns[boolean boolValueRet, int line]:
     }
     ;
 
-//todo
 class_identifier returns[Identifier idRet, int line]:
     cid=CLASS_IDENTIFIER
     {
@@ -607,7 +567,6 @@ class_identifier returns[Identifier idRet, int line]:
     }
     ;
 
-//todo
 identifier returns[Identifier idRet, int line]:
     id=IDENTIFIER
     {
@@ -617,7 +576,6 @@ identifier returns[Identifier idRet, int line]:
     }
     ;
 
-//todo
 type returns [Type typeRet]:
     INT
     { $typeRet = new IntType(); }
@@ -633,7 +591,6 @@ type returns [Type typeRet]:
     { $typeRet = new ClassType($cid.idRet); }
     ;
 
-//todo
 array_type returns [ArrayType arrTypeRet]
     locals[Type t, ArrayList<Expression> dims]:
     { $dims = new ArrayList<>(); }
@@ -644,16 +601,13 @@ array_type returns [ArrayType arrTypeRet]
     (LBRACK ex=expression RBRACK { $dims.add($ex.expRet); })+
     { $arrTypeRet = new ArrayType($t, $dims); };
 
-//todo
 fptr_type returns[FptrType fptrTypeRet]:
     { ArrayList<Type> args = new ArrayList<>(); }
     FPTR LESS_THAN (VOID
     | (t1 = type { args.add($t1.typeRet); } (COMMA t2 = type { args.add($t2.typeRet); })* ))
-
     ARROW (t3 = type {$fptrTypeRet = new FptrType(args, $t3.typeRet);}
     | VOID {$fptrTypeRet = new FptrType(args, new VoidType());}) GREATER_THAN;
 
-//todo
 set_type returns [SetType setTypeRet]:
     SET LESS_THAN (INT) GREATER_THAN { $setTypeRet = new SetType(); };
 
