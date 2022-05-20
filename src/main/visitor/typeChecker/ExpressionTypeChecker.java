@@ -53,7 +53,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         return (t1 instanceof NoType) || (t2 instanceof NoType) || (isFirstSubTypeOfSecond(t1, t2) && isFirstSubTypeOfSecond(t2, t1));
     }
 
-    private boolean isFirstSubTypeOfSecondMultiple(ArrayList<Type> first, ArrayList<Type> second) {
+    public boolean isFirstSubTypeOfSecondMultiple(ArrayList<Type> first, ArrayList<Type> second) {
         if(first.size() != second.size())
             return false;
         for(int i = 0; i < first.size(); i++) {
@@ -63,7 +63,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         return true;
     }
 
-    private boolean isFirstSubTypeOfSecond(Type first, Type second) {
+    public boolean isFirstSubTypeOfSecond(Type first, Type second) {
         if(first instanceof NoType)
             return true;
         else if(first instanceof IntType || first instanceof BoolType || first instanceof SetType)
@@ -132,7 +132,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         }
     }
 
-    private boolean isLvalue(Expression expression) {
+    public boolean isLvalue(Expression expression) {
         boolean prevIsCatchErrorsActive = Node.isCatchErrorsActive;
         boolean prevSeenNoneLvalue = this.seenNoneLvalue;
         Node.isCatchErrorsActive = false;
