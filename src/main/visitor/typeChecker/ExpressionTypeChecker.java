@@ -173,6 +173,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
             if((firstType instanceof FptrType && secondType instanceof NullType) ||
                     (firstType instanceof NullType && secondType instanceof FptrType) ||
                     (firstType instanceof FptrType && secondType instanceof FptrType)) {
+                //todo fix the type checking for fptr : must have same signature
                 return new BoolType();
             }
             if(firstType instanceof NullType && secondType instanceof NullType)
