@@ -128,10 +128,10 @@ public class TypeChecker extends Visitor<Void> {
 //            doesMethodReturn = doesReturn || doesMethodReturn;
         }
 
-        if (!this.methodReturns && !(methodDeclaration.getReturnType() instanceof VoidType)) {
-            MissingReturnStatement exception = new MissingReturnStatement(methodDeclaration);
-            methodDeclaration.addError(exception);
-        }
+//        if (!this.methodReturns && !(methodDeclaration.getReturnType() instanceof VoidType)) {
+//            MissingReturnStatement exception = new MissingReturnStatement(methodDeclaration);
+//            methodDeclaration.addError(exception);
+//        }
         return null;
     }
 
