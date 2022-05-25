@@ -32,6 +32,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
     private boolean seenNoneLvalue = false;
     private boolean isInMethodCallStmt = false;
 
+
     public ExpressionTypeChecker(Graph<String> classHierarchy) {
         this.classHierarchy = classHierarchy;
     }
@@ -67,6 +68,8 @@ public class ExpressionTypeChecker extends Visitor<Type> {
             return true;
         else if(first instanceof IntType || first instanceof BoolType || first instanceof SetType)
             return first.toString().equals(second.toString());
+        else if(first instanceof VoidType && second instanceof VoidType)
+            return true;
         else if(first instanceof NullType)
             return second instanceof NullType || second instanceof FptrType || second instanceof ClassType;
         else if(first instanceof ClassType) {
@@ -172,7 +175,6 @@ public class ExpressionTypeChecker extends Visitor<Type> {
             if((firstType instanceof FptrType && secondType instanceof NullType) ||
                     (firstType instanceof NullType && secondType instanceof FptrType) ||
                     (firstType instanceof FptrType && secondType instanceof FptrType)) {
-                //todo fix the type checking for fptr : must have same signature
                 return new BoolType();
             }
             if(firstType instanceof NullType && secondType instanceof NullType)
@@ -369,7 +371,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
             ArrayList<Type> actualArgsTypes = ((FptrType) instanceType).getArgumentsTypes();
             Type returnType = ((FptrType) instanceType).getReturnType();
             boolean hasError = false;
-            if(!isInMethodCallStmt && (returnType instanceof NullType)) {
+            if(!isInMethodCallStmt && (returnType instanceof VoidType)) {
                 CantUseValueOfVoidMethod exception = new CantUseValueOfVoidMethod(methodCall.getLine());
                 methodCall.addError(exception);
                 hasError = true;
