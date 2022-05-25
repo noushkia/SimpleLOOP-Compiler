@@ -370,6 +370,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         else {
             ArrayList<Type> actualArgsTypes = ((FptrType) instanceType).getArgumentsTypes();
             Type returnType = ((FptrType) instanceType).getReturnType();
+
             boolean hasError = false;
             if(!isInMethodCallStmt && (returnType instanceof VoidType)) {
                 CantUseValueOfVoidMethod exception = new CantUseValueOfVoidMethod(methodCall.getLine());

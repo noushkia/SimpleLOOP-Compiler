@@ -177,6 +177,7 @@ public class TypeChecker extends Visitor<Void> {
                 statement.addError(exception);
                 return null;
             }
+            statement.accept(this);
         }
         return null;
     }
