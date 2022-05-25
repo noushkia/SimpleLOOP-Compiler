@@ -102,18 +102,19 @@ public class ExpressionTypeChecker extends Visitor<Type> {
     }
 
     public void checkTypeValidation(Type type, Node node) {
-        if(!(type instanceof ClassType || type instanceof FptrType))
+        if(!(type instanceof ClassType || type instanceof FptrType || type instanceof ArrayType))
             return;
-//        if(type instanceof ArrayType) {
-//            //todo check size??
-//            for (Expression dimension : ((ArrayType) type).getDimensions()) {
-//                Type dimType = dimension.accept(this);
-//                if (dimType instanceof IntType || dimType instanceof NoType){
-//                    UnsupportedOperandType unsupportedOperandType = new UnsupportedOperandType(node.getLine(), );
-//                }
-//            }
-//        }
-        if(type instanceof FptrType) {
+        if(type instanceof ArrayType) {
+            for (Expression dimension : ((ArrayType) type).getDimensions()) {
+                if (dimension instanceof IntValue){
+                    if (((IntValue) dimension).getConstant() == 0){
+                        CannotHaveEmptyArray cannotHaveEmptyArray = new CannotHaveEmptyArray(node.getLine());
+                        node.addError(cannotHaveEmptyArray);
+                    }
+                }
+            }
+        }
+        else if(type instanceof FptrType) {
             Type retType = ((FptrType) type).getReturnType();
             ArrayList<Type> argsType = ((FptrType) type).getArgumentsTypes();
             this.checkTypeValidation(retType, node);

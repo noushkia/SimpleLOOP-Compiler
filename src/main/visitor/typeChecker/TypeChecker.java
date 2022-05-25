@@ -255,13 +255,13 @@ public class TypeChecker extends Visitor<Void> {
     @Override
     public Void visit(EachStmt eachStmt) {
         Type listType = eachStmt.getList().accept(expressionTypeChecker);
-        if (!(listType instanceof ArrayType)) {
+        if (!(listType instanceof ArrayType || listType instanceof NoType)) {
             EachCantIterateNoneArray exception = new EachCantIterateNoneArray(eachStmt.getLine());
             eachStmt.addError(exception);
             return null;
         }
         Type varType = eachStmt.getVariable().accept(expressionTypeChecker);
-        if (!(expressionTypeChecker.isFirstSubTypeOfSecond(varType, ((ArrayType) listType).getType()))) {
+        if (!(listType instanceof NoType || expressionTypeChecker.isFirstSubTypeOfSecond(varType, ((ArrayType) listType).getType()))) {
             EachVarNotMatchList exception = new EachVarNotMatchList(eachStmt);
             eachStmt.addError(exception);
             return null;
