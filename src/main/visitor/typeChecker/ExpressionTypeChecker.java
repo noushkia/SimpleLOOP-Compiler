@@ -31,6 +31,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
     private int typeValidationNumberOfErrors;
     private boolean seenNoneLvalue = false;
     private boolean isInMethodCallStmt = false;
+    private MethodDeclaration methodDeclaration;
 
 
     public ExpressionTypeChecker(Graph<String> classHierarchy) {
@@ -377,16 +378,28 @@ public class ExpressionTypeChecker extends Visitor<Type> {
                 methodCall.addError(exception);
                 hasError = true;
             }
-            if(this.isFirstSubTypeOfSecondMultiple(argsTypes, actualArgsTypes)) {
-                if(hasError)
-                    return new NoType();
-                return this.refineType(returnType);
+            int i = 0;
+            for(ArgPair argPair : methodDeclaration.getArgs()) {
+                Type argType = argPair.getVariableDeclaration().getType();
+                if (argPair.getDefaultValue() != null) {
+                    if (argsTypes.size() <= i)
+                        continue;
+                    if (!this.isFirstSubTypeOfSecond(argsTypes.get(i), argPair.getDefaultValue().accept(this))) {
+                        MethodCallNotMatchDefinition exception = new MethodCallNotMatchDefinition(methodCall.getLine());
+                        methodCall.addError(exception);
+                        return new NoType();
+                    }
+                }
+                else {
+                    if (argsTypes.size() <= i || !this.isFirstSubTypeOfSecond(argsTypes.get(i), argType)) {
+                        MethodCallNotMatchDefinition exception = new MethodCallNotMatchDefinition(methodCall.getLine());
+                        methodCall.addError(exception);
+                        return new NoType();
+                    }
+                }
+                i += 1;
             }
-            else {
-                MethodCallNotMatchDefinition exception = new MethodCallNotMatchDefinition(methodCall.getLine());
-                methodCall.addError(exception);
-                return new NoType();
-            }
+            return methodDeclaration.getReturnType();
         }
     }
 
@@ -465,6 +478,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
                 try {
                     MethodSymbolTableItem methodSymbolTableItem = (MethodSymbolTableItem) classSymbolTable.getItem(MethodSymbolTableItem.START_KEY + memberName, true);
                     this.seenNoneLvalue = true;
+                    this.methodDeclaration = methodSymbolTableItem.getMethodDeclaration();
                     return new FptrType(methodSymbolTableItem.getArgTypes(), methodSymbolTableItem.getReturnType());
                 } catch (ItemNotFoundException memberNotFound) {
                     if(memberName.equals(className)) {
