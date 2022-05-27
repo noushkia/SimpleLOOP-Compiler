@@ -556,11 +556,11 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         Type falseExpressionType = ternaryExpression.getFalseExpression().accept(this);
         boolean hasError = false;
         if (!(conditionType instanceof BoolType || conditionType instanceof NoType)) {
-            UnsupportedOperandType exception = new UnsupportedOperandType(ternaryExpression.getLine(), TernaryOperator.ternary.name());
+            ConditionNotBool exception = new ConditionNotBool(ternaryExpression.getLine());
             ternaryExpression.addError(exception);
             hasError = true;
         }
-        else if (!isSameType(trueExpressionType, falseExpressionType)) {
+        if (!isSameType(trueExpressionType, falseExpressionType)) {
             UnsupportedOperandType exception = new UnsupportedOperandType(ternaryExpression.getLine(), TernaryOperator.ternary.name());
             ternaryExpression.addError(exception);
             hasError = true;
