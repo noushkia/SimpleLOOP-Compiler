@@ -19,7 +19,6 @@ public class SimpleLOOPCompiler {
 
         Program program = simpleLOOPParser.simpleLOOP().simpleLOOPProgram;
         ErrorReporter errorReporter = new ErrorReporter();
-//        ASTTreePrinter astTreePrinter = new ASTTreePrinter();
 
         NameAnalyzer nameAnalyzer = new NameAnalyzer(program);
         nameAnalyzer.analyze();
