@@ -42,6 +42,10 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         this.currentClass = classDeclaration;
     }
 
+    public void setMethodDeclaration(MethodDeclaration methodDeclaration) {
+        this.methodDeclaration = methodDeclaration;
+    }
+
     public void setCurrentMethod(MethodDeclaration currentMethod) {
         this.currentMethod = currentMethod;
     }
@@ -377,6 +381,18 @@ public class ExpressionTypeChecker extends Visitor<Type> {
                 CantUseValueOfVoidMethod exception = new CantUseValueOfVoidMethod(methodCall.getLine());
                 methodCall.addError(exception);
                 hasError = true;
+            }
+            if (methodDeclaration == null){
+                int i = 0;
+                for(Type argType : actualArgsTypes) {
+                    if (!this.isFirstSubTypeOfSecond(argsTypes.get(i), argType)) {
+                        MethodCallNotMatchDefinition exception = new MethodCallNotMatchDefinition(methodCall.getLine());
+                        methodCall.addError(exception);
+                        return new NoType();
+                    }
+                    i++;
+                }
+                return returnType;
             }
             int i = 0;
             for(ArgPair argPair : methodDeclaration.getArgs()) {
