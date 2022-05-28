@@ -104,6 +104,9 @@ public class TypeChecker extends Visitor<Void> {
                 constructorDeclaration.addError(exception);
             }
         }
+        for (VariableDeclaration variableDeclaration : constructorDeclaration.getLocalVars()){
+            variableDeclaration.accept(this);
+        }
         for (Statement statement : constructorDeclaration.getBody()){
             statement.accept(this);
         }
