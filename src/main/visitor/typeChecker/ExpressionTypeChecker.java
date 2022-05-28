@@ -3,6 +3,7 @@ package main.visitor.typeChecker;
 import main.ast.nodes.Node;
 import main.ast.nodes.declaration.classDec.ClassDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
+import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.ast.nodes.expression.*;
 import main.ast.nodes.expression.operators.*;
 import main.ast.nodes.expression.values.*;
@@ -113,6 +114,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         if(!(type instanceof ClassType || type instanceof FptrType || type instanceof ArrayType))
             return;
         if(type instanceof ArrayType) {
+            checkTypeValidation(((ArrayType)type).getType(), node);
             for (Expression dimension : ((ArrayType) type).getDimensions()) {
                 if (dimension instanceof IntValue){
                     if (((IntValue) dimension).getConstant() == 0){
