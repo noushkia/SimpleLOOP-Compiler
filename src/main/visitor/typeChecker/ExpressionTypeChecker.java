@@ -3,6 +3,7 @@ package main.visitor.typeChecker;
 import main.ast.nodes.Node;
 import main.ast.nodes.declaration.classDec.ClassDeclaration;
 import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
+import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.ast.nodes.expression.*;
 import main.ast.nodes.expression.operators.*;
 import main.ast.nodes.expression.values.*;
@@ -40,6 +41,10 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     public void setCurrentClass(ClassDeclaration classDeclaration) {
         this.currentClass = classDeclaration;
+    }
+
+    public void setMethodDeclaration(MethodDeclaration methodDeclaration) {
+        this.methodDeclaration = methodDeclaration;
     }
 
     public void setCurrentMethod(MethodDeclaration currentMethod) {
@@ -109,6 +114,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         if(!(type instanceof ClassType || type instanceof FptrType || type instanceof ArrayType))
             return;
         if(type instanceof ArrayType) {
+            checkTypeValidation(((ArrayType)type).getType(), node);
             for (Expression dimension : ((ArrayType) type).getDimensions()) {
                 if (dimension instanceof IntValue){
                     if (((IntValue) dimension).getConstant() == 0){
@@ -380,6 +386,18 @@ public class ExpressionTypeChecker extends Visitor<Type> {
                 methodCall.addError(exception);
                 hasError = true;
             }
+            if (methodDeclaration == null){
+                int i = 0;
+                for(Type argType : actualArgsTypes) {
+                    if (!this.isFirstSubTypeOfSecond(argsTypes.get(i), argType)) {
+                        MethodCallNotMatchDefinition exception = new MethodCallNotMatchDefinition(methodCall.getLine());
+                        methodCall.addError(exception);
+                        return new NoType();
+                    }
+                    i++;
+                }
+                return returnType;
+            }
             int i = 0;
             for(ArgPair argPair : methodDeclaration.getArgs()) {
                 Type argType = argPair.getVariableDeclaration().getType();
@@ -416,13 +434,15 @@ public class ExpressionTypeChecker extends Visitor<Type> {
                 LocalVariableSymbolTableItem localVariableSymbolTableItem = (LocalVariableSymbolTableItem) methodSymbolTable.getItem(LocalVariableSymbolTableItem.START_KEY + identifier.getName(), true);
                 return this.refineType(localVariableSymbolTableItem.getType());
             }catch (ItemNotFoundException e){
-                try{
-                    FieldSymbolTableItem field = (FieldSymbolTableItem) classSymbolTable.getItem(FieldSymbolTableItem.START_KEY + identifier.getName(), true);
-                    return this.refineType(field.getType());
-                }catch (ItemNotFoundException ee){
-                    GlobalVariableSymbolTableItem globalVariableSymbolTableItem = (GlobalVariableSymbolTableItem) SymbolTable.root.getItem(GlobalVariableSymbolTableItem.START_KEY + identifier.getName(), true);
-                    return refineType(globalVariableSymbolTableItem.getType());
-                }
+//                try{
+//                    FieldSymbolTableItem field = (FieldSymbolTableItem) classSymbolTable.getItem(FieldSymbolTableItem.START_KEY + identifier.getName(), true);
+//                    return this.refineType(field.getType());
+//                }catch (ItemNotFoundException ee){
+//                    GlobalVariableSymbolTableItem globalVariableSymbolTableItem = (GlobalVariableSymbolTableItem) SymbolTable.root.getItem(GlobalVariableSymbolTableItem.START_KEY + identifier.getName(), true);
+//                    return refineType(globalVariableSymbolTableItem.getType());
+//                }
+                GlobalVariableSymbolTableItem globalVariableSymbolTableItem = (GlobalVariableSymbolTableItem) SymbolTable.root.getItem(GlobalVariableSymbolTableItem.START_KEY + identifier.getName(), true);
+                return refineType(globalVariableSymbolTableItem.getType());
 
             }
 
@@ -558,11 +578,11 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         Type falseExpressionType = ternaryExpression.getFalseExpression().accept(this);
         boolean hasError = false;
         if (!(conditionType instanceof BoolType || conditionType instanceof NoType)) {
-            UnsupportedOperandType exception = new UnsupportedOperandType(ternaryExpression.getLine(), TernaryOperator.ternary.name());
+            ConditionNotBool exception = new ConditionNotBool(ternaryExpression.getLine());
             ternaryExpression.addError(exception);
             hasError = true;
         }
-        else if (!isSameType(trueExpressionType, falseExpressionType)) {
+        if (!isSameType(trueExpressionType, falseExpressionType)) {
             UnsupportedOperandType exception = new UnsupportedOperandType(ternaryExpression.getLine(), TernaryOperator.ternary.name());
             ternaryExpression.addError(exception);
             hasError = true;

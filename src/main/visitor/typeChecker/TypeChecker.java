@@ -184,7 +184,7 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(ConditionalStmt conditionalStmt) {
-        boolean hasReturnIf, hasReturnElse = true, hasReturnCur;
+        boolean hasReturnIf, hasReturnElse = false, hasReturnCur;
         hasReturnCur = hasReturn;
         Type condType = conditionalStmt.getCondition().accept(expressionTypeChecker);
         if(!(condType instanceof BoolType || condType instanceof NoType)) {
@@ -197,12 +197,12 @@ public class TypeChecker extends Visitor<Void> {
         for (ElsifStmt elsifStmt : conditionalStmt.getElsif()) {
             hasReturn = false;
             elsifStmt.accept(this);
-            hasReturnElse &= hasReturn;
+            hasReturnElse = hasReturn;
         }
         if(conditionalStmt.getElseBody() != null) {
             hasReturn = false;
             conditionalStmt.getElseBody().accept(this);
-            hasReturnElse &= hasReturn;
+            hasReturnElse = hasReturn;
         }
         if(hasReturnCur){
             hasReturn = true;
@@ -263,16 +263,15 @@ public class TypeChecker extends Visitor<Void> {
     @Override
     public Void visit(EachStmt eachStmt) {
         Type listType = eachStmt.getList().accept(expressionTypeChecker);
+        Type varType = eachStmt.getVariable().accept(expressionTypeChecker);
         if (!(listType instanceof ArrayType || listType instanceof NoType)) {
             EachCantIterateNoneArray exception = new EachCantIterateNoneArray(eachStmt.getLine());
             eachStmt.addError(exception);
-            return null;
+            listType = new NoType();
         }
-        Type varType = eachStmt.getVariable().accept(expressionTypeChecker);
         if (!(listType instanceof NoType || expressionTypeChecker.isFirstSubTypeOfSecond(varType, ((ArrayType) listType).getType()))) {
             EachVarNotMatchList exception = new EachVarNotMatchList(eachStmt);
             eachStmt.addError(exception);
-            return null;
         }
         eachStmt.getBody().accept(this);
         return null;
