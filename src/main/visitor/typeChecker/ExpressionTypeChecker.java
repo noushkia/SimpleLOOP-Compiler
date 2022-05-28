@@ -265,16 +265,18 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         if(this.classHierarchy.doesGraphContainNode(className)) {
             try {
                 ClassSymbolTableItem classSymbolTableItem = (ClassSymbolTableItem) SymbolTable.root.getItem(ClassSymbolTableItem.START_KEY + className, true);
-                MethodDeclaration methodDeclaration = classSymbolTableItem.getClassDeclaration().getConstructor();
-                if (methodDeclaration == null){
+                MethodDeclaration constructorDeclaration = classSymbolTableItem.getClassDeclaration().getConstructor();
+                if (constructorDeclaration == null){
                     if(newClassInstance.getArgs().size() != 0){
                         ConstructorArgsNotMatchDefinition exception = new ConstructorArgsNotMatchDefinition(newClassInstance);
                         newClassInstance.addError(exception);
                         return new NoType();
                     }
+                    else
+                        return newClassInstance.getClassType();
                 }
                 int i = 0;
-                for(ArgPair argPair : methodDeclaration.getArgs()) {
+                for(ArgPair argPair : constructorDeclaration.getArgs()) {
                     Type argType = argPair.getVariableDeclaration().getType();
                     if (argPair.getDefaultValue() != null) {
                         if (newInstanceTypes.size() <= i)
