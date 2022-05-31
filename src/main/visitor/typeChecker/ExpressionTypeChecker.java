@@ -275,6 +275,11 @@ public class ExpressionTypeChecker extends Visitor<Type> {
                     else
                         return newClassInstance.getClassType();
                 }
+                if (constructorDeclaration.getArgs().size() == 0 && newInstanceTypes.size() > 0){
+                    ConstructorArgsNotMatchDefinition exception = new ConstructorArgsNotMatchDefinition(newClassInstance);
+                    newClassInstance.addError(exception);
+                    return new NoType();
+                }
                 int i = 0;
                 for(ArgPair argPair : constructorDeclaration.getArgs()) {
                     Type argType = argPair.getVariableDeclaration().getType();
@@ -580,7 +585,6 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         if (!(conditionType instanceof BoolType || conditionType instanceof NoType)) {
             ConditionNotBool exception = new ConditionNotBool(ternaryExpression.getLine());
             ternaryExpression.addError(exception);
-            hasError = true;
         }
         if (!isSameType(trueExpressionType, falseExpressionType)) {
             UnsupportedOperandType exception = new UnsupportedOperandType(ternaryExpression.getLine(), TernaryOperator.ternary.name());
