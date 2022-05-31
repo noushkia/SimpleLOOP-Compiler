@@ -282,6 +282,7 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(SetDelete setDelete) {
+        Type argType = setDelete.getSetArg().accept(expressionTypeChecker);
         Type setAddElementType = setDelete.getElementArg().accept(expressionTypeChecker);
         if (!(setAddElementType instanceof IntType || setAddElementType instanceof NoType)) {
             AddInputNotInt exception = new AddInputNotInt(setDelete.getLine());
@@ -293,6 +294,7 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(SetMerge setMerge) {
+        Type argType = setMerge.getSetArg().accept(expressionTypeChecker);
         for (Expression element : setMerge.getElementArgs()) {
             Type setMergeElementType = element.accept(expressionTypeChecker);
             if (!(setMergeElementType instanceof SetType || setMergeElementType instanceof NoType)) {
@@ -306,6 +308,7 @@ public class TypeChecker extends Visitor<Void> {
 
     @Override
     public Void visit(SetAdd setAdd) {
+        Type argType = setAdd.getSetArg().accept(expressionTypeChecker);
         Type setAddElementType = setAdd.getElementArg().accept(expressionTypeChecker);
         if (!(setAddElementType instanceof IntType || setAddElementType instanceof NoType)) {
             AddInputNotInt exception = new AddInputNotInt(setAdd.getLine());
