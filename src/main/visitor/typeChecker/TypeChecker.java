@@ -85,13 +85,6 @@ public class TypeChecker extends Visitor<Void> {
             this.expressionTypeChecker.setCurrentMethod(methodDeclaration);
             this.currentMethod = methodDeclaration;
             methodDeclaration.accept(this);
-            // todo
-//            boolean doesReturn = methodDeclaration.accept(this).doesReturn;
-//            methodDeclaration.setDoesReturn(doesReturn);
-//            if(!doesReturn && !(methodDeclaration.getReturnType() instanceof NullType)) {
-//                MissingReturnStatement exception = new MissingReturnStatement(methodDeclaration);
-//                methodDeclaration.addError(exception);
-//            }
         }
         return null;
     }
@@ -297,7 +290,8 @@ public class TypeChecker extends Visitor<Void> {
         Type argType = setMerge.getSetArg().accept(expressionTypeChecker);
         for (Expression element : setMerge.getElementArgs()) {
             Type setMergeElementType = element.accept(expressionTypeChecker);
-            if (!(setMergeElementType instanceof SetType || setMergeElementType instanceof NoType)) {
+            if (!(setMergeElementType instanceof SetType || setMergeElementType instanceof NoType ||
+                    setMergeElementType instanceof IntType)) {
                 MergeInputNotSet exception = new MergeInputNotSet(setMerge.getLine());
                 setMerge.addError(exception);
                 return null;

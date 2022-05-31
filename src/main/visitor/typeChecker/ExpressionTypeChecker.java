@@ -394,7 +394,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
             if (methodDeclaration == null){
                 int i = 0;
                 for(Type argType : actualArgsTypes) {
-                    if (!this.isFirstSubTypeOfSecond(argsTypes.get(i), argType)) {
+                    if (argsTypes.size()==0 || !this.isFirstSubTypeOfSecond(argsTypes.get(i), argType)) {
                         MethodCallNotMatchDefinition exception = new MethodCallNotMatchDefinition(methodCall.getLine());
                         methodCall.addError(exception);
                         return new NoType();
