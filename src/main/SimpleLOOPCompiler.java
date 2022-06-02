@@ -1,13 +1,16 @@
+
+
 package main;
 
-import main.ast.nodes.Program;
-import main.visitor.nameAnalyzer.NameAnalyzer;
+import main.visitor.codeGenerator.CodeGenerator;
 import main.visitor.typeChecker.TypeChecker;
+import main.visitor.utils.ASTTreePrinter;
 import main.visitor.utils.ErrorReporter;
+import parsers.*;
+import main.ast.nodes.Program;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import parsers.SimpleLOOPLexer;
-import parsers.SimpleLOOPParser;
+import main.visitor.nameAnalyzer.*;
 
 public class SimpleLOOPCompiler {
     public void compile(CharStream textStream) {
@@ -16,22 +19,21 @@ public class SimpleLOOPCompiler {
         SimpleLOOPParser simpleLOOPParser = new SimpleLOOPParser(tokenStream);
 
         Program program = simpleLOOPParser.simpleLOOP().simpleLOOPProgram;
-
         ErrorReporter errorReporter = new ErrorReporter();
 
         NameAnalyzer nameAnalyzer = new NameAnalyzer(program);
         nameAnalyzer.analyze();
-        int numberOfErrors = program.accept(errorReporter);
-        if(numberOfErrors > 0)
-            System.exit(1);
 
         TypeChecker typeChecker = new TypeChecker(nameAnalyzer.getClassHierarchy());
         program.accept(typeChecker);
 
-        numberOfErrors = program.accept(errorReporter);
-        if(numberOfErrors > 0)
-            System.exit(1);
+        int numberOfErrors = program.accept(errorReporter);
 
-        System.out.println("Compilation successful");
+        CodeGenerator codeGenerator = new CodeGenerator(nameAnalyzer.getClassHierarchy());
+        program.accept(codeGenerator);
+
+        if(numberOfErrors == 0)
+            System.out.println("Compilation Successful");
+
     }
 }

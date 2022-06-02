@@ -20,6 +20,7 @@ import main.symbolTable.items.ClassSymbolTableItem;
 import main.symbolTable.items.FieldSymbolTableItem;
 import main.symbolTable.items.LocalVariableSymbolTableItem;
 import main.symbolTable.items.MethodSymbolTableItem;
+import main.util.ArgPair;
 import main.visitor.Visitor;
 
 public class NameCollector extends Visitor<Void> {
@@ -94,13 +95,14 @@ public class NameCollector extends Visitor<Void> {
             methodDeclaration.addError(exception);
         }
         SymbolTable.push(methodSymbolTable);
-        for(VariableDeclaration varDeclaration : methodDeclaration.getArgs()) {
+        for(ArgPair argPair : methodDeclaration.getArgs()) {
+            VariableDeclaration variableDeclaration = argPair.getVariableDeclaration();
             try {
-                SymbolTable.root.getItem(LocalVariableSymbolTableItem.START_KEY + varDeclaration.getVarName().getName(), true);
-                LocalVarConflictWithGlobalVar exception = new LocalVarConflictWithGlobalVar(varDeclaration.getLine(), varDeclaration.getVarName().getName());
-                varDeclaration.addError(exception);
+                SymbolTable.root.getItem(LocalVariableSymbolTableItem.START_KEY + variableDeclaration.getVarName().getName(), true);
+                LocalVarConflictWithGlobalVar exception = new LocalVarConflictWithGlobalVar(variableDeclaration.getLine(), variableDeclaration.getVarName().getName());
+                variableDeclaration.addError(exception);
             } catch (ItemNotFoundException ignored){
-                varDeclaration.accept(this);
+                variableDeclaration.accept(this);
             }
 
         }

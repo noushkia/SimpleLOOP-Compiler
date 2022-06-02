@@ -4,8 +4,8 @@ import main.ast.nodes.declaration.Declaration;
 import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.ast.nodes.expression.Identifier;
 import main.ast.nodes.statement.Statement;
-import main.ast.types.NullType;
 import main.ast.types.Type;
+import main.util.ArgPair;
 import main.visitor.IVisitor;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class MethodDeclaration extends Declaration {
     protected Identifier methodName;
     protected Type returnType;
-    protected ArrayList<VariableDeclaration> args = new ArrayList<>();
+        protected ArrayList<ArgPair> args = new ArrayList<>();
     protected ArrayList<VariableDeclaration> localVars = new ArrayList<>();
     protected ArrayList<Statement> body = new ArrayList<>();
     protected boolean isPrivate;
@@ -46,11 +46,11 @@ public class MethodDeclaration extends Declaration {
         this.returnType = returnType;
     }
 
-    public ArrayList<VariableDeclaration> getArgs() {
+    public ArrayList<ArgPair> getArgs() {
         return args;
     }
 
-    public void setArgs(ArrayList<VariableDeclaration> args) {
+    public void setArgs(ArrayList<ArgPair> args) {
         this.args = args;
     }
 
@@ -68,10 +68,6 @@ public class MethodDeclaration extends Declaration {
 
     public void setBody(ArrayList<Statement> body) {
         this.body = body;
-    }
-
-    public void addArg(VariableDeclaration varDeclaration) {
-        this.args.add(varDeclaration);
     }
 
     public void addLocalVar(VariableDeclaration varDeclaration) {
