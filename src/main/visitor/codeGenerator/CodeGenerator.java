@@ -8,6 +8,7 @@ import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
 import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.ast.nodes.expression.*;
 import main.ast.nodes.expression.operators.BinaryOperator;
+import main.ast.nodes.expression.operators.TernaryOperator;
 import main.ast.nodes.expression.operators.UnaryOperator;
 import main.ast.nodes.expression.values.NullValue;
 import main.ast.nodes.expression.values.primitive.BoolValue;
@@ -556,12 +557,24 @@ public class CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(TernaryExpression ternaryExpression) {
-        return super.visit(ternaryExpression);
+        String commands = "";
+        String falseLabel = newLabel();
+        String afterLabel = newLabel();
+        commands += ternaryExpression.getCondition().accept(this);
+        commands += "\nifeq " + falseLabel;
+        commands += "\n" + ternaryExpression.getTrueExpression().accept(this);
+        commands += "\ngoto " + afterLabel;
+        commands += "\n" + falseLabel + ":";
+        commands += "\n" + ternaryExpression.getFalseExpression().accept(this);
+        commands += "\n" + afterLabel + ":";
+
+        return commands;
     }
 
     @Override
     public String visit(RangeExpression rangeExpression) {
-        return super.visit(rangeExpression);
+        String commands = "";
+        return commands;
     }
 
     @Override
