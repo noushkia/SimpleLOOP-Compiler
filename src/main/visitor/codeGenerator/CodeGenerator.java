@@ -336,7 +336,7 @@ public class CodeGenerator extends Visitor<String> {
         for (ArgPair arg : methodDeclaration.getArgs()) {
             command += makeTypeSignature(arg.getVariableDeclaration().getType());
         }
-        System.out.println(command);
+//        System.out.println(command);
         command += ")";
         command += makeTypeSignature(methodDeclaration.getReturnType());
         addCommand(command);
@@ -478,12 +478,7 @@ public class CodeGenerator extends Visitor<String> {
         addCommand("getstatic java/lang/System/out Ljava/io/PrintStream;");
         addCommand(print.getArg().accept(this));
 
-        if (type instanceof ArrayType) {
-            //todo
-        }
-        else {
-            addCommand("invokevirtual java/io/PrintStream/println(" + makePrimitiveSignature(type) + ")V");
-        }
+        addCommand("invokevirtual java/io/PrintStream/println(" + makePrimitiveSignature(type) + ")V");
 
         return null;
     }
@@ -509,17 +504,18 @@ public class CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(EachStmt eachStmt) {
-        String continueLabel = newLabel();
         String loopStartLabel = newLabel();
         String afterLabel = newLabel();
 
         ArrayType arrayType = (ArrayType) eachStmt.getList().accept(expressionTypeChecker);
-        //int listSize = listType.getElementsTypes().size();
+        // int arraySize = arrayType.getDimensions().size();
+
         int listSlot = slotOf("");
         int iSlot = slotOf("");
         Type memberType = eachStmt.getVariable().accept(expressionTypeChecker);
 
-        addCommand("; Foreach " + eachStmt.getLine());
+        addCommand("; Each " + eachStmt.getLine());
+
         // load list
         addCommand(eachStmt.getList().accept(this));
         addCommand("astore " + listSlot);
@@ -531,11 +527,11 @@ public class CodeGenerator extends Visitor<String> {
         addCommand(loopStartLabel + ":");
         // check cond
         addCommand("iload " + iSlot);
-        //addCommand("ldc " + listSize);
+        //addCommand("ldc " + arraySize);
         addCommand("if_icmpge " + afterLabel);
 
         // assign
-        addCommand("; assign foreach");
+        addCommand("; assign each");
         addCommand("aload " + listSlot);
         addCommand("iload " + iSlot);
         addCommand("invokevirtual List/getElement(I)Ljava/lang/Object;");
@@ -545,8 +541,6 @@ public class CodeGenerator extends Visitor<String> {
         // visit body
         eachStmt.getBody().accept(this);
 
-        // update
-        addCommand(continueLabel + ":");
         addCommand("iinc " + iSlot + " 1");
 
         addCommand("goto " + loopStartLabel);
@@ -573,6 +567,7 @@ public class CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(RangeExpression rangeExpression) {
+        // Create range array and store it on the stack, check with the size and get the elements
         String commands = "";
         return commands;
     }
@@ -890,7 +885,7 @@ public class CodeGenerator extends Visitor<String> {
         Type elementType = arrayAccessByIndex.accept(expressionTypeChecker);
         commands += arrayAccessByIndex.getInstance().accept(this);
         commands += "\n" + arrayAccessByIndex.getIndex().accept(this);
-        commands += "\ninvokevirtual List/getElement(I)Ljava/lang/Object;";
+        commands += "\ninvokevirtual Array/getElement(I)Ljava/lang/Object;";
         commands += "\ncheckcast " + checkcastType(elementType);
 
         String castCmd = castToPrimitive(elementType);

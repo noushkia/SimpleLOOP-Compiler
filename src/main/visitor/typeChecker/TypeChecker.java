@@ -231,7 +231,7 @@ public class TypeChecker extends Visitor<Void> {
     @Override
     public Void visit(PrintStmt print) {
         Type argType = print.getArg().accept(expressionTypeChecker);
-        if(!(argType instanceof IntType || argType instanceof ArrayType || argType instanceof SetType ||
+        if(!(argType instanceof IntType || argType instanceof SetType ||
                 argType instanceof BoolType || argType instanceof NoType)) {
             UnsupportedTypeForPrint exception = new UnsupportedTypeForPrint(print.getLine());
             print.addError(exception);

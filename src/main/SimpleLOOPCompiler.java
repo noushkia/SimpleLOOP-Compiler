@@ -22,8 +22,6 @@ public class SimpleLOOPCompiler {
         NameAnalyzer nameAnalyser = new NameAnalyzer(program);
         nameAnalyser.analyze();
 
-        int numberOfErrors = program.accept(errorReporter);
-
         TypeChecker typeChecker = new TypeChecker(nameAnalyser.getClassHierarchy());
         program.accept(typeChecker);
 
@@ -31,8 +29,13 @@ public class SimpleLOOPCompiler {
         CodeGenerator codeGenerator = new CodeGenerator(nameAnalyser.getClassHierarchy());
         program.accept(codeGenerator);
 
+        int numberOfErrors = program.accept(errorReporter);
+
         if(numberOfErrors == 0)
             System.out.println("Compilation Successful");
+        else
+            System.exit(1);
+
 
         runJasminFiles();
 
