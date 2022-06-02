@@ -1,18 +1,20 @@
 package main.ast.nodes.declaration.classDec.classMembersDec;
 
 import main.ast.nodes.expression.Identifier;
+import main.ast.types.NullType;
+import main.ast.types.Type;
 import main.visitor.IVisitor;
 
 //line -> INITIALIZE
 public class ConstructorDeclaration extends MethodDeclaration{
 
     public ConstructorDeclaration() {
-        super();
+        super(new Identifier("initialize"), new NullType(), false);
     }
 
     @Override
     public Identifier getMethodName() {
-        return new Identifier("initialize");
+        return this.methodName;
     }
 
     @Override
