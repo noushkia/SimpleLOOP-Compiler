@@ -130,6 +130,8 @@ public class CodeGenerator extends Visitor<String> {
             return  "java/lang/Integer";
         else if (t instanceof BoolType)
             return "java/lang/Boolean";
+        else if (t instanceof ArrayType)
+            return "Array";
         else if (t instanceof FptrType)
             return "Fptr";
         else if (t instanceof ClassType)
@@ -419,11 +421,11 @@ public class CodeGenerator extends Visitor<String> {
         addCommand("ifeq " + elseLabel);
         conditionalStmt.getThenBody().accept(this);
         addCommand("goto " + afterLabel);
-        addCommand(elseLabel + ":");
         for (ElsifStmt elsifStmt : conditionalStmt.getElsif()) {
             //todo
             elsifStmt.accept(this);
         }
+        addCommand(elseLabel + ":");
         if (conditionalStmt.getElseBody() != null)
             conditionalStmt.getElseBody().accept(this);
         addCommand(afterLabel + ":");
@@ -452,7 +454,13 @@ public class CodeGenerator extends Visitor<String> {
         addCommand("; Print Statement " + print.getLine());
         addCommand("getstatic java/lang/System/out Ljava/io/PrintStream;");
         addCommand(print.getArg().accept(this));
-        addCommand("invokevirtual java/io/PrintStream/print(" + makePrimitiveSignature(type) + ")V");
+
+        if (type instanceof ArrayType) {
+            //todo
+        }
+        else {
+            addCommand("invokevirtual java/io/PrintStream/print(" + makePrimitiveSignature(type) + ")V");
+        }
 
         return null;
     }
