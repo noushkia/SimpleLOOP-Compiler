@@ -2,6 +2,7 @@
 
 package main;
 
+import main.visitor.codeGenerator.CodeGenerator;
 import main.visitor.typeChecker.TypeChecker;
 import main.visitor.utils.ASTTreePrinter;
 import main.visitor.utils.ErrorReporter;
@@ -27,6 +28,10 @@ public class SimpleLOOPCompiler {
         program.accept(typeChecker);
 
         int numberOfErrors = program.accept(errorReporter);
+
+        CodeGenerator codeGenerator = new CodeGenerator(nameAnalyzer.getClassHierarchy());
+        program.accept(codeGenerator);
+
         if(numberOfErrors == 0)
             System.out.println("Compilation Successful");
 
