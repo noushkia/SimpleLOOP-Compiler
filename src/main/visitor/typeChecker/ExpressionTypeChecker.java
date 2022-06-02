@@ -439,13 +439,6 @@ public class ExpressionTypeChecker extends Visitor<Type> {
                 LocalVariableSymbolTableItem localVariableSymbolTableItem = (LocalVariableSymbolTableItem) methodSymbolTable.getItem(LocalVariableSymbolTableItem.START_KEY + identifier.getName(), true);
                 return this.refineType(localVariableSymbolTableItem.getType());
             }catch (ItemNotFoundException e){
-//                try{
-//                    FieldSymbolTableItem field = (FieldSymbolTableItem) classSymbolTable.getItem(FieldSymbolTableItem.START_KEY + identifier.getName(), true);
-//                    return this.refineType(field.getType());
-//                }catch (ItemNotFoundException ee){
-//                    GlobalVariableSymbolTableItem globalVariableSymbolTableItem = (GlobalVariableSymbolTableItem) SymbolTable.root.getItem(GlobalVariableSymbolTableItem.START_KEY + identifier.getName(), true);
-//                    return refineType(globalVariableSymbolTableItem.getType());
-//                }
                 GlobalVariableSymbolTableItem globalVariableSymbolTableItem = (GlobalVariableSymbolTableItem) SymbolTable.root.getItem(GlobalVariableSymbolTableItem.START_KEY + identifier.getName(), true);
                 return refineType(globalVariableSymbolTableItem.getType());
 
@@ -473,6 +466,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         if(instanceType instanceof ArrayType) {
             if(indexErrored)
                 return new NoType();
+            return ((ArrayType) instanceType).getType();
         }
         else if(!(instanceType instanceof NoType)) {
             AccessByIndexOnNoneArray exception = new AccessByIndexOnNoneArray(arrayAccessByIndex.getLine());

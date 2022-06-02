@@ -174,7 +174,7 @@ public class TypeChecker extends Visitor<Void> {
     @Override
     public Void visit(BlockStmt blockStmt) {
         for(Statement statement : blockStmt.getStatements()) {
-            if(hasReturn) {
+            if(hasReturn && !hasReturnError) {
                 hasReturnError = true;
                 UnreachableStatements exception = new UnreachableStatements(statement);
                 statement.addError(exception);
