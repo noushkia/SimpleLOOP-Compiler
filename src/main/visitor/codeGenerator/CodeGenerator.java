@@ -71,9 +71,11 @@ public class CodeGenerator extends Visitor<String> {
                     file.delete();
             directory.mkdir();
         }
-        catch(SecurityException e) { }
+        catch(SecurityException e) {
+            e.printStackTrace();
+        }
         copyFile(jasminPath, this.outputPath + "jasmin.jar");
-        copyFile(arrayClassPath, this.outputPath + "Array.j");
+//        copyFile(arrayClassPath, this.outputPath + "Array.j");
         copyFile(fptrClassPath, this.outputPath + "Fptr.j");
     }
 
@@ -89,7 +91,9 @@ public class CodeGenerator extends Visitor<String> {
                 writingFileStream.write(buffer, 0, readLength);
             readingFileStream.close();
             writingFileStream.close();
-        } catch (IOException e) { }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void createFile(String name) {
@@ -99,7 +103,9 @@ public class CodeGenerator extends Visitor<String> {
             file.createNewFile();
             FileWriter fileWriter = new FileWriter(path);
             this.currentFile = fileWriter;
-        } catch (IOException e) {}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void addCommand(String command) {
@@ -112,7 +118,9 @@ public class CodeGenerator extends Visitor<String> {
             else
                 this.currentFile.write("\t\t" + command + "\n");
             this.currentFile.flush();
-        } catch (IOException e) {}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private String makeTypeSignature(Type t) {
@@ -233,6 +241,9 @@ public class CodeGenerator extends Visitor<String> {
         else if (type instanceof BoolType) {
             addCommand("ldc 0");
             addCommand("invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;");
+        }
+        else if (type instanceof ArrayType) {
+            addCommand("aconst_null");
         }
         else if (type instanceof FptrType) {
             addCommand("aconst_null");
@@ -526,7 +537,12 @@ public class CodeGenerator extends Visitor<String> {
         String loopStartLabel = newLabel();
         String afterLabel = newLabel();
 
-        ArrayType arrayType = (ArrayType) eachStmt.getList().accept(expressionTypeChecker);
+        if (eachStmt.getList() instanceof RangeExpression) {
+            //todo: build range Array
+        }
+        else {
+            //todo: build normal Array
+        }
         // int arraySize = arrayType.getDimensions().size();
 
         int listSlot = slotOf("");
@@ -553,7 +569,7 @@ public class CodeGenerator extends Visitor<String> {
         addCommand("; assign each");
         addCommand("aload " + listSlot);
         addCommand("iload " + iSlot);
-        addCommand("invokevirtual List/getElement(I)Ljava/lang/Object;");
+        addCommand("invokevirtual Array/getElement(I)Ljava/lang/Object;");
         addCommand("checkcast " + checkcastType(memberType));
         addCommand("astore " + slotOf(eachStmt.getVariable().getName()));
 
@@ -698,9 +714,9 @@ public class CodeGenerator extends Visitor<String> {
                 String castCmd = castToNonPrimitive(secondType);
                 if (castCmd != null)
                     commands += "\n" + castCmd;
-                commands += "\n" + "invokevirtual List/setElement(ILjava/lang/Object;)V";
+                commands += "\n" + "invokevirtual Array/setElement(ILjava/lang/Object;)V";
                 commands += "\niload " + tempSlot;
-                commands += "\n" + "invokevirtual List/getElement(I)Ljava/lang/Object;";
+                commands += "\n" + "invokevirtual Array/getElement(I)Ljava/lang/Object;";
                 commands += "\ncheckcast " + checkcastType(secondType);
                 castCmd = castToPrimitive(secondType);
                 if (castCmd != null)
@@ -729,9 +745,9 @@ public class CodeGenerator extends Visitor<String> {
                     String castCmd = castToNonPrimitive(secondType);
                     if (castCmd != null)
                         commands += "\n" + castCmd;
-                    commands += "\ninvokevirtual List/setElement(ILjava/lang/Object;)V";
+                    commands += "\ninvokevirtual Array/setElement(ILjava/lang/Object;)V";
                     commands += "\nldc " + index;
-                    commands += "\ninvokevirtual List/getElement(I)Ljava/lang/Object; ; putting back on stack";
+                    commands += "\ninvokevirtual Array/getElement(I)Ljava/lang/Object; ; putting back on stack";
                     commands += "\ncheckcast " + checkcastType(secondType);
                     castCmd = castToPrimitive(secondType);
                     if (castCmd != null)
@@ -799,7 +815,7 @@ public class CodeGenerator extends Visitor<String> {
                 commands += "\n" + ((ArrayAccessByIndex) unaryExpression.getOperand()).getInstance().accept(this);
                 commands += "\n" + ((ArrayAccessByIndex) unaryExpression.getOperand()).getIndex().accept(this);
                 commands += "\naload " + tmpSlot;
-                commands += "\n" + "invokevirtual List/setElement(ILjava/lang/Object;)V";
+                commands += "\n" + "invokevirtual Array/setElement(ILjava/lang/Object;)V";
             }
             else if(unaryExpression.getOperand() instanceof ObjectMemberAccess) {
                 Expression instance = ((ObjectMemberAccess) unaryExpression.getOperand()).getInstance();
@@ -820,7 +836,7 @@ public class CodeGenerator extends Visitor<String> {
 //                    }
                     commands += "\nldc " + index;
                     commands += "\naload " + tmpSlot;
-                    commands += "\n" + "invokevirtual List/setElement(ILjava/lang/Object;)V";
+                    commands += "\n" + "invokevirtual Array/setElement(ILjava/lang/Object;)V";
                 }
                 else if(instanceType instanceof ClassType) {
                     int tmpSlot = slotOf("");
@@ -875,9 +891,9 @@ public class CodeGenerator extends Visitor<String> {
 //                    break;
 //                index++;
 //            }
-            commands += objectMemberAccess.getInstance().accept(this) + " ;List member access";
+            commands += objectMemberAccess.getInstance().accept(this) + " ;Array member access";
             commands += "\nldc " + index;
-            commands += "\ninvokevirtual List/getElement(I)Ljava/lang/Object;";
+            commands += "\ninvokevirtual Array/getElement(I)Ljava/lang/Object;";
             commands += "\ncheckcast " + checkcastType(memberType);
             String castCmd = castToPrimitive(memberType);
             if (castCmd != null)
