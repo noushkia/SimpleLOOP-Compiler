@@ -40,6 +40,8 @@ import java.util.Stack;
 public class CodeGenerator extends Visitor<String> {
     ExpressionTypeChecker expressionTypeChecker;
     Graph<String> classHierarchy;
+    @SuppressWarnings("FieldMayBeFinal")
+    private ArrayList<VariableDeclaration> globalVars;
     private String outputPath;
     private FileWriter currentFile;
     private ClassDeclaration currentClass;
@@ -50,6 +52,7 @@ public class CodeGenerator extends Visitor<String> {
     private String nextLabel;
 
     public CodeGenerator(Graph<String> classHierarchy) {
+        this.globalVars = new ArrayList<>();
         this.classHierarchy = classHierarchy;
         this.expressionTypeChecker = new ExpressionTypeChecker(classHierarchy);
         this.prepareOutputFolder();
@@ -58,7 +61,7 @@ public class CodeGenerator extends Visitor<String> {
     private void prepareOutputFolder() {
         this.outputPath = "output/";
         String jasminPath = "utilities/jarFiles/jasmin.jar";
-        String listClassPath = "utilities/codeGenerationUtilityClasses/List.j";
+        String arrayClassPath = "utilities/codeGenerationUtilityClasses/Array.j";
         String fptrClassPath = "utilities/codeGenerationUtilityClasses/Fptr.j";
         try{
             File directory = new File(this.outputPath);
@@ -70,7 +73,7 @@ public class CodeGenerator extends Visitor<String> {
         }
         catch(SecurityException e) { }
         copyFile(jasminPath, this.outputPath + "jasmin.jar");
-        copyFile(listClassPath, this.outputPath + "List.j");
+        copyFile(arrayClassPath, this.outputPath + "Array.j");
         copyFile(fptrClassPath, this.outputPath + "Fptr.j");
     }
 
@@ -117,6 +120,8 @@ public class CodeGenerator extends Visitor<String> {
             return  "Ljava/lang/Integer;";
         else if (t instanceof BoolType)
             return "Ljava/lang/Boolean;";
+        else if (t instanceof ArrayType)
+            return "LArray;";
         else if (t instanceof FptrType)
             return "LFptr;";
         else if (t instanceof ClassType)
@@ -195,6 +200,12 @@ public class CodeGenerator extends Visitor<String> {
         }
 
         int i = 1;
+        for (VariableDeclaration variableDeclaration : globalVars) {
+            if (variableDeclaration.getVarName().getName().equals(identifier))
+                return  i;
+            i++;
+        }
+
         for (ArgPair arg : currentMethod.getArgs()) {
             if (arg.getVariableDeclaration().getVarName().getName().equals(identifier))
                 return i;
@@ -233,7 +244,7 @@ public class CodeGenerator extends Visitor<String> {
 
     private String castToNonPrimitive(Type type) {
         if (type instanceof IntType) {
-            return  "invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;";
+            return "invokestatic java/lang/Integer/valueOf(I)Ljava/lang/Integer;";
         }
         else if (type instanceof BoolType) {
             return "invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;";
@@ -244,7 +255,7 @@ public class CodeGenerator extends Visitor<String> {
 
     private String castToPrimitive(Type type) {
         if (type instanceof IntType) {
-            return  "invokevirtual java/lang/Integer/intValue()I";
+            return "invokevirtual java/lang/Integer/intValue()I";
         }
         else if (type instanceof BoolType) {
             return "invokevirtual java/lang/Boolean/booleanValue()Z";
@@ -255,10 +266,7 @@ public class CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(Program program) {
-        for (VariableDeclaration variableDeclaration : program.getGlobalVariables()) {
-            //todo
-            variableDeclaration.accept(this);
-        }
+        globalVars.addAll(program.getGlobalVariables());
         for(ClassDeclaration classDeclaration : program.getClasses()) {
             this.expressionTypeChecker.setCurrentClass(classDeclaration);
             this.currentClass = classDeclaration;
@@ -277,6 +285,14 @@ public class CodeGenerator extends Visitor<String> {
             parent = classDeclaration.getParentClassName().getName();
         addCommand(".super " + parent);
         addCommand("");
+
+//        for (VariableDeclaration variableDeclaration : globalVars) {
+////            variableDeclaration.accept(this);
+//            String varName = variableDeclaration.getVarName().getName();
+//            Type type = variableDeclaration.getType();
+//
+//            addCommand(".field " + varName + " " + makeTypeSignature(type));
+//        }
 
         for (FieldDeclaration fieldDeclaration : classDeclaration.getFields()) {
             fieldDeclaration.accept(this);
@@ -361,6 +377,9 @@ public class CodeGenerator extends Visitor<String> {
                         + "/" + fieldName + " " + makeTypeSignature(fieldType));
             }
         }
+
+        for (VariableDeclaration variableDeclaration : globalVars)
+            variableDeclaration.accept(this);
 
         for (VariableDeclaration variableDeclaration : methodDeclaration.getLocalVars())
             variableDeclaration.accept(this);

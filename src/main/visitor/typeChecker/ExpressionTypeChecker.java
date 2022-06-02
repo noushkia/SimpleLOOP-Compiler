@@ -435,13 +435,18 @@ public class ExpressionTypeChecker extends Visitor<Type> {
             SymbolTable classSymbolTable = classSymbolTableItem.getClassSymbolTable();
             MethodSymbolTableItem methodSymbolTableItem = (MethodSymbolTableItem) classSymbolTable.getItem(MethodSymbolTableItem.START_KEY + this.currentMethod.getMethodName().getName(), true);
             SymbolTable methodSymbolTable = methodSymbolTableItem.getMethodSymbolTable();
-            try{
-                LocalVariableSymbolTableItem localVariableSymbolTableItem = (LocalVariableSymbolTableItem) methodSymbolTable.getItem(LocalVariableSymbolTableItem.START_KEY + identifier.getName(), true);
-                return this.refineType(localVariableSymbolTableItem.getType());
-            }catch (ItemNotFoundException e){
-                GlobalVariableSymbolTableItem globalVariableSymbolTableItem = (GlobalVariableSymbolTableItem) SymbolTable.root.getItem(GlobalVariableSymbolTableItem.START_KEY + identifier.getName(), true);
-                return refineType(globalVariableSymbolTableItem.getType());
+            try {
+                FieldSymbolTableItem fieldSymbolTableItem = (FieldSymbolTableItem) methodSymbolTable.getItem(FieldSymbolTableItem.START_KEY + identifier.getName(), true);
+                return this.refineType(fieldSymbolTableItem.getType());
+            } catch (ItemNotFoundException ex) {
+                try {
+                    LocalVariableSymbolTableItem localVariableSymbolTableItem = (LocalVariableSymbolTableItem) methodSymbolTable.getItem(LocalVariableSymbolTableItem.START_KEY + identifier.getName(), true);
+                    return this.refineType(localVariableSymbolTableItem.getType());
+                } catch (ItemNotFoundException e) {
+                    GlobalVariableSymbolTableItem globalVariableSymbolTableItem = (GlobalVariableSymbolTableItem) SymbolTable.root.getItem(GlobalVariableSymbolTableItem.START_KEY + identifier.getName(), true);
+                    return refineType(globalVariableSymbolTableItem.getType());
 
+                }
             }
 
         } catch (ItemNotFoundException e) {
