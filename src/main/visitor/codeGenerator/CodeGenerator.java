@@ -46,6 +46,7 @@ public class CodeGenerator extends Visitor<String> {
 
     private int lastSlot = -1;
     private int lastLabel = 0;
+    private String nextLabel;
 
     public CodeGenerator(Graph<String> classHierarchy) {
         this.classHierarchy = classHierarchy;
@@ -414,27 +415,48 @@ public class CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(ConditionalStmt conditionalStmt) {
+        ArrayList<String> elsifLabels = new ArrayList<>();
+        for (ElsifStmt elsifStmt : conditionalStmt.getElsif()) {
+            elsifLabels.add(newLabel());
+        }
         String elseLabel = newLabel();
         String afterLabel = newLabel();
         addCommand("; If statement " + conditionalStmt.getLine());
         addCommand(conditionalStmt.getCondition().accept(this));
-        addCommand("ifeq " + elseLabel);
+        if (conditionalStmt.getElsif().size() > 0)
+            addCommand("ifeq " + elsifLabels.get(0));
+        else
+            addCommand("ifeq " + elseLabel);
         conditionalStmt.getThenBody().accept(this);
         addCommand("goto " + afterLabel);
+
+        int i = 0;
         for (ElsifStmt elsifStmt : conditionalStmt.getElsif()) {
-            //todo
+            if (i+1 < elsifLabels.size())
+                nextLabel = elsifLabels.get(i+1);
+            else
+                nextLabel = elseLabel;
+            addCommand(elsifLabels.get(i) + ":");
             elsifStmt.accept(this);
+            addCommand("goto " + afterLabel);
+            i += 1;
         }
+
         addCommand(elseLabel + ":");
         if (conditionalStmt.getElseBody() != null)
             conditionalStmt.getElseBody().accept(this);
+
         addCommand(afterLabel + ":");
+
         return null;
     }
 
     @Override
     public String visit(ElsifStmt elsifStmt) {
-        return super.visit(elsifStmt);
+        addCommand(elsifStmt.getCondition().accept(this));
+        addCommand("ifeq " + nextLabel);
+        elsifStmt.getThenBody().accept(this);
+        return null;
     }
 
     @Override
@@ -459,7 +481,7 @@ public class CodeGenerator extends Visitor<String> {
             //todo
         }
         else {
-            addCommand("invokevirtual java/io/PrintStream/print(" + makePrimitiveSignature(type) + ")V");
+            addCommand("invokevirtual java/io/PrintStream/println(" + makePrimitiveSignature(type) + ")V");
         }
 
         return null;
