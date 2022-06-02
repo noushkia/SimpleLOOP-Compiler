@@ -9,6 +9,7 @@ out
 delivery
 samples
 gen
+output
 
 # Compiled class file
 *.class
