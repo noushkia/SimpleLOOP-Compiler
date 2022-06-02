@@ -44,9 +44,6 @@ public class CodeGenerator extends Visitor<String> {
     private ClassDeclaration currentClass;
     private MethodDeclaration currentMethod;
 
-    private Stack<String> breakLabels = new Stack<>();
-    private Stack<String> continueLabels = new Stack<>();
-
     private int lastSlot = -1;
     private int lastLabel = 0;
 
@@ -254,6 +251,10 @@ public class CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(Program program) {
+        for (VariableDeclaration variableDeclaration : program.getGlobalVariables()) {
+            //todo
+            variableDeclaration.accept(this);
+        }
         for(ClassDeclaration classDeclaration : program.getClasses()) {
             this.expressionTypeChecker.setCurrentClass(classDeclaration);
             this.currentClass = classDeclaration;
@@ -419,10 +420,19 @@ public class CodeGenerator extends Visitor<String> {
         conditionalStmt.getThenBody().accept(this);
         addCommand("goto " + afterLabel);
         addCommand(elseLabel + ":");
+        for (ElsifStmt elsifStmt : conditionalStmt.getElsif()) {
+            //todo
+            elsifStmt.accept(this);
+        }
         if (conditionalStmt.getElseBody() != null)
             conditionalStmt.getElseBody().accept(this);
         addCommand(afterLabel + ":");
         return null;
+    }
+
+    @Override
+    public String visit(ElsifStmt elsifStmt) {
+        return super.visit(elsifStmt);
     }
 
     @Override
@@ -467,22 +477,20 @@ public class CodeGenerator extends Visitor<String> {
     }
 
     @Override
-    public String visit(EachStmt foreachStmt) {
+    public String visit(EachStmt eachStmt) {
         String continueLabel = newLabel();
         String loopStartLabel = newLabel();
         String afterLabel = newLabel();
-        continueLabels.push(continueLabel);
-        breakLabels.push(afterLabel);
 
-        ArrayType arrayType = (ArrayType) foreachStmt.getList().accept(expressionTypeChecker);
+        ArrayType arrayType = (ArrayType) eachStmt.getList().accept(expressionTypeChecker);
         //int listSize = listType.getElementsTypes().size();
         int listSlot = slotOf("");
         int iSlot = slotOf("");
-        Type memberType = foreachStmt.getVariable().accept(expressionTypeChecker);
+        Type memberType = eachStmt.getVariable().accept(expressionTypeChecker);
 
-        addCommand("; Foreach " + foreachStmt.getLine());
+        addCommand("; Foreach " + eachStmt.getLine());
         // load list
-        addCommand(foreachStmt.getList().accept(this));
+        addCommand(eachStmt.getList().accept(this));
         addCommand("astore " + listSlot);
 
         // init
@@ -501,10 +509,10 @@ public class CodeGenerator extends Visitor<String> {
         addCommand("iload " + iSlot);
         addCommand("invokevirtual List/getElement(I)Ljava/lang/Object;");
         addCommand("checkcast " + checkcastType(memberType));
-        addCommand("astore " + slotOf(foreachStmt.getVariable().getName()));
+        addCommand("astore " + slotOf(eachStmt.getVariable().getName()));
 
         // visit body
-        foreachStmt.getBody().accept(this);
+        eachStmt.getBody().accept(this);
 
         // update
         addCommand(continueLabel + ":");
@@ -512,10 +520,18 @@ public class CodeGenerator extends Visitor<String> {
 
         addCommand("goto " + loopStartLabel);
         addCommand(afterLabel + ": ; After loop");
-        continueLabels.pop();
-        breakLabels.pop();
 
         return null;
+    }
+
+    @Override
+    public String visit(TernaryExpression ternaryExpression) {
+        return super.visit(ternaryExpression);
+    }
+
+    @Override
+    public String visit(RangeExpression rangeExpression) {
+        return super.visit(rangeExpression);
     }
 
     @Override
@@ -558,10 +574,7 @@ public class CodeGenerator extends Visitor<String> {
             if (type instanceof IntType || type instanceof BoolType)
                 cmpCommand = "if_i";
 
-            if (operator == BinaryOperator.eq)
-                commands += "\n" + cmpCommand + "cmpeq "  + trueLabel + " ; binary eq";
-            else
-                commands += "\n" + cmpCommand + "cmpne "  + trueLabel + " ; binary neq";
+            commands += "\n" + cmpCommand + "cmpeq "  + trueLabel + " ; binary eq";
 
             commands += "\nldc 0"; // cond was false
             commands += "\ngoto " + afterLabel;
@@ -617,9 +630,8 @@ public class CodeGenerator extends Visitor<String> {
                     commands += "\n" + castCmd;
                 commands += "\nastore " + slotOf(name);
             }
-            else if(binaryExpression.getFirstOperand() instanceof ArrayAccessByIndex) {
+            else if(binaryExpression.getFirstOperand() instanceof ArrayAccessByIndex arrayAccessByIndex) {
                 int tempSlot = slotOf("");
-                ArrayAccessByIndex arrayAccessByIndex = (ArrayAccessByIndex) binaryExpression.getFirstOperand();
                 commands += arrayAccessByIndex.getInstance().accept(this);
                 commands += "\ndup ; dup list for retrieving from list to put value on stack after assign";
                 commands += "\n" + arrayAccessByIndex.getIndex().accept(this);
@@ -902,28 +914,6 @@ public class CodeGenerator extends Visitor<String> {
         commands += "aload_0";
         return commands;
     }
-
-//    @Override
-//    public String visit(ListValue listValue) {
-//        String commands = "";
-//        commands += "new List";
-//        commands += "\ndup";
-//        commands += "\nnew java/util/ArrayList";
-//        commands += "\ndup";
-//        commands += "\ninvokespecial java/util/ArrayList/<init>()V";
-//        for (Expression exp : listValue.getElements()) {
-//            Type type = exp.accept(expressionTypeChecker);
-//            commands += "\ndup";
-//            commands += "\n" + exp.accept(this);
-//            String castCmd = castToNonPrimitive(type);
-//            if (castCmd != null)
-//                commands += "\n" + castCmd;
-//            commands += "\ninvokevirtual java/util/ArrayList/add(Ljava/lang/Object;)Z"; // append
-//            commands += "\npop"; // pop the bool from last command
-//        }
-//        commands += "\ninvokespecial List/<init>(Ljava/util/ArrayList;)V";
-//        return commands;
-//    }
 
     @Override
     public String visit(NullValue nullValue) {
