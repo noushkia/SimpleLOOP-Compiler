@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.io.*;
 
 public class Array {
     public ArrayList<Object> elements;
@@ -28,10 +29,8 @@ public class Array {
 
     public void addElement(Object o) {this.elements.add(getNewObject(o));}
 
-    public void print() {
-        for (Object element : elements) {
-            System.out.
-        }
+    public ArrayList<Object> getElements() {
+        return this.elements;
     }
 
 }
