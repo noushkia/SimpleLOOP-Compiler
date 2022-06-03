@@ -8,14 +8,12 @@ import main.ast.nodes.declaration.classDec.classMembersDec.MethodDeclaration;
 import main.ast.nodes.declaration.variableDec.VariableDeclaration;
 import main.ast.nodes.expression.*;
 import main.ast.nodes.expression.operators.BinaryOperator;
-import main.ast.nodes.expression.operators.TernaryOperator;
 import main.ast.nodes.expression.operators.UnaryOperator;
 import main.ast.nodes.expression.values.NullValue;
 import main.ast.nodes.expression.values.primitive.BoolValue;
 import main.ast.nodes.expression.values.primitive.IntValue;
 import main.ast.nodes.statement.*;
 import main.ast.nodes.statement.EachStmt;
-import main.ast.types.NoType;
 import main.ast.types.NullType;
 import main.ast.types.Type;
 import main.ast.types.array.ArrayType;
@@ -35,7 +33,6 @@ import main.visitor.typeChecker.ExpressionTypeChecker;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Stack;
 
 public class CodeGenerator extends Visitor<String> {
     ExpressionTypeChecker expressionTypeChecker;
@@ -75,7 +72,7 @@ public class CodeGenerator extends Visitor<String> {
             e.printStackTrace();
         }
         copyFile(jasminPath, this.outputPath + "jasmin.jar");
-//        copyFile(arrayClassPath, this.outputPath + "Array.j");
+        copyFile(arrayClassPath, this.outputPath + "Array.j");
         copyFile(fptrClassPath, this.outputPath + "Fptr.j");
     }
 
