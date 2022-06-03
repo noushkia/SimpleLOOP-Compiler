@@ -8,6 +8,12 @@ import java.util.stream.IntStream;
 public class Array {
     public ArrayList<Object> elements;
 
+    public Array(ArrayList<Object> newElements) {
+        this.elements = new ArrayList<>();
+        for(Object newElement : newElements)
+            this.elements.add(getNewObject(newElement));
+    }
+
     public Array(int size) {
         this.elements = new ArrayList<>(size);
     }
