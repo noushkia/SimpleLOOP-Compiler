@@ -8,10 +8,8 @@ import java.util.stream.IntStream;
 public class Array {
     public ArrayList<Object> elements;
 
-    public Array(ArrayList<Object> newElements) {
-        this.elements = new ArrayList<>();
-        for(Object newElement : newElements)
-            this.elements.add(getNewObject(newElement));
+    public Array(int size) {
+        this.elements = new ArrayList<>(size);
     }
 
     public Array(int leftVal, int rightVal) {
@@ -38,11 +36,5 @@ public class Array {
     }
 
     public int getSize() {return this.elements.size();}
-
-    public void addElement(Object o) {this.elements.add(getNewObject(o));}
-
-    public ArrayList<Object> getElements() {
-        return this.elements;
-    }
 
 }
