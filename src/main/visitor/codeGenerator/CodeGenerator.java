@@ -44,6 +44,10 @@ public class CodeGenerator extends Visitor<String> {
     private ClassDeclaration currentClass;
     private MethodDeclaration currentMethod;
 
+    private int dimLvl = 0;
+
+    private boolean inMain = false;
+
     private int lastSlot = -1;
     private int lastLabel = 0;
     private String nextLabel;
@@ -122,7 +126,7 @@ public class CodeGenerator extends Visitor<String> {
 
     private String makeTypeSignature(Type t) {
         if (t instanceof IntType)
-            return  "Ljava/lang/Integer;";
+            return "Ljava/lang/Integer;";
         else if (t instanceof BoolType)
             return "Ljava/lang/Boolean;";
         else if (t instanceof ArrayType)
@@ -139,7 +143,7 @@ public class CodeGenerator extends Visitor<String> {
 
     private String checkcastType(Type t) {
         if (t instanceof IntType)
-            return  "java/lang/Integer";
+            return "java/lang/Integer";
         else if (t instanceof BoolType)
             return "java/lang/Boolean";
         else if (t instanceof ArrayType)
@@ -240,7 +244,12 @@ public class CodeGenerator extends Visitor<String> {
             addCommand("invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;");
         }
         else if (type instanceof ArrayType) {
-            addCommand("aconst_null");
+            String sizeCmd = ((ArrayType) type).getDimensions().get(dimLvl++).accept(this);
+            addCommand("new Array");
+            addCommand("dup");
+            addCommand(sizeCmd);
+            addDefaultValueCommand(((ArrayType) type).getType());
+            addCommand("invokespecial Array/<init>(ILjava/lang/Object;)V");
         }
         else if (type instanceof FptrType) {
             addCommand("aconst_null");
@@ -248,6 +257,7 @@ public class CodeGenerator extends Visitor<String> {
         else if (type instanceof ClassType) {
             addCommand("aconst_null");
         }
+        dimLvl = 0;
     }
 
     private String castToNonPrimitive(Type type) {
@@ -915,6 +925,7 @@ public class CodeGenerator extends Visitor<String> {
     public String visit(ArrayAccessByIndex arrayAccessByIndex) {
         String commands = "";
         Type elementType = arrayAccessByIndex.accept(expressionTypeChecker);
+        int dimSize = ((ArrayType) arrayAccessByIndex.getInstance().accept(expressionTypeChecker)).getDimensions().size();
         commands += arrayAccessByIndex.getInstance().accept(this);
         commands += "\n" + arrayAccessByIndex.getIndex().accept(this);
         commands += "\ninvokevirtual Array/getElement(I)Ljava/lang/Object;";

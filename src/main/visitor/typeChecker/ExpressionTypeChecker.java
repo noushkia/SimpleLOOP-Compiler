@@ -33,6 +33,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
     private boolean seenNoneLvalue = false;
     private boolean isInMethodCallStmt = false;
     private MethodDeclaration methodDeclaration;
+    private int dimLvl = 0;
 
 
     public ExpressionTypeChecker(Graph<String> classHierarchy) {
@@ -458,6 +459,7 @@ public class ExpressionTypeChecker extends Visitor<Type> {
 
     @Override
     public Type visit(ArrayAccessByIndex arrayAccessByIndex) {
+        dimLvl = 0;
         Type instanceType = arrayAccessByIndex.getInstance().accept(this);
         boolean prevSeenNoneLvalue = this.seenNoneLvalue;
         Type indexType = arrayAccessByIndex.getIndex().accept(this);
@@ -471,11 +473,15 @@ public class ExpressionTypeChecker extends Visitor<Type> {
         if(instanceType instanceof ArrayType) {
             if(indexErrored)
                 return new NoType();
-            return ((ArrayType) instanceType).getType();
+            dimLvl++;
+            if (dimLvl == ((ArrayType) instanceType).getDimensions().size())
+                return ((ArrayType) instanceType).getType();
+            return instanceType;
         }
         else if(!(instanceType instanceof NoType)) {
             AccessByIndexOnNoneArray exception = new AccessByIndexOnNoneArray(arrayAccessByIndex.getLine());
             arrayAccessByIndex.addError(exception);
+            return new NoType();
         }
         return new NoType();
     }

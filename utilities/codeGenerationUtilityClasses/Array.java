@@ -14,8 +14,11 @@ public class Array {
             this.elements.add(getNewObject(newElement));
     }
 
-    public Array(int size) {
+    public Array(int size, Object defaultElement) {
         this.elements = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            this.elements.add(getNewObject(defaultElement));
+        }
     }
 
     public Array(int leftVal, int rightVal) {
@@ -37,7 +40,7 @@ public class Array {
         return this.elements.get(index);
     }
 
-    public void setElements(int index, Object value) {
+    public void setElement(int index, Object value) {
         this.elements.set(index, value);
     }
 
