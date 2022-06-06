@@ -135,7 +135,7 @@ public class CodeGenerator extends Visitor<String> {
             return "LFptr;";
         else if (t instanceof ClassType)
             return "L" + ((ClassType) t).getClassName().getName() + ";";
-        else if (t instanceof NullType)
+        else if (t instanceof NullType || t instanceof VoidType)
             return "V";
 
         return null;
@@ -282,9 +282,60 @@ public class CodeGenerator extends Visitor<String> {
         return null;
     }
 
+    private VariableDeclaration getGlobalVar(Identifier identifier) {
+        for (VariableDeclaration variableDeclaration : globalVars) {
+            //todo check conflict with field
+            if (variableDeclaration.getVarName().getName().equals(identifier.getName())) {
+                return variableDeclaration;
+            }
+        }
+        return null;
+    }
+
+    private void addStaticGlobalVars() {
+        String name = "Global";
+        createFile(name);
+        addCommand(".class public " + name);
+        String parent = "java/lang/Object";
+        addCommand(".super " + parent);
+        addCommand("");
+
+        // Add static fields resembling global variables
+        for (VariableDeclaration globalVar : globalVars) {
+            String varName = globalVar.getVarName().getName();
+            Type varType = globalVar.getType();
+
+            addCommand(".field static " + varName + " " + makeTypeSignature(varType));
+
+        }
+        addCommand("");
+
+
+        // Add default Constructor
+        addCommand(".method public <init>()V");
+        addCommand(".limit stack 128");
+        addCommand(".limit locals 128");
+        addCommand("aload_0");
+        addCommand("invokespecial java/lang/Object/<init>()V");
+
+        for (VariableDeclaration globalVar : globalVars) {
+            String varName = globalVar.getVarName().getName();
+            Type varType = globalVar.getType();
+
+            addCommand("aload_0");
+            addDefaultValueCommand(varType);
+            addCommand("putstatic " + name + "/" + varName + " " + makeTypeSignature(varType));
+        }
+        addCommand("return");
+        addCommand(".end method");
+        addCommand("");
+
+    }
+
     @Override
     public String visit(Program program) {
         globalVars.addAll(program.getGlobalVariables());
+        addStaticGlobalVars();
         for(ClassDeclaration classDeclaration : program.getClasses()) {
             this.expressionTypeChecker.setCurrentClass(classDeclaration);
             this.currentClass = classDeclaration;
@@ -303,14 +354,6 @@ public class CodeGenerator extends Visitor<String> {
             parent = classDeclaration.getParentClassName().getName();
         addCommand(".super " + parent);
         addCommand("");
-
-//        for (VariableDeclaration variableDeclaration : globalVars) {
-////            variableDeclaration.accept(this);
-//            String varName = variableDeclaration.getVarName().getName();
-//            Type type = variableDeclaration.getType();
-//
-//            addCommand(".field " + varName + " " + makeTypeSignature(type));
-//        }
 
         for (FieldDeclaration fieldDeclaration : classDeclaration.getFields()) {
             fieldDeclaration.accept(this);
@@ -396,9 +439,6 @@ public class CodeGenerator extends Visitor<String> {
             }
         }
 
-        for (VariableDeclaration variableDeclaration : globalVars)
-            variableDeclaration.accept(this);
-
         for (VariableDeclaration variableDeclaration : methodDeclaration.getLocalVars())
             variableDeclaration.accept(this);
 
@@ -429,7 +469,12 @@ public class CodeGenerator extends Visitor<String> {
 
         addDefaultValueCommand(varType);
 
-        addCommand("astore " + slot);
+        VariableDeclaration globalVarDec = getGlobalVar(variableDeclaration.getVarName());
+
+        if (globalVarDec != null)
+            addCommand("putstatic Global/" + globalVarDec.getVarName().getName() + " " + makeTypeSignature(globalVarDec.getType()));
+        else
+            addCommand("astore " + slot);
 
         return null;
     }
@@ -499,8 +544,8 @@ public class CodeGenerator extends Visitor<String> {
 
     @Override
     public String visit(MethodCallStmt methodCallStmt) {
-        Type retType = methodCallStmt.getMethodCall().accept(expressionTypeChecker);
         expressionTypeChecker.setIsInMethodCallStmt(true);
+        Type retType = methodCallStmt.getMethodCall().accept(expressionTypeChecker);
         addCommand(methodCallStmt.getMethodCall().accept(this));
 //        if (!(retType instanceof NullType || retType instanceof NoType))
         addCommand("pop");
@@ -708,7 +753,11 @@ public class CodeGenerator extends Visitor<String> {
                 String castCmd = castToNonPrimitive(secondType);
                 if (castCmd != null)
                     commands += "\n" + castCmd;
-                commands += "\nastore " + slotOf(name);
+                VariableDeclaration globalVarDec = getGlobalVar(((Identifier) binaryExpression.getFirstOperand()));
+                if (globalVarDec != null)
+                    commands += "\nputstatic Global/" + name + " " + makeTypeSignature(globalVarDec.getType());
+                else
+                    commands += "\nastore " + slotOf(name);
             }
             else if(binaryExpression.getFirstOperand() instanceof ArrayAccessByIndex arrayAccessByIndex) {
                 int tempSlot = slotOf("");
@@ -809,10 +858,15 @@ public class CodeGenerator extends Visitor<String> {
                 commands += "\nisub";
 
             if(unaryExpression.getOperand() instanceof Identifier) {
-                int slot = slotOf(((Identifier) unaryExpression.getOperand()).getName());
+                String name = ((Identifier) unaryExpression.getOperand()).getName();
+                int slot = slotOf(name);
 //                commands += "\ndup";
                 commands += "\n" + castToNonPrimitive(new IntType());
-                commands += "\nastore " + slot;
+                VariableDeclaration globalVarDec = getGlobalVar(((Identifier) unaryExpression.getOperand()));
+                if (globalVarDec != null)
+                    commands += "\nputstatic Global/" + name + " " + makeTypeSignature(globalVarDec.getType());
+                else
+                    commands += "\nastore " + slot;
             }
             else if(unaryExpression.getOperand() instanceof ArrayAccessByIndex) {
                 int tmpSlot = slotOf("");
@@ -912,8 +966,13 @@ public class CodeGenerator extends Visitor<String> {
     @Override
     public String visit(Identifier identifier) {
         String commands = "";
-        int slot = slotOf(identifier.getName());
-        commands += "aload " + String.valueOf(slot);
+        VariableDeclaration globalVarDec = getGlobalVar(identifier);
+        if (globalVarDec != null)
+                commands += "getstatic Global/" + identifier.getName() + " " + makeTypeSignature(globalVarDec.getType());
+        else {
+            int slot = slotOf(identifier.getName());
+            commands += "aload " + slot;
+        }
         Type type = identifier.accept(expressionTypeChecker);
         String castCmd = castToPrimitive(type);
         if (castCmd != null)
