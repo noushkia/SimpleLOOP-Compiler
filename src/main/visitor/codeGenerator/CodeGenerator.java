@@ -244,12 +244,15 @@ public class CodeGenerator extends Visitor<String> {
             addCommand("invokestatic java/lang/Boolean/valueOf(Z)Ljava/lang/Boolean;");
         }
         else if (type instanceof ArrayType) {
-            String sizeCmd = ((ArrayType) type).getDimensions().get(dimLvl++).accept(this);
-            addCommand("new Array");
-            addCommand("dup");
-            addCommand(sizeCmd);
+            while (dimLvl < ((ArrayType) type).getDimensions().size()) {
+                addCommand("new Array");
+                addCommand("dup");
+                addCommand(((ArrayType) type).getDimensions().get(dimLvl++).accept(this));
+            }
             addDefaultValueCommand(((ArrayType) type).getType());
-            addCommand("invokespecial Array/<init>(ILjava/lang/Object;)V");
+            for (int i = 0; i < dimLvl; i++) {
+                addCommand("invokespecial Array/<init>(ILjava/lang/Object;)V");
+            }
         }
         else if (type instanceof FptrType) {
             addCommand("aconst_null");
@@ -257,7 +260,6 @@ public class CodeGenerator extends Visitor<String> {
         else if (type instanceof ClassType) {
             addCommand("aconst_null");
         }
-        dimLvl = 0;
     }
 
     private String castToNonPrimitive(Type type) {
@@ -466,7 +468,9 @@ public class CodeGenerator extends Visitor<String> {
     public String visit(VariableDeclaration variableDeclaration) {
         int slot = slotOf(variableDeclaration.getVarName().getName());
         Type varType = variableDeclaration.getType();
-
+        if (varType instanceof ArrayType){
+            dimLvl = 0;
+        }
         addDefaultValueCommand(varType);
 
         VariableDeclaration globalVarDec = getGlobalVar(variableDeclaration.getVarName());
@@ -989,7 +993,6 @@ public class CodeGenerator extends Visitor<String> {
         commands += "\n" + arrayAccessByIndex.getIndex().accept(this);
         commands += "\ninvokevirtual Array/getElement(I)Ljava/lang/Object;";
         commands += "\ncheckcast " + checkcastType(elementType);
-
         String castCmd = castToPrimitive(elementType);
         if (castCmd != null)
             commands += "\n" + castCmd;
